@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewBag.Title = "EmailConfig";
+    Layout = "~/Views/Shared/_FDLayout.cshtml";
+}
+
+<style>
+    b {
+        color: #808080;
+    }
+</style>
+<div class="card-header">
+    <div class="row">
+        <div class="col-sm-4">
+            <h4 style="color:#758484">Mail Configuration</h4>
+        </div>
+    </div>
+</div>
+@*<------------------Modal start-------------->*@
+<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style="color: #639292;font-family:inherit;">Edit Mail Config</h5>
+                <a class="close" data-dismiss="modal"><span>x</span></a>
+            </div>
+            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/FD/EmailConfig" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" id="Id" value="0" name="ID" />
+                   
+                    <br />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>BCC:</b>
+                            <input type="text" class="form-control" id="bcc" name="BCC"/>
+                        </div>
+                    </div>                   
+                    <br />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Body:</b>
+                            <textarea class="form-control" id="body" style="height: 174px;" name="Body" ></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@*<------------------Modal End-------------->*@
+<div class="card-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                <thead style="background-color: #090c5d;color: white;">
+                    <tr>
+                     
+                        <th>BCC</th>
+                        <th>Subject</th>
+                        <th>Body</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.emailConfigList != null)
+                    {
+                        foreach (var item in ViewBag.emailConfigList)
+                        {
+                            <tr>                           
+                                <td>@item.BCC</td>
+                                <td>@item.Subject</td>
+                                <td>@item.Body</td>
+                                <td><button class="btn btn-sm btn-success" onclick="OnEditClick(@Json.Encode(item))" data-toggle="modal" data-target="#modalContactForm">Edit</button></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function OnEditClick(dataty) {   
+        document.getElementById('bcc').value = dataty.BCC;        
+        document.getElementById('body').value = getmsgbody(dataty.Body);
+        document.getElementById('Id').value = dataty.ID;
+    }
+
+    function getmsgbody(body) {
+        debugger
+        body = body.substring(body.indexOf("id='p'>"));
+        body = body.replace(body.substring(body.indexOf("</p>")), "").replace("id='p'>", "");
+        
+        return body;
+    }
+</script>

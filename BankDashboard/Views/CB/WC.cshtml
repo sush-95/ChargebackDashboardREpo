@@ -1,0 +1,327 @@
+﻿
+@{
+    ViewBag.Title = "WeCare Statistics";
+    Layout = "~/Views/Shared/_CBLayout.cshtml";
+}
+<script src="~/JavaScript/mdb/mdb.min.js"></script>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
+<style>
+    .durationTable {
+        width: 66%;
+        font-weight: bold;
+        color: #716662;
+        position: relative;
+        left: 20%;
+    }
+
+    .chartTable {
+        width: 100%;
+        font-weight: bold;
+        color: #716662;
+        position: relative;
+        left: 7%;
+        margin-top: -2px;
+    }
+
+    .card-header b {
+        color: #546f6f;
+        margin-left: -4px;
+    }
+
+    #labeldiv {
+        font-size: 19px;
+        background-color: #5e6f6b;
+        border-radius: 3px;
+        padding: 3px;
+        font-family: fangsong;
+        font-weight: bold;
+        position: relative;
+        top: 3px;
+    }
+
+    .progress {
+        width: 0px;
+        height: 27px;
+        transition-property: width;
+        transition-duration: 1s;
+        border-color: #c5acb1;
+        border: solid;
+        border-width: 1px;
+        border-radius: 0px;
+    }
+
+        .progress b {
+            padding-left: 50%;
+            padding-right: 50%;
+            padding-top: 10px;
+            color: white;
+        }
+
+    .pbar1 {
+        background-color: #34d234;
+        border-right: none;
+    }
+
+    .pbar2 {
+        background-color: #dcd500;
+        border-right: none;
+        border-left: none;
+    }
+
+    .pbar3 {
+        background-color: #0f60da;
+        border-left: none;
+    }
+
+    .pabrraised1 {
+        width: 50%;
+    }
+
+    .pabrraised2 {
+        width: 35%;
+    }
+
+    .pabrraised3 {
+        width: 10%;
+    }
+
+    .invoice {
+        width: 80%;
+        height: calc(1.5em + 0.75rem + -10px);
+        background-color: #f9f3f0;
+        color: #8c9894;
+        font-weight: bold;
+    }
+</style>
+
+<div class="card-header">
+    <div class="row">
+        <table class="durationTable">
+            <tr>
+                <td style="text-align: center;"><b>Duration : </b></td>
+                <td><input type="radio" value="Realtime" name="Duration" /> Realtime</td>
+                <td><input type="radio" value="1 Month" name="Duration" /> 1 Month</td>
+                <td><input type="radio" value="3 Months" name="Duration" /> 3 Months</td>
+                <td><input type="radio" value="3 Months" name="Duration" /> Custom</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="card-body">
+    <div class="row">
+        <div class="col-sm-1 p-3">
+
+        </div>
+        <div class="col-sm-10 p-3">
+            <div class="shadow card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <b>Issue Type</b>
+                        </div>
+                        <div class="col-sm-6">
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-10">
+                        <canvas id="horizontalBar"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-10">
+            <div class="shadow card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <b>Cases Status</b>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-sm-11 row">
+
+                        <div class="pbar1 progress" id="p1">
+                            <b class="Count">45</b>
+                        </div>
+                        <div class="pbar2 progress" id="p2">
+                            <b class="Count">23</b>
+                        </div>
+                        <div class="pbar3 progress" id="p3">
+                            <b class="Count">15</b>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-11 row">
+                        <table style=" color: #7f7571;font-size: 14px;height:92px;">
+                            <tr>
+                                <td style="width: 36px;"><div style="height: 16px;background-color: #0aca0a;width: 16px;"></div></td>
+                                <th>Closed</th>
+                            </tr>
+                            <tr>
+                                <td><div style="height: 16px;background-color: #dcd500;width: 16px;"></div></td>
+                                <th>In Progress</th>
+                            </tr>
+                            <tr>
+                                <td><div style="height: 16px;background-color: #0f60da;width: 16px;"></div></td>
+                                <th>Resolved</th>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="card-footer">
+                    <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-10">
+            <div class="shadow card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <b>Daily Cases Trend</b>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-10">
+            <div class="shadow card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <b>Monthly Cases Received</b>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var x = new Chart(document.getElementById("horizontalBar"), {
+            "type": "horizontalBar",
+            "data": {
+                "labels": ["Wrong Charges", "Transactionpaid by other means card", "Requestfor transfer confirmation", "Payment to wrong School", "Partial amount received",
+                    "Incorrect amount debited", "Credit card claims not refunded", "Card Captured", "Amount Debited More than Once", "Account not closed"],
+                "datasets": [{
+                    "label": "Issue Type Graph",
+                    "data": [22, 33, 55, 12, 86, 23, 14, 29, 34, 56],
+                    "fill": false,
+                    "backgroundColor": ["rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)",
+                        "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(54, 162, 235, 0.2)",
+                        "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)", "rgba(100, 206, 157, 0.2)", "rgba(222, 255, 133, 0.36)", "rgba(174, 76, 122, 0.58)"
+                    ],
+                    "borderColor": ["rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)",
+                        "rgb(75, 192, 192)", "rgb(54, 162, 235)", "rgb(153, 102, 255)", "rgb(201, 203, 207)", "rgba(100, 206, 157)", "rgba(222, 255, 133)", "rgba(174, 76, 122)"
+                    ],
+                    "borderWidth": 1
+                }]
+            },
+            "options": {
+                "scales": {
+                    "xAxes": [{
+                        "ticks": {
+                            "beginAtZero": true
+                        }
+                    }]
+                }
+            }
+        });
+
+
+
+        //line
+        var ctxL = document.getElementById("lineChart").getContext('2d');
+        var myLineChart = new Chart(ctxL, {
+            type: 'line',
+            data: {
+                labels: ["10/1/2020", "10/2/2020", "10/3/2020", "10/4/2020", "10/5/2020", "10/6/2020", "10/7/2020", "10/8/2020", "10/9/2020", "10/10/2020"],
+                datasets: [{
+                    label: "Daily Cases",
+                    data: [65, 59, 80, 81, 56, 55, 40, 34, 56, 70],
+                    backgroundColor: [
+                        'rgba(12, 152, 223, 0.64)',
+                    ],
+                    borderColor: [
+                        'rgba(12, 152, 223, 7)',
+                    ],
+                    borderWidth: 2
+                }
+                ]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+
+        //bar
+        var ctxB = document.getElementById("barChart").getContext('2d');
+        var myBarChart = new Chart(ctxB, {
+            type: 'bar',
+            data: {
+                labels: ["January", "February", "March", "April", "May", "June"],
+                datasets: [{
+                    label: '',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: [
+                        'rgba(123, 55, 241, 1)',
+                        'rgba(123, 55, 241, 1)',
+                        'rgba(123, 55, 241, 1)',
+                        'rgba(123, 55, 241, 1)',
+                        'rgba(123, 55, 241, 1)',
+                        'rgba(123, 55, 241, 1)',
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>

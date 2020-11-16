@@ -1,0 +1,72 @@
+﻿
+@{
+    ViewBag.Title = "Error";
+    //Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        div[class="dataTables_filter"] {
+            display: none;
+        }
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title ::Bank Muscat</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Scripts/dt/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="row" style="margin-top: -75px;">
+        <div class="col-md-2">
+            <a href="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/Admin/index" style="text-decoration:none"><img src="~/Images/logo-bank.jpg" width="215px;" height="150px;" /></a>
+        </div>
+    </div>
+    <div class="well-sm" style="background-color: #f7714df2;color: white; text-align:center">
+        <h2>Authentication Error</h2>
+    </div>
+    <h4 align="center">You are not authorize person to view this page.</h4>
+    <h4 align ="center">
+        <a href="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/LogIn/LogIn">Click here to Login</a>
+    </h4>
+    <div class="container body-content">
+        <hr />
+        <footer>
+            <p><center>&copy; @DateTime.Now.Year - Grid Infocom Pvt. Ltd.</center></p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script src="~/Scripts/dt/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        
+        $("#lblmsg").hide(5000)
+        var table = $('#example').DataTable();
+
+        $('#example tbody').on('click', 'tr', function () {
+            var data = table.row(this).data();
+            // alert('You clicked on ' + data[0] + '\'s row');
+        });
+
+        $(".invoice").datepicker(
+            {
+                dateFormat: 'dd-M-yy',
+                timepicker: false,
+
+            }
+        );
+
+        //$("#lblmsg").hide(2000)
+    });
+</script>

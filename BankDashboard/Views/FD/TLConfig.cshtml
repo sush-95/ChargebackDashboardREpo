@@ -1,0 +1,106 @@
+﻿
+@{
+    ViewBag.Title = "TLConfig";
+    Layout = "~/Views/Shared/_FDLayout.cshtml";
+}
+<style>
+    b {
+        color: #808080;
+    }
+</style>
+<div class="card-header">
+    <div class="row">
+        <div class="col-sm-4">
+            <h4 style="color:#758484">Termlength Configuration</h4>
+        </div>
+        <div class="col-sm-4"> </div>
+        <div class="col-sm-4">
+          <button data-toggle="modal" style="margin-left: 39%" data-target="#modalContactForm" class="btn btn-secondary">Add New Product</button>
+        </div>
+    </div>
+</div>
+@*<------------------Modall start-------------->*@
+<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style="color: #639292;font-family:inherit;">Edit Termlength Config</h5>
+                <a class="close" data-dismiss="modal"><span>x</span></a>
+            </div>
+            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/FD/TLConfig" method="post" class="form-group">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" value="0" id="Id" name="ID" />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Term Length:</b>
+                            <input type="text" class="form-control" required id="TL" name="TermLength" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Profit Payment Frequency:</b>
+                            <input type="text" class="form-control" required id="PPF" name="ProfitPaymentFrequency" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Product Code:</b>
+                            <input type="text" class="form-control" required id="PC" name="ProductCode" />                         
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*<------------------Modall End-------------->*@
+<div class="card-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                <thead style="background-color: #090c5d;color: white;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Term Length</th>
+                        <th>ProfitPaymentFrequency</th>
+                        <th>Product Code</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.TlList != null)
+                    {
+                        foreach (var item in ViewBag.TlList)
+                        {
+                            <tr>
+                                <td>@item.ID</td>
+                                <td>@item.TermLength</td>
+                                <td>@item.ProfitPaymentFrequency</td>
+                                <td>@item.ProductCode</td>
+                                <td><button class="btn btn-sm btn-success" onclick="OnEditClick(@Json.Encode(item))" data-toggle="modal" data-target="#modalContactForm">Edit</button></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function OnEditClick(dataty) {
+        debugger;
+        document.getElementById('TL').value = dataty.TermLength;
+        document.getElementById('PPF').value = dataty.ProfitPaymentFrequency;
+        document.getElementById('PC').value = dataty.ProductCode;
+        document.getElementById('Id').value = dataty.ID;
+    }
+</script>

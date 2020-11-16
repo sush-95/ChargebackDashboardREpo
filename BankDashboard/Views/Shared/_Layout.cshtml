@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Scripts/dt/css/jquery.dataTables.min.css" rel="stylesheet" />
+</head>
+<body>
+    @*<div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    </ul>
+                </div>
+            </div>
+        </div>*@
+    <div class="row" style="margin-top: -50px;">
+        <div class="col-md-2">
+            <img src="~/Images/logo-bank.jpg" width="215px;" height="150px;" />
+        </div>
+        <div class="col-md-10" style="text-align:right;color:#FC5E3C;padding-top:75px;">
+            Welcome Admin
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column" style="background:#FC5E3C;height:430px;">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" style="color:white;">Reports</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" style="color:white;">Balancing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Dashboard/BNMst" style="color:white;">Bin List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="/Dashboard/DeviceList" style="color:white;">Device List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="/Dashboard/GLAList" style="color:white;">GL Account</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" style="color:white;">Error Code List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" style="color:white;">Manage Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" style="color:white;">Change Password</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10"></div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p><center>&copy; @DateTime.Now.Year - Grid Infocom Pvt. Ltd.</center></p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/dt/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+       
+        var table = $('#example').DataTable();
+
+        $('#example tbody').on('click', 'tr', function () {
+            var data = table.row(this).data();
+            // alert('You clicked on ' + data[0] + '\'s row');
+        });
+
+
+    });
+</script>

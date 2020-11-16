@@ -1,0 +1,141 @@
+﻿
+#example {
+    font-size: 12px;
+}
+
+.dataTables_length label select {
+    border-radius: 0.25rem;
+    border-color: #b0bdbd;
+}
+
+#action {
+    background-image: none;
+}
+
+#success {
+    position: fixed;
+    top: 15%;
+    right: 40%;
+    background-color: #11de5a7d;
+    height: 40px;
+    width: 225px;
+    border-radius: 4px;
+    padding: 7px;
+}
+
+#error {
+    position: fixed;
+    top: 15%;
+    right: 40%;
+    background-color: #ff000087;
+    height: 40px;
+    width: 225px;
+    border-radius: 4px;
+    padding: 7px;
+}
+
+.nav2 {
+    height: 34px;
+    background-color: #ff2300;
+    position: fixed;
+    top: 56px;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    border: solid;
+    border-color: #564a46;
+    border-radius: 6px;
+}
+
+body {
+    margin: 0;
+}
+
+
+
+   
+
+.submenu {
+    padding: 0px;
+    display:none;
+}
+
+.sidebar {
+    margin: 0;
+    padding: 0;
+    width: 209px;
+    background-color: #463c3a;
+    position: fixed;
+    top: 91px;
+    overflow: auto;
+    border-radius: 4px;
+}
+
+.logoImg {
+    height: 84px;
+    width: 216px;
+    margin-top: -16px;
+    position: relative;
+    left: 98%;
+}
+
+.sidebar li a {
+    display: block;
+    color: #efe7e4;
+    padding: 16px;
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: solid;
+    padding: 15px;
+    border-width: 1px;
+}
+
+.sidebar a.active {
+    background-color: #ea5082;
+    color: white;
+    font-size: 17px;
+    font-family: inherit;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.NoSidebar {
+    display: none;
+}
+
+
+.nav2 b {
+    position: relative;
+    left: 17%;
+    color: white;
+    font-style: italic;
+    font-family: cursive;
+}
+div.content {
+    margin-left: 200px;
+    padding: 1px 16px;
+    height: 1000px;
+}
+
+@media screen and (max-width: 700px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+        .sidebar a {
+            float: left;
+        }
+
+    div.content {
+        margin-left: 0;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .sidebar li {
+        text-align: center;
+        float: none;
+    }
+}

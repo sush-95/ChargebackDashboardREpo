@@ -1,0 +1,347 @@
+﻿
+@{
+    ViewBag.Title = "OverView";
+    Layout = "~/Views/Shared/_FDLayout.cshtml";
+}
+<script src="~/JavaScript/mdb/mdb.min.js"></script>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+<style>
+    .btn-sm {
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .buttoList {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #4db6de;
+        width: 214px;
+        height: 33px;
+        border-radius: 2px;
+    }
+
+        .buttoList li {
+            float: left;
+            display: block;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            padding: 4px;
+            font-weight: bold;
+            border-radius: 2px;
+            text-decoration: none;
+        }
+
+
+
+    .active1 {
+        background-color: #276577;
+        border: solid;
+        border-radius: 2px;
+        height: 100%;
+        border-width: 2px;
+        padding: 4px;
+        border-color: rgb(76 187 161);
+    }
+
+    .botstat {
+        height: 25px;
+        width: 74px;
+    }
+
+    .Count {
+        font-size: 6.4rem;
+        color: #4e907a
+    }
+
+    #dtogle {
+        display: none
+    }
+</style>
+<div class="card-header">
+    <div class="row">
+        <div class="col-sm-2" style="text-align:right">
+            <b style="color: #3c4e4e;font-size: 17px;">Bot Status</b>
+        </div>
+        <div class="col-sm-1">
+            <p class="botstat" style=" background-color: #d60f2af7;"></p>
+        </div>
+        <div class="col-sm-5"></div>
+        <div class="col-sm-2">
+            <button class="btn btn-sm  btn-secondary" onclick="getdiv('1')">Counting View</button>
+        </div>
+        <div class="col-sm-2">
+            <button class="btn btn-sm btn-secondary" onclick="getdiv('2')">Graphical View</button>
+        </div>
+    </div>
+</div>
+<div class="card-body" id="dtogle1">
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-4 p-3">
+            <div class="shadow card">
+
+                <div class="card-image-wrapper" style="text-align:center">
+                    <h1 class="Count">@ViewBag.couning.Requested</h1>
+                </div>
+                <div class="card-footer " style="text-align:center">
+                    <b style="color:#6d7979;font-size:16px"> FD Requested till Date.</b><br />
+                    <b style="color:#6d7979;font-size:12px">Showing data from @ViewBag.couning.date till date</b>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-2"></div>
+        <div class="col-sm-4 p-3">
+            <div class="shadow card">
+                <div class="card-image-wrapper" style="text-align:center">
+                    <h1 class="Count">@ViewBag.couning.Processed</h1>
+                </div>
+                <div class="card-footer" style="text-align:center">
+                    <b style="color:#6d7979;font-size:16px">FD Processed till Date.</b><br />
+                    <b style="color:#6d7979;font-size:12px">Showing data from @ViewBag.couning.date till date</b>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 p-3">
+            <div class="shadow card">
+                <div class="card-image-wrapper" style="text-align:center">
+                    <h1 class="Count">@ViewBag.couning.Manhoursaved</h1>
+                    <b style="color:#4e907a;">Hrs</b>
+                </div>
+                <div class="card-footer" style="text-align:center">
+                    <b style="color:#6d7979;font-size:16px">Man hour saved till date. And Counting...</b><br />
+                    <b style="color:#6d7979;font-size:12px">Showing data from @ViewBag.couning.date till date</b>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+@*<---------------------------Pi chart----------------------------------------------------------->*@
+<div class="card-body" id="dtogle">
+    <br />
+    <div class="row">
+        <div class="col-sm-9"></div>
+        <div class="col-sm-3">
+            <ul class="buttoList">
+                <li id="li1" class="active1" style="width:50%" onclick="Realtime(true,@Json.Encode(ViewBag.realtime.CartFigures))">Real Time</li>
+                <li id="li2" class="" onclick="Realtime(false,@Json.Encode(ViewBag.historical.CartFigures))" style="width:50%">Historical</li>
+            </ul>
+        </div>
+    </div><br />
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-5" id="real" style="display:none">
+            <div class="shadow card">
+                <div class="card-image-wrapper" style="text-align:center">
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div class="card-footer">
+                    <b style="color:#6d7979;font-size:12px">Showing data from @ViewBag.realtime.YTD till date</b>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-5" id="his" style="display:none">
+            <div class="shadow card">
+                <div class="card-image-wrapper" style="text-align:center">
+                    <canvas id="pieChart1"></canvas>
+                </div>
+                <div class="card-footer">
+                    <b style="color:#6d7979;font-size:12px">Showing data from @ViewBag.historical.YTD till date</b>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br /> <br />
+
+</div>
+
+<br /><br />
+<script>
+
+
+
+    var labellist = ["Fd Created", "Mail Sent", "SMS Sent", "Status Marked", "Not Processed"];
+    var bccolor = ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1", "#4D5360"];
+    var bccolorHover = ["#FF5A5E", "#5AD3D1", "#FFC870", "#A8B3C5", "#616774"];
+    function getdiv(val) {
+        var realdiv = document.getElementById('real')
+        var hisdiv = document.getElementById('his')
+        realdiv.setAttribute('style', 'display:none')
+        hisdiv.setAttribute('style', 'display:none')
+        var div1 = document.getElementById('dtogle')
+        var div = document.getElementById('dtogle1')
+        debugger
+        if (val == '1') {
+            div.setAttribute('style', 'display:block')
+            div1.setAttribute('style', 'display: none')
+            $('.Count').each(function () {
+                var $this = $(this);
+                jQuery({ Counter: 0 }).animate({ Counter: $this.text() }, {
+                    duration: 1000,
+                    easing: 'swing',
+                    step: function () {
+                        $this.text(Math.ceil(this.Counter));
+                    }
+                });
+            });
+        } else {
+            div.setAttribute('style', 'display:none')
+            div1.setAttribute('style', 'display: block')
+            realdiv.setAttribute('style', 'display:block')
+
+            vdr(@Json.Encode(ViewBag.realtime.CartFigures), labellist, bccolor, bccolorHover);
+
+        }
+        return false;
+    }
+    function vdr(list, labels, bgcolor, hoverbgcolor) {
+        var ctxP = document.getElementById("pieChart").getContext('2d');
+        var myPieChart = new Chart(ctxP, {
+            plugins: [ChartDataLabels],
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: list,
+                    backgroundColor: bgcolor,
+                    hoverBackgroundColor: hoverbgcolor
+                }]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'right',
+                    labels: {
+                        padding: 20,
+                        boxWidth: 10
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        formatter: (value, ctx) => {
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => {
+                                sum += data;
+                            });
+                            let percentage = (value * 100 / sum).toFixed(2) + "%";
+                            return percentage;
+                        },
+                        color: 'white',
+                        labels: {
+                            title: {
+                                font: {
+                                    size: '16'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+    function vdr1(list, labels, bgcolor, hoverbgcolor) {
+        var ctxP = document.getElementById("pieChart1").getContext('2d');
+        var myPieChart = new Chart(ctxP, {
+            plugins: [ChartDataLabels],
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: list,
+                    backgroundColor: bgcolor,
+                    hoverBackgroundColor: hoverbgcolor
+                }]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'right',
+                    labels: {
+                        padding: 20,
+                        boxWidth: 10
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        formatter: (value, ctx) => {
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => {
+                                sum += data;
+                            });
+                            let percentage = (value * 100 / sum).toFixed(2) + "%";
+                            return percentage;
+                        },
+                        color: 'white',
+                        labels: {
+                            title: {
+                                font: {
+                                    size: '16'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+
+    function Realtime(booval, listofstat) {
+        var li1 = document.getElementById('li1')
+        var li2 = document.getElementById('li2')
+        var realdiv = document.getElementById('real')
+        var hisdiv = document.getElementById('his')
+        if (booval) {
+            li1.setAttribute('class', 'active1');
+            realdiv.setAttribute('style', 'display:block')
+            hisdiv.setAttribute('style', 'display:none')
+            li2.setAttribute('class', '');
+            vdr(listofstat, labellist, bccolor, bccolorHover)
+        }
+        else {
+            li1.setAttribute('class', '');
+            li2.setAttribute('class', 'active1');
+            hisdiv.setAttribute('style', 'display:block')
+            realdiv.setAttribute('style', 'display:none')
+            vdr1(listofstat, labellist, bccolor, bccolorHover)
+        }
+
+    }
+</script>
+<script>
+                //function vdr(list, labels, bgcolor, hoverbgcolor) {
+
+                //    var ctxP = document.getElementById("pieChart").getContext('2d');
+                //    var myPieChart = new Chart(ctxP, {
+                //        type: 'pie',
+                //        data: {
+                //            labels: labels,
+                //            datasets: [{
+                //                data: list,
+                //                backgroundColor: bgcolor,
+                //                hoverBackgroundColor: hoverbgcolor
+                //            }]
+                //        },
+                //        options: {
+                //            responsive: true
+                //        }
+                //    });
+                //}
+
+</script>

@@ -1,0 +1,303 @@
+﻿@using BankDashboard.Common;
+@{
+    ViewBag.Title = "Report";
+    Layout = "~/Views/Shared/_FDLayout.cshtml";
+    FDViewModelClass.ReportView filterobj = (FDViewModelClass.ReportView)ViewBag.filter;
+}
+<style>
+    .form-control {
+        height: calc(1.5em + 0.6rem + 2px);
+    }
+
+    #inputheader .form-control {
+        font-size: 12px;
+    }
+
+    #inputheader {
+        font-size: 10px;
+        text-align: center;
+    }
+
+        #inputheader th {
+            width: 14.28%;
+        }
+
+    .col-sm-3 .invoice {
+        height: 27px;
+        width: 164px;
+    }
+</style>
+@{
+    FDViewModelClass.ListOFproperty props = new FDViewModelClass.ListOFproperty();
+    if (ViewBag.getPropertyList != null)
+    {
+        props = (FDViewModelClass.ListOFproperty)ViewBag.getPropertyList;
+    }
+
+}
+
+<div class="card-header">
+    <div class="row">
+        <div class="col-sm-2">
+            <h4 style="color:#758484">Report</h4>
+        </div>
+        <div class="col-sm-8"></div>
+        <div class="col-sm-2">
+            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/FD/GetExcel" method="post">
+                <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
+                <button class="btn btn-success" type="submit">
+                    <img src="~/Images/exl.png" style="height: 19px;" />Export
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card-body">
+    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/FD/Report" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-sm-3">
+                <span> From Date:</span>
+                @if (filterobj == null)
+                {
+                    <input type="text" class="form-control invoice" autocomplete="off" name="FromDate" />
+                }
+                else
+                {
+                    <input type="text" class="form-control invoice" value="@filterobj.FromDate" autocomplete="off" name="FromDate" />
+                }
+
+            </div>
+            <div class="col-sm-3">
+                <span> To Date:</span>
+                @if (filterobj == null)
+                {
+                    <input type="text" class="form-control invoice" autocomplete="off" name="ToDate" />
+                }
+                else
+                {
+                    <input type="text" class="form-control invoice" value="@filterobj.ToDate" autocomplete="off" name="ToDate" />
+                }
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-12">
+
+                <table id="inputheader" class="table-bordered table table-striped table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Customer Number</th>
+                            <th>TermLength</th>
+                            <th>Request Date</th>
+                            <th>FD Created</th>
+                            <th>Mail Sent</th>
+                            <th>SMS Sent</th>
+                            <th>MarkedStatusInMB</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th><input type="text" class="form-control" name="CustomerNumber" /></th>
+                            <th>
+                                <select class="form-control" name="TermLength">
+                                    <option value="">select</option>
+                                    @if (filterobj != null)
+                                    {
+                                        <option value="@filterobj.TermLength" selected hidden>@filterobj.TermLength</option>
+                                    }
+                                    @if (props.ListofTermLength != null)
+                                    {
+                                        foreach (string a in props.ListofTermLength)
+                                        {
+                                            <option value="@a">@a</option>
+                                        }
+                                    }
+                                </select>
+                            </th>
+                            <th>
+                                @if (filterobj == null)
+                                {
+                                    <input type="text" class="form-control invoice" name="RequestDate" autocomplete="off" />
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control invoice" value="@filterobj.RequestDate" name="RequestDate" autocomplete="off" />
+                                }
+                            </th>
+                            <th>
+                                <select class="form-control" name="FDCreated">
+                                    <option value="">select</option>
+                                    @if (filterobj != null)
+                                    {
+                                        <option value="@filterobj.FDCreated" selected hidden>@filterobj.FDCreated</option>
+                                    }
+                                    @if (props.ListofFDCreated != null)
+                                    {
+                                        foreach (string a in props.ListofFDCreated)
+                                        {
+                                            <option value="@a">@a</option>
+                                        }
+                                    }
+                                </select>
+                            </th>
+                            <th>
+                                <select class="form-control" name="MailSent">
+                                    <option value="">select</option>
+                                    @if (filterobj != null)
+                                    {
+                                        <option value="@filterobj.MailSent" selected hidden>@filterobj.MailSent</option>
+                                    }
+                                    @if (props.ListOfMailsent != null)
+                                    {
+                                        foreach (string a in props.ListOfMailsent)
+                                        {
+                                            <option value="@a">@a</option>
+                                        }
+                                    }
+                                </select>
+
+                            </th>
+                            <th>
+                                <select class="form-control" name="SMSSent">
+                                    <option value="">select</option>
+                                    @if (filterobj != null)
+                                    {
+                                        <option value="@filterobj.SMSSent" selected hidden>@filterobj.SMSSent</option>
+                                    }
+                                    @if (props.ListOfSMSSent != null)
+                                    {
+                                        foreach (string a in props.ListOfSMSSent)
+                                        {
+                                            <option value="@a">@a</option>
+                                        }
+                                    }
+                                </select>
+                            </th>
+                            <th>
+                                <select class="form-control" name="MarkedStatusInMB">
+                                    <option value="">select</option>
+                                    @if (filterobj != null)
+                                    {
+                                        <option value="@filterobj.MarkedStatusInMB" selected hidden>@filterobj.MarkedStatusInMB</option>
+                                    }
+                                    @if (props.ListMarkedStatusInMB != null)
+                                    {
+                                        foreach (string a in props.ListMarkedStatusInMB)
+                                        {
+                                            <option value="@a">@a</option>
+                                        }
+                                    }
+                                </select>
+                            </th>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-2">
+                <button class="btn btn-sm btn-primary" type="submit" name="Apply">Apply</button>
+                <a class="btn btn-sm btn-secondary" href="/app/FD/Report" name="Apply">Reset</a>
+            </div>
+        </div>
+    </form>
+</div>
+@*<------------------Modal start-------------->*@
+<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style="color: #639292;font-family:inherit;">FD Request Detail</h5>
+                <a class="close" data-dismiss="modal"><span>x</span></a>
+            </div>
+
+            <div class="modal-body">
+                <table class="table-bordered table table-striped table-condensed " style="font-size:12px;text-align:center">
+                    <tbody>
+                        <tr><th>Customer Number</th><td id="cuno"></td><th>Term Length</th><td id="TL"></td></tr>
+                        <tr><th>Profit Payment Frequency</th><td id="ppf"></td><th>Deposit Amount</th><td id="da"> </td></tr>
+                        <tr><th>Request Date</th><td id="rdate"> </td><th>FD Created</th><td id="fdcr"></td></tr>
+                        <tr><th>Mail Sent</th><td id="mail"></td><th>Marked Status In MB</th><td id="msib"></td></tr>
+                        <tr><th>SMS Sent</th><td id="sms"></td><th>Maturity Date</th><td id="mdate"></td></tr>
+                        <tr><th>FD Booking Date</th><td id="fdbookdate"></td><th>FD Account No</th><td id="fdaccno"></td></tr>
+                        <tr><th>Payment Method</th><td id="pmethod"></td><th></th><td id="status"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+@*<------------------Modal End-------------->*@
+
+<div class="card-body">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+
+                <thead style="background-color: #090c5d;color: white;">
+                    <tr>
+                        <th>Customer No.</th>
+                        <th>TermLength</th>
+                        <th>Request Date</th>
+                        <th>FD Created</th>
+                        <th>Mail Sent</th>
+                        <th>SMS Sent</th>
+                        <th>MarkedStatusInMB</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.ReportList != null)
+                    {
+                        foreach (var item in ViewBag.ReportList)
+                        {
+                            <tr>
+                                <td>@item.CustomerNumber</td>
+                                <td>@item.TermLength</td>
+                                <td>@item.RequestDate</td>
+                                <td>@item.FDCreated</td>
+                                <td>@item.MailSent</td>
+                                <td>@item.SMSSent</td>
+                                <td>@item.MarkedStatusInMB</td>
+                                <td>
+                                    <a class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalContactForm" onclick="getFdDetail(@Json.Encode(item))">View</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getFdDetail(data) {
+        debugger;
+        document.getElementById('cuno').innerText = data.CustomerNumber;
+        document.getElementById('TL').innerText = data.TermLength;
+        document.getElementById('ppf').innerText = data.ProfitPaymentFrequency;
+        document.getElementById('da').innerText = data.DepositAmount
+        document.getElementById('rdate').innerText = data.RequestDate
+        document.getElementById('fdcr').innerText = data.FDCreated;
+        document.getElementById('mail').innerText = data.MailSent;
+        document.getElementById('msib').innerText = data.MarkedStatusInMB;
+        document.getElementById('sms').innerText = data.SMSSent;
+        document.getElementById('mdate').innerText = data.MaturityDate;
+        document.getElementById('fdbookdate').innerText = data.FDBookingDate;
+        document.getElementById('fdaccno').innerText = data.FDAccNo;
+        document.getElementById('pmethod').innerText = data.PaymentMethod;
+        //document.getElementById('status').innerText = data.RequestStatus;
+    }
+</script>

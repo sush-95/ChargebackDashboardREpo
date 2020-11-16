@@ -1,0 +1,275 @@
+﻿
+@{
+    ViewBag.Title = "Bot Statistics";
+    Layout = "~/Views/Shared/_CBLayout.cshtml";
+}
+<script src="~/JavaScript/mdb/mdb.min.js"></script>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
+<style>
+    .durationTable {
+        width: 66%;
+        font-weight: bold;
+        color: #716662;
+        position: relative;
+        left: 20%;
+    }
+
+    .chartTable {
+        width: 100%;
+        font-weight: bold;
+        color: #716662;
+        position: relative;
+        left: 7%;
+        margin-top: -2px;
+    }
+
+    .card-header b {
+        color: #546f6f;
+        margin-left: -4px;
+    }
+
+    #labeldiv {
+        font-size: 19px;
+        background-color: #5e6f6b;
+        border-radius: 3px;
+        padding: 3px;
+        font-family: fangsong;
+        font-weight: bold;
+        position: relative;
+        top: 3px;
+    }
+
+    .progress {
+        width: 0px;
+        height: 27px;
+        transition-property: width;
+        transition-duration: 1s;
+        border-color: #c5acb1;
+        border: solid;
+        border-width: 1px;
+        border-radius: 0px;
+    }
+
+        .progress b {
+            padding-left: 50%;
+            padding-right: 50%;
+            padding-top: 10px;
+            color: white;
+        }
+
+    .pbar1 {
+        background-color: #34d234;
+        border-right: none;
+    }
+
+    .pbar2 {
+        background-color: #0e35c1;
+        border-right: none;
+        border-left: none;
+    }
+
+    .pbar3 {
+        background-color: red;
+        border-left: none;
+    }
+
+    .pbar4 {
+        background-color: #5e5858;
+        border-left: none;
+    }
+
+    .pabrraised1 {
+        width: 50%;
+    }
+
+    .pabrraised2 {
+        width: 35%;
+    }
+
+    .pabrraised3 {
+        width: 10%;
+    }
+
+    .invoice {
+        width: 80%;
+        height: calc(1.5em + 0.75rem + -10px);
+        background-color: #f9f3f0;
+        color: #8c9894;
+        font-weight: bold;
+    }
+
+    .pabrraised4 {
+        width: 5%;
+    }
+</style>
+<div class="card-header">
+    <div class="row">
+        <table class="durationTable">
+            <tr>
+                <td style="text-align: center;"><b>Duration :</b></td>
+                <td><input type="radio" value="Realtime" name="Duration" /> Realtime</td>
+                <td><input type="radio" value="1 Month" name="Duration" /> 1 Month</td>
+                <td><input type="radio" value="3 Months" name="Duration" /> 3 Months</td>
+                <td><input type="radio" value="3 Months" name="Duration" /> Custom</td>
+            </tr>
+        </table>
+
+    </div>
+    <div class="row">
+
+    </div>
+</div>
+
+<div class="card-body">
+    <div class="row">
+        @*<table style="position: relative;left: 1.5%;">
+                <tr>
+                    <td><input type="text" placeholder="From Date" class="form-control invoice" /></td>
+                    <td><input type="text" placeholder="To Date" class="form-control invoice" /></td>
+                </tr>
+            </table>*@
+    </div>
+    <div class="row">
+        <div class="col-sm-6 p-3">
+            <div class="shadow card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <b>Cases Status</b>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-sm-11 row">
+                        <div class="pbar1 progress" id="p1">
+                            <b class="Count">45</b>
+                        </div>
+                        <div class="pbar2 progress" id="p2">
+                            <b class="Count">23</b>
+                        </div>
+                        <div class="pbar3 progress" id="p3">
+                            <b class="Count">15</b>
+                        </div>
+                        <div class="pbar4 progress" id="p4">
+                            <b class="Count">5</b>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-11 row">
+                        <table style=" color: #7f7571;font-size: 14px;height: 149px;">
+                            <tr>
+                                <td style="width: 36px;"><div style="height: 16px;background-color: #0aca0a;width: 16px;"></div></td>
+                                <th>Processed</th>
+                            </tr>
+                            <tr>
+                                <td><div style="height: 16px;background-color: #0a3cca;width: 16px;"></div></td>
+                                <th>Business Rule Exception</th>
+                            </tr>
+                            <tr>
+                                <td><div style="height: 16px;background-color: red;width: 16px;"></div></td>
+                                <th>Application Exception</th>
+                            </tr>
+                            <tr>
+                                <td><div style="height: 16px;background-color: #5e5858;width: 16px;"></div></td>
+                                <th>Unprocessed</th>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="card-footer">
+                    <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-6 p-3">
+            <div class="shadow card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <b>Routing Portal Statistics</b>
+                        </div>
+                        <div class="col-sm-6">
+                            <table class="chartTable">
+                                <tr>
+                                    <td><input type="radio" value="Realtime" name="Duration" /> Pie</td>
+                                    <td><input type="radio" value="1 Month" name="Duration" /> Bar</td>
+
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body" style="width:510px;height:240px;position: relative;left: 9%;">
+                    <div class="col-md-11">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 p-3">
+            <div class="shadow card">
+                <div class="card-image-wrapper" style="text-align:center;height: 178px;">
+                    <b style="color: #565451;font-family: emoji;">Cases ready for action.</b>
+                    <h1 class="Count" style="  font-size: 6.4rem;color: #4e907a">234</h1>
+                </div>
+                <div class="card-footer">
+                    <b style="color:#6d7979;font-size:12px;">Showing data from 23-Mar -till date</b>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 p-3">
+            <div class="shadow card">
+                <div class="card-image-wrapper" style="text-align:center">
+                    <b style="color: #565451;font-family: emoji;">Hours Saved. And Counting..</b>
+                    <h1 class="Count" style="  font-size: 6.4rem;color: #4e907a">24</h1>
+                    <b style="color:#4e907a;">Hrs</b>
+                </div>
+                <div class="card-footer">
+                    <b style="color:#6d7979;font-size:12px;">Showing data from 23-Mar -till date</b>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    function GetCheckedValue(btnval) {
+        debugger;
+
+        if (btnval.checked) {
+            document.getElementById('labeldiv').innerText = 'Historical';
+        }
+        else {
+            document.getElementById('labeldiv').innerText = 'Real-time';
+        }
+
+    }
+    var ctxD = document.getElementById("doughnutChart").getContext('2d');
+    var myLineChart = new Chart(ctxD, {
+        type: 'doughnut',
+        data: {
+            labels: ["MasterCard", "Visa", "OmanNet", "Onus"],
+            datasets: [{
+                data: [300, 50, 100, 40],
+                backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1"],
+                hoverBackgroundColor: ["#FF5A5E", "#5AD3D1", "#FFC870", "#A8B3C5"]
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>

@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewBag.Title = "Asset";
+    Layout = "~/Views/Shared/_FDLayout.cshtml";
+}
+
+<style>
+    b {
+        color: #808080;
+    }
+</style>
+<div class="card-header">
+    <div class="row">
+        <div class="col-sm-4">
+            <h4 style="color:#758484">Assets</h4>
+        </div>
+    </div>
+</div>
+
+<div class="card-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                <thead style="background-color: #090c5d;color: white;">
+                    <tr>
+                        <th>ID</th>
+                        <th>Asset</th>
+                        <th>Description</th>
+                      
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.list != null)
+                    {
+                        foreach (var item in ViewBag.list)
+                        {
+                            <tr>
+                                <td>@item.ID</td>
+                                <td>@item.Asset</td>
+                                <td>@item.Name</td>                              
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>

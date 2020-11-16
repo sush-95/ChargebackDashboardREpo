@@ -1,0 +1,189 @@
+﻿@using BankDashboard.ModelFd;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link href="~/Content/Sidebar.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width" />
+    <title>_FDLayout</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <link rel="stylesheet" href="~/dragableCss/jquery-ui.css" />
+    <link href="~/Scripts/dt/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <style>
+        .card-header {
+            border-bottom: solid;
+            border-color: #FC5E3C;
+        }
+
+        #example {
+            font-size: 12px;
+        }
+
+        .dataTables_length label select {
+            border-radius: 0.25rem;
+            border-color: #b0bdbd;
+        }
+
+        #action {
+            background-image: none;
+        }
+
+        #success {
+            position: fixed;
+            top: 15%;
+            right: 40%;
+            background-color: #11de5a7d;
+            height: 40px;
+            width: 225px;
+            border-radius: 4px;
+            padding: 7px;
+        }
+
+        #error {
+            position: fixed;
+            top: 15%;
+            right: 40%;
+            background-color: #ff000087;
+            height: 40px;
+            width: 225px;
+            border-radius: 4px;
+            padding: 7px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark  fixed-top" style="background-color:#ffffff">
+        <div class="col-md-2">
+            <img src="~/Images/logo-bank.jpg" class="card-img" style="width:189px;height:100px;margin-top: -20px;margin-left: -14px;" />
+        </div>
+        <div class="col-md-1">
+            <a class="navbar-brand" href="#" id="toggleMenu" style="margin: auto;  margin-bottom: 16px; margin-left: -26px;">
+                <img src="~/Images/ham.png" height="35" />
+            </a>
+        </div>
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-2" style="text-align: center;">
+            <img src="~/Images/user.png" style="height: 33px; margin-top: -9px;" />
+            @if (Session["User"] != null)
+            {
+                Tbl_User_Detail user = (Tbl_User_Detail)Session["User"];
+                <b style="color:#6d7979;font-size:21px">@Session["USerName"]</b>
+                <b style="color:#6d7979;font-size:12px">(@user.Usergroup)</b>
+            }
+
+        </div>
+        <div class="col-md-1">
+            <a href="/app/LogIn/Logout"> <img src="~/Images/Logout.png" height="37" alt="Logout" /></a>
+        </div>
+    </nav>
+
+
+    <div class="container-fluid" style=" margin-top:45px">
+        <div class="row">
+            <div class="col-md-2" style="margin-left: -17px;" id="sideDiv">
+
+                <div class="sidebar">
+                    <a class="@ViewBag.OverView" href="/app/FD/OverView">
+                        <img src="~/Images/dashboard.png" /> Overview
+                    </a>
+                    <a class="@ViewBag.report" href="/app/FD/Report">
+                        <img src="~/Images/report.png" /> Reports
+                    </a>
+                    <a class="@ViewBag.rbtconfg" href="/app/FD/RobotConfig">
+                        <img src="~/Images/robot.png" height="28" /> Robot Config
+                    </a>
+                    <a class="@ViewBag.sms" href="/app/FD/SMSConfig">
+                        <img src="~/Images/sms.png" height="28" /> SMS Config
+                    </a>
+                    <a class="@ViewBag.email" href="/app/FD/EmailConfig">
+                        <img src="~/Images/email.png" height="28" /> Email Config
+                    </a>
+                    <a class="@ViewBag.term" href="/app/FD/TLConfig">
+                        <img src="~/Images/term.png" height="28" /> TL Config
+                    </a>
+                   
+                </div>
+            </div>
+            <div class="col-md-10" id="contentDiv">
+                <div class="card" >
+                    @RenderBody()
+                </div>
+                <div style="width:100%">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div id="success">
+                            <b style="color:white">@TempData["Success"]</b>
+                        </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div id="error">
+                            <b style="color:white">@TempData["Error"]</b>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <footer>
+        <hr />
+        <p><center>&copy; @DateTime.Now.Year - Grid Infocom Pvt. Ltd.</center></p>
+    </footer>
+    @RenderSection("scripts", required: false)
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/dt/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $("#success").fadeOut(4000);
+            $("#error").fadeOut(4000)
+            var table = $('#example').DataTable();
+            $('#example tbody').on('click', 'tr', function () {
+                var data = table.row(this).data();
+            });
+
+            $('.Count').each(function () {
+                var $this = $(this);
+                jQuery({ Counter: 0 }).animate({ Counter: $this.text() }, {
+                    duration: 1000,
+                    easing: 'swing',
+                    step: function () {
+                        $this.text(Math.ceil(this.Counter));
+                    }
+                });
+            });
+            $('#toggleMenu').on('click', function () {
+                $('#sideDiv').toggleClass('NoSidebar');
+                $('#contentDiv').toggleClass('col-md-12')
+            });
+
+            $(".invoice").datepicker(
+                {
+                    dateFormat: 'dd-M-yy',
+                    timepicker: false,
+
+                }
+            );
+        });
+    </script>
+</body>
+</html>

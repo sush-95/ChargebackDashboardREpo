@@ -1,0 +1,183 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        .bootRBL input {
+            display: inline;
+            margin-right: 0.25em;
+        }
+
+        .bootRBL label {
+            display: inline;
+            margin-right: 1em;
+        }
+        .container-login100::before {
+            content: "";
+            display: block;
+            position: absolute;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            /*background-color: rgba(255,255,255,0.9);*/
+        }
+    </style>
+    <title>Login::Bank Muscat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="~/Login_v3/images/icons/favicon.ico" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Login_v3/vendor/bootstrap/css/bootstrap.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Login_v3/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Login_v3/fonts/iconic/css/material-design-iconic-font.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Login_v3/vendor/animate/animate.css"  />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Login_v3/vendor/css-hamburgers/hamburgers.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Login_v3/vendor/animsition/css/animsition.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Login_v3/vendor/select2/select2.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Login_v3/vendor/daterangepicker/daterangepicker.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Login_v3/css/util.css" />
+    <link rel="stylesheet" type="text/css" href="~/Login_v3/css/main.css" />
+    <!--===============================================================================================-->
+    
+</head>
+<body>
+
+    <div class="limiter">
+        <div class="container-login100" style="background-image: url('/Login_v3/images/loginback.jpg');">
+            <div class="wrap-login100" style="height:554px">
+                <form class="login100-form validate-form" method="post" action="/app/LogIn/LogIn">
+                    <span class="login100-form-logo">
+                        <img src="~/Login_v3/images/BankMuscat.jpg" class="login100-form-logo" />
+                    </span>
+                    <i style="color: #504848;font-weight: bold;">
+                        Robotic Process Automation                        
+                    </i>
+                    <h3 style="color: #4e3e38fa;font-weight: bold;font-family: math;">FIXED DEPOSIT TEAM</h3>
+                   
+                    <br />
+                    <div class="wrap-input100 validate-input" data-validate="Enter username">
+                        <input class="input100" type="text" name="uname" placeholder="Username" autocomplete="off">
+                        <span class="focus-input100" data-placeholder="&#xf207;"></span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate="Enter password">
+                        <input id="pass" class="input100" type="password" @*onkeyup=""*@ placeholder="Password">
+                        <span class="focus-input100" data-placeholder="&#xf191;"></span>
+                        <input type="hidden" id="hpwd" name="pwd" />
+                        <input type="hidden" id="key" name="key" value="@TempData["keyData"]" />
+                    </div>
+
+                    @*PasswordEncrypt(this)*@
+
+                    <div class="container-login100-form-btn">
+                        <button class="login100-form-btn" type="submit" onclick="EncryptText();">
+                            Login
+                        </button>
+                        
+
+                    </div>
+
+                    <div class="text-center p-t-90">
+                        <b class="txt1">
+                            @if (TempData["invalidmsg"] != null)
+                            {
+                                <span style="color:red; position: relative;top: -85px;">@TempData["invalidmsg"]</span>
+                            }
+                            @*<span style="color:;position: relative;top: -85px;">Invalid Message Invalid Message</span>*@
+                        </b>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="dropDownSelect1"></div>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/JavaScript/CryptoJS/crypto-js.js"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>*@
+    <script type="text/javascript">
+
+        function EncryptText() {
+           
+            var keyT = $("#key").val();
+            if (keyT != null) {
+                var text = CryptoJS.enc.Utf8.parse($("#pass").val());
+                //var Key = CryptoJS.enc.Utf8.parse("PSVJQRk9QTEpNVU1DWUZCRVFGV1VVT0="); //secret key
+                var Key = CryptoJS.enc.Utf8.parse(keyT);
+                var IV = CryptoJS.enc.Utf8.parse("2314345645678765"); //16 digit
+                var encryptedText = CryptoJS.AES.encrypt(text, Key, { keySize: 128 / 8, iv: IV, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+                var encrypted = encryptedText.toString();//document.getElementById('encrypted');
+                $("#hpwd").val(encrypted);
+                //encrypted.value = encryptedText;
+                //Pass encryptedText through service
+                return false;
+            }
+            else {
+                location.reload();
+            }
+            
+        }
+
+
+
+                    //function PasswordEncrypt(text) {
+                    //    
+                    //    text = $("#pass").val();
+                    //    if (text != '') {
+                    //        $.ajax({
+                    //            type: "POST",
+                    //            url: "/LogIn/EncryptPassword",
+                    //            contentType: "application/json; charset=utf-8",
+                    //            data: '{"pwd":"' + text + '"}',
+                    //            dataType: "html",
+                    //            success: function (data) {
+                    //                if (data != "") {
+                    //                    $("#hpwd").val(data);
+                    //                   // alert(data);
+                    //                }
+                    //            },
+                    //            error: function () {
+                    //                alert("Error")
+                    //            }
+                    //        });
+                    //    }
+
+                    //}
+    </script>
+    <!--===============================================================================================-->
+    <script src="~/Login_v3/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Login_v3/vendor/animsition/js/animsition.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Login_v3/vendor/bootstrap/js/popper.js"></script>
+    <script src="~/Login_v3/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Login_v3/vendor/select2/select2.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Login_v3/vendor/daterangepicker/moment.min.js"></script>
+    <script src="~/Login_v3/vendor/daterangepicker/daterangepicker.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Login_v3/vendor/countdowntime/countdowntime.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/Login_v3/js/main.js"></script>
+
+
+</body>
+</html>

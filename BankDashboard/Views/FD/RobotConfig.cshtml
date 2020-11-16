@@ -1,0 +1,101 @@
+﻿
+@{
+    ViewBag.Title = "RobotConfig";
+    Layout = "~/Views/Shared/_FDLayout.cshtml";
+}
+
+<style>
+    b{
+        color:#808080;
+    }
+</style>
+<div class="card-header">
+    <div class="row">
+        <div class="col-sm-4">
+            <h4 style="color:#758484">Robot Configuration</h4>
+        </div>
+    </div>
+</div>
+@*<------------------Modall start-------------->*@
+<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style="color: #639292;font-family:inherit;">Edit Robot Config</h5>
+                <a class="close" data-dismiss="modal"><span>x</span></a>
+            </div>
+            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/FD/RobotConfig" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" id="Id" name="ID"  />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Name:</b>
+                            <input type="text" class="form-control" id="cname" name="Name" placeholder="Name" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Value:</b>
+                            <input type="text" class="form-control" id="val" name="Value" placeholder="Value" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Description:</b>
+                            <textarea class="form-control" style="height: 174px;" name="Description" id="des"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*<------------------Modal End-------------->*@
+<div class="card-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                <thead style="background-color: #090c5d;color: white;">
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.RbConfigList != null)
+                    {
+                        foreach (var item in ViewBag.RbConfigList)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.Value</td>
+                                <td>@item.Description</td>
+                                <td><button class="btn btn-sm btn-success" onclick="OnEditClick(@Json.Encode(item))" data-toggle="modal" data-target="#modalContactForm">Edit</button></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function OnEditClick(dataty) {
+        document.getElementById('cname').value = dataty.Name;
+        document.getElementById('val').value = dataty.Value;
+        document.getElementById('des').value = dataty.Description;
+        document.getElementById('Id').value = dataty.ID;
+    }
+</script>
+

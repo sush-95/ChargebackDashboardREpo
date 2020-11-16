@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewBag.Title = "SMSConfig";
+    Layout = "~/Views/Shared/_FDLayout.cshtml";
+}
+
+<style>
+    b {
+        color: #808080;
+    }
+</style>
+<div class="card-header">
+    <div class="row">
+        <div class="col-sm-4">
+            <h4 style="color:#758484">SMS Configuration</h4>
+        </div>
+    </div>
+</div>
+@*<------------------Modall start-------------->*@
+<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style="color: #639292;font-family:inherit;">Edit SMS Config</h5>
+                <a class="close" data-dismiss="modal"><span>x</span></a>
+            </div>
+            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/FD/SMSConfig" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" id="smsId" value="0" name="ID" />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Business Exception:</b>
+                            <input type="text" class="form-control" id="be" name="BusinessException" placeholder="Name" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Language:</b>
+                            <input type="text" class="form-control" id="lan" name="Language" placeholder="Value" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>SMS Body:</b>
+                            <textarea class="form-control" style="height: 174px;" name="SMSBody" id="sbody"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*<------------------Modall End-------------->*@
+<div class="card-body">
+    <div class="row">
+        <div class="col-sm-12">
+            <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                <thead style="background-color: #090c5d;color: white;">
+                    <tr>
+                        <th>Business Exception</th>
+                        <th>Language</th>
+                        <th style="width:558px">SMS Body</th>
+                        <th id="action">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.smsConfigList != null)
+                    {
+                        foreach (var item in ViewBag.smsConfigList)
+                        {
+                            <tr>
+                                <td>@item.BusinessException</td>
+                                <td>@item.Language</td>
+                                <td>@item.SMSBody</td>
+                                <td><button class="btn btn-sm btn-success" onclick="OnEditClick(@Json.Encode(item))" data-toggle="modal" data-target="#modalContactForm">Edit</button></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+                
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function OnEditClick(dataty) {
+        debugger;       
+        document.getElementById('be').value = dataty.BusinessException;
+        document.getElementById('lan').value = dataty.Language; 
+        document.getElementById('sbody').value = dataty.SMSBody;
+        document.getElementById('smsId').value = dataty.ID;      
+    }
+</script>

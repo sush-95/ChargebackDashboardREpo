@@ -1,0 +1,107 @@
+﻿@using BankDashboard.Models;
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        div[class="dataTables_filter"] {
+            display: none;
+        }
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title ::Bank Muscat</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Scripts/dt/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="row" style="margin-top: -75px;">
+        <div class="col-md-2">
+            <a href="/Admin/index" style="text-decoration:none"><img src="~/Images/logo-bank.jpg" width="215px;" height="150px;" /></a>
+        </div>
+        @*<div class="col-md-10">
+            <ul>
+            </ul>
+            <b style="color:black;position: relative;top: 42px;left: 1040px">@(((tbl_UserDetail)Session["User"]).AccountName)</b>
+            <ul class="nav navbar-nav navbar-right" style="color:black;margin-top:56px;margin-right:0px;">
+                <li>
+                    <a href='@Url.Action("Logout", "LogIn")'>
+                        <img src='@Url.Content("~/Logout.png")' />&nbsp; Logout
+                    </a>
+                </li>
+            </ul>
+        </div>*@
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <ul class="nav flex-column" style="background:#FC5E3C;">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/Home/NewReportUserWise" style="color:white;">Reports</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Dashboard/Balance" style="color:white;">Balancing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/Dashboard/BNMst" style="color:white;">BIN List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="/Dashboard/DeviceList" style="color:white;">Device List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="/Dashboard/GLAList" style="color:white;">GL Account</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="/Dashboard/ErrorCodeList" style="color:white;">Error Code List</a>
+                </li>                
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="/Dashboard/BotMst" style="color:white;">BOT List</a>
+                </li>
+             
+            </ul>
+        </div>
+       
+        <div class="col-md-10">
+            @RenderBody()
+
+        </div>
+    </div>
+    <div class="container body-content">
+
+        <hr />
+        <footer>
+            <p><center>&copy; @DateTime.Now.Year - Grid Infocom Pvt. Ltd.</center></p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script src="~/Scripts/dt/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        debugger
+        $("#lblmsg").hide(5000)
+        var table = $('#example').DataTable();
+
+        $('#example tbody').on('click', 'tr', function () {
+            var data = table.row(this).data();
+            // alert('You clicked on ' + data[0] + '\'s row');
+        });
+
+        $(".invoice").datepicker(
+            {
+                dateFormat: 'dd-M-yy',
+                timepicker: false,
+
+            }
+        );
+
+        //$("#lblmsg").hide(2000)
+    });
+</script>
