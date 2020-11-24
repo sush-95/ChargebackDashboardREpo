@@ -4,6 +4,8 @@
     Layout = "~/Views/Shared/_CBLayout.cshtml";
     ViewModelClass.FilterClass filterobj = (ViewModelClass.FilterClass)ViewBag.filter;
 }
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
 <style>
     .form-control {
         height: calc(1.5em + -0.4rem + 10px);
@@ -38,7 +40,18 @@
     }
 
     .btnImg {
-        height: 13px
+        height: 13px;
+        margin-bottom: 12px;
+        margin-left: -3px;
+    }
+
+    #example .tbn-sm {
+        height: 29px;
+        width: 29px;
+    }
+
+    #example th {
+        background-image: none;
     }
 </style>
 <div class="card-header">
@@ -48,7 +61,7 @@
         </div>
         <div class="col-sm-8"></div>
         <div class="col-sm-2">
-            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/FD/GetExcel" method="post">
+            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
                 <button class="btn btn-success" type="submit">
@@ -58,6 +71,8 @@
         </div>
     </div>
 </div>
+
+
 <div class="card-body">
     <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/CaseHistory" method="post">
         @Html.AntiForgeryToken()
@@ -89,27 +104,74 @@
                 <span> Feedback ID:</span>
                 @if (filterobj == null)
                 {
-                    <input type="text" class="form-control" autocomplete="off" name="FeefbackID" />
+                    <input type="text" class="form-control" autocomplete="off" name="FeedbackID" />
                 }
                 else
                 {
-                    <input type="text" class="form-control" value="@filterobj.FeedbackID" autocomplete="off" name="FeefbackID" />
+                    <input type="text" class="form-control" value="@filterobj.FeedbackID" autocomplete="off" name="FeedbackID" />
                 }
-                </div>
+            </div>
+            <div class="col-sm-2">
+                <span> CIF No:</span>
+                @if (filterobj == null)
+                {
+                    <input type="text" class="form-control" autocomplete="off" name="CIFNo" />
+                }
+                else
+                {
+                    <input type="text" class="form-control" value="@filterobj.CIFNo" autocomplete="off" name="CIFNo" />
+                }
+            </div>
             <div class="col-sm-3">
-                <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;">Find</button>
+                <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;" name="find" value="find">Find</button>
                 <a class="btn btn-sm btn-secondary" href="/app/CB/CaseHistory" style="margin-top: 19px;">Reset</a>
             </div>
         </div>
     </form>
     <br />
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="font-weight: bold;color: #7b6b56;">
+                    <span>Feedback ID:</span><u id="flabel"></u>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <table id="authtable"  class="table-bordered table table-striped table-condensed" style="font-size: 9px;">
+                        <thead style="background-color:#1d40b1;color:white;text-align: center;">
+                            <tr>
+                                <th>Auth Code</th>
+                                <th>Amount</th>
+                                <th>Routing Portal</th>
+                                <th>Card No.</th>
+                                <th>ARN No.</th>
+                                <th>RRN No.</th>
+                                <th>Issuer</th>
+                                <th>Acquirer</th>
+                                <th>VROL Case No.</th>
+                                <th>Remarks</th>                               
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ModalEnd -->
     <div class="row">
         <div class="col-md-12">
-            <table id="example" class="table-bordered table table-striped table-condensed">
+            <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 9px;">
                 <thead style="background-color:#1d40b1;color:white;text-align: center;">
                     <tr>
                         <th>Feedback Id</th>
-                        <th style="    width: 125px;">Issue Type</th>
+                        <th style="    width:125px;">Issue Type</th>
                         <th>Category</th>
                         <th>CIF No</th>
                         <th>Banking With</th>
@@ -117,7 +179,8 @@
                         <th>Amount</th>
                         <th>Associated By Bot</th>
                         <th>Remarks</th>
-                        <th width="78">Action</th>
+                        <th>Detail</th>
+                        <th>View</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -126,21 +189,23 @@
                         foreach (var item in ViewBag.list)
                         {
                             <tr>
-                                <td>@item.FeedbackID</td>
+                                <td>@item.FeedbackId</td>
                                 <td>@item.Issue</td>
                                 <td>@item.Category</td>
                                 <td>@item.CIFNo</td>
                                 <td>@item.BankingWith</td>
                                 <td>@item.IncidentDate</td>
                                 <td>@item.Amount</td>
-                                <td>@item.DeviceNo</td>
-                                <td>@item.FeedbackID</td>
+                                <td></td>
+                                <td>@item.BotRemarks</td>
+                                <td>
+                                    <button class="btn tbn-sm btn-success" data-toggle="modal" onclick="getAuthcode('@item.FeedbackId')" data-target="#myModal" style="background-color:#cc6014">
+                                        <img class="btnImg" src="~/Images/detail.png" />
+                                    </button>
+                                </td>
                                 <td>
                                     <button class="btn tbn-sm btn-info" data-toggle="tooltip" data-placement="bottom" title="View">
                                         <img class="btnImg" src="~/Images/view.png" />
-                                    </button>
-                                    <button class="btn tbn-sm btn-success" data-toggle="tooltip" data-placement="bottom" title="Detail" style="background-color:#cc6014">
-                                        <img class="btnImg" src="~/Images/detail.png" />
                                     </button>
                                 </td>
                             </tr>
@@ -153,3 +218,68 @@
         </div>
     </div>
 </div>
+
+<script>
+    function getAuthcode(feedbackid) {
+       $.ajax({
+                type: "POST",
+                url: '/app/CB/AuthCode',
+           data: '{feedback: ' +feedbackid+ '}',
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    // alert("Data has been added successfully.");
+                    LoadData(data);
+                },
+                error: function () {
+                    alert("Error while inserting data");
+                }
+        });
+        $("#flabel").text(feedbackid)
+
+    }
+</script>
+<script>
+    function LoadData(authdata) {
+        $("#authtable tbody tr").remove();  
+        $.each(authdata, function (i, item) {
+            var rows = "<tr>"
+                + "<td>" + item.AuthCode + "</td>"
+                + "<td>" + item.Amount + "</td>"
+                + "<td>" + item.Routing_Channel + "</td>"
+                + "<td>" + item.CardNumber + "</td>"
+                + "<td>" + item.ARN_Number + "</td>"
+                + "<td>" + item.RRN_Number + "</td>"
+                + "<td>" + item.Issuer + "</td>"
+                + "<td>" + item.Acquirer + "</td>"
+                + "<td>" + item.VROL_Case_No + "</td>"
+                + "<td>" + item.Bot_Remark + "</td>"               
+                + "</tr>";
+            $('#authtable tbody').append(rows);
+        });  
+        @*$.ajax({  
+            type: 'POST',  
+            url: '@Url.Action("getStudent")',  
+            dataType: 'json',  
+            data: { id: '' },  
+            success: function (data) {  
+                var items = '';  
+                $.each(data, function (i, item) {  
+                    var rows = "<tr>"  
+                    + "<td class='prtoducttd'>" + item.studentID + "</td>"  
+                    + "<td class='prtoducttd'>" + item.studentName + "</td>"  
+                    + "<td class='prtoducttd'>" + item.studentAddress + "</td>"  
+                    + "</tr>";  
+                    $('#tblStudent tbody').append(rows);  
+                });  
+            },  
+            error: function (ex) {  
+                var r = jQuery.parseJSON(response.responseText);  
+                alert("Message: " + r.Message);  
+                alert("StackTrace: " + r.StackTrace);  
+                alert("ExceptionType: " + r.ExceptionType);  
+            }  
+        });*@  
+        return false;  
+    }  
+</script>

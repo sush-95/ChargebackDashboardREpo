@@ -100,10 +100,10 @@
                             <img src="~/Images/dashboard.png" />Dashboard
 
                         </a>
-                        <ul class="submenu" id="dash">
+                        <ul class="submenu @ViewBag.Dashboard" id="dash">
                             <li>
                                 <a href="/app/CB/Index" class="@ViewBag.botstat">
-                                    <img src="~/Images/bot.png" /> BOT Statistics
+                                    <img src="~/Images/bot.png" /> Case Statistics
                                 </a>
                             </li>
                             <li>
@@ -118,7 +118,7 @@
                         <a href="#" id="rep" style="background-color: #6f5d5d;">
                             <img src="~/Images/report1.png" />Report
                         </a>
-                        <ul class="submenu" id="rep1">
+                        <ul class="submenu @ViewBag.Report" id="rep1">
                             <li>
                                 <a href="/app/CB/CaseHistory" class="@ViewBag.casehistrory">
                                     <img src="~/Images/casedetail.png" />Case History
@@ -146,7 +146,6 @@
                             </li>
                         </ul>
                     </li>
-
                 </ul>
 
 
@@ -174,7 +173,7 @@
     </div>
     <footer style="position: relative;top: 400px;">
         <hr />
-        <p><center>&copy; @DateTime.Now.Year - Grid Infocom Pvt. Ltd.</center></p>
+        <p><center style="font-size:9px">&copy; @DateTime.Now.Year - Grid Infocom Pvt. Ltd.</center></p>
     </footer>
 
 
@@ -191,12 +190,12 @@
         $(document).ready(function () {
             $("#success").fadeOut(4000);
             $("#error").fadeOut(4000);
-
-            $("#p1").toggleClass('pabrraised1')
-            $("#p2").toggleClass('pabrraised2')
-            $("#p3").toggleClass('pabrraised3')
-            $("#p4").toggleClass('pabrraised4')
-
+       //----------------------------------------------------------------------------------------------           
+            $("#p1").attr("style", "width:" + $("#xp1").val() + "%")
+            $("#p2").attr("style", "width:" + $("#xp2").val() + "%")
+            $("#p3").attr("style", "width:" + $("#xp3").val() + "%")
+            $("#p4").attr("style", "width:" + $("#xp4").val() + "%")  
+       //--------------------------------------------------------------------------------------
             var table = $('#example').DataTable();
             $('#example tbody').on('click', 'tr', function () {
                 var data = table.row(this).data();

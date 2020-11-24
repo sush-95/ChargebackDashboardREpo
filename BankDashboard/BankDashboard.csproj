@@ -326,19 +326,24 @@
     <Content Include="ImagesScreens\WC_FeedBackId90002_1.jpg" />
     <Content Include="ImagesScreens\WC_FeedBackId90004_1.jpg" />
     <Content Include="ImagesScreens\WC_FeedBackId90004_2.jpg" />
+    <Content Include="Images\bluetexture.PNG" />
     <Content Include="Images\bot.png" />
     <Content Include="Images\botconfig.png" />
     <Content Include="Images\building.jpg" />
+    <Content Include="Images\calender.png" />
     <Content Include="Images\casedetail.png" />
     <Content Include="Images\center-logo.png" />
     <Content Include="Images\dashboard.png" />
     <Content Include="Images\detail.png" />
     <Content Include="Images\exl.png" />
+    <Content Include="Images\greentexture.PNG" />
+    <Content Include="Images\greytexture.PNG" />
     <Content Include="Images\ham.png" />
     <Content Include="Images\logo-bank.jpg" />
     <Content Include="Images\Logout1.png" />
     <Content Include="Images\mtran.png" />
     <Content Include="Images\recon.png" />
+    <Content Include="Images\redtexture.PNG" />
     <Content Include="Images\report1.png" />
     <Content Include="Images\umtran.png" />
     <Content Include="Images\user1.png" />
@@ -669,6 +674,7 @@
     <Content Include="Views\CB\CaseHistory.cshtml" />
     <Content Include="Views\CB\MatchedFinTransaction.cshtml" />
     <Content Include="Views\CB\UnmatchedFinTransaction.cshtml" />
+    <Content Include="Views\CB\AuthCode.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
