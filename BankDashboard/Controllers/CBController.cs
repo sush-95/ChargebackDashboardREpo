@@ -18,24 +18,81 @@ namespace BankDashboard.Controllers
         {
             ViewBag.Dashboard = "show";
             ViewBag.botstat = "active";
-
             BOtStatModel obj = new BOtStatModel();
-            obj.castStatFigures = getpercentagefigure(new List<string>(){ "34", "34", "45", "9" });
+            obj.castStatFigures = CBHelper.CaseForToday();
             obj.RoutingPortalFigures = new List<string>() { "24", "35", "56", "21", "76" };
+            obj.CaseReadyForAction = new List<string>() { "20", "5", "10", "2", "1" ,"2"};
             ViewBag.casestat = obj;
             return View();
         }
+       
+        public ActionResult CaseViewFrom(string getval, CaseFilter filter)
+        {
+            ViewBag.Dashboard = "show";
+            ViewBag.botstat = "active";
+            try
+            {
+                BOtStatModel obj = new BOtStatModel();
+                obj.flag = getval;
+                if (TempData["caseObj"] != null)
+                {
+                    ViewBag.casestat = TempData["caseObj"];
+                    ViewBag.list = TempData["list"];
+                }
+                else
+                {   
+                    if (getval == "1")
+                    {
+                        obj.castStatFigures = CBHelper.CaseForToday();
+                        ViewBag.list = CBHelper.CaseTableDataForToday();
+                    }
+                    else if (getval == "2")
+                    {
+                        obj.RoutingPortalFigures = new List<string>() { "24", "35", "56", "21", "76" };
+                    }
+                    else if (getval == "3")
+                    {
+                        obj.CaseReadyForAction = new List<string>() { "24", "35", "56", "21", "76" };
+                    }
+                    ViewBag.casestat = obj;
+                }
+               
+            }
+            catch { throw; }
+            return View();
+        }
+    
+        public ActionResult GetFilterData(string Flag,string Todate,string Fromdate,string Filter)
+        {
+            BOtStatModel obj = new BOtStatModel();
+           
+            if (Flag == "1")
+            {
+                obj.castStatFigures = CBHelper.CaseDataOnFilter(Fromdate, Todate);
+                TempData["list"] = CBHelper.CaseDataTableOnFilter(Fromdate, Todate, Filter);
+            }
+            else if (Flag == "2")
+            {
+                obj.RoutingPortalFigures = new List<string>() { "24", "35", "56", "21", "76" };
+            }
+            else if (Flag == "3")
+            {
+                obj.CaseReadyForAction = new List<string>() { "24", "35", "56", "21", "76" };
+            }
+            TempData["caseObj"] = obj;
+            return RedirectToAction("CaseViewFrom", new { getval = Flag });
+        }
         public List<string> getpercentagefigure(List<string> casestatfigure)
         {
-            List<string> list =new List<string>();
+            List<string> list = new List<string>();
             long sum = 0;
-            foreach(string item in casestatfigure)
+            foreach (string item in casestatfigure)
             {
                 sum += long.Parse(item);
             }
-            foreach(string item in casestatfigure)
+            foreach (string item in casestatfigure)
             {
-                list.Add(((long.Parse(item) * 100 / sum) ).ToString());
+                list.Add(((long.Parse(item) * 100 / sum)).ToString());
             }
             casestatfigure.AddRange(list);
             return casestatfigure;
@@ -48,7 +105,7 @@ namespace BankDashboard.Controllers
             ViewBag.wcstat = "active";
             try
             {
-               
+
             }
             catch (Exception ex)
             {
@@ -110,7 +167,7 @@ namespace BankDashboard.Controllers
                     CBDB db = new CBDB();
                     list = db.tbl_UnassignedTickets.ToList();
                 }
-                FormattoExcel(list, "Report_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));                
+                FormattoExcel(list, "Report_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
             }
             catch
             {
@@ -222,7 +279,7 @@ namespace BankDashboard.Controllers
             System.Web.HttpContext.Current.Response.Write("Status");
             System.Web.HttpContext.Current.Response.Write("</B>");
             System.Web.HttpContext.Current.Response.Write("</Td>");
-          
+
             System.Web.HttpContext.Current.Response.Write("</Tr>");
 
 

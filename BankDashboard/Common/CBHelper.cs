@@ -1,4 +1,5 @@
 ﻿using BankDashboard.CBModel;
+using BankDashboard.DataAccessLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,65 @@ namespace BankDashboard.Common
 {
     public class CBHelper
     {
+        #region------------------------------------Case Statistics--------------------------------------------------
+        public static List<string> CaseForToday()
+        {
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<string> cList = objdata.GetCaseStatusData(DateTime.Today, DateTime.Today);
+            return getpercentagefigure(cList);
+        }
+        public static List<tbl_UnassignedTickets> CaseTableDataForToday()
+        {
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<tbl_UnassignedTickets> list = objdata.GetCaseStatusDataWithFilter(DateTime.Today,DateTime.Today,"");
+            return list;
+        }
+        public static List<string> getpercentagefigure(List<string> casestatfigure)
+        {
+            List<string> list = new List<string>();
+            long sum = 0;
+            foreach (string item in casestatfigure)
+            {
+                sum += long.Parse(item);
+            }
+            foreach (string item in casestatfigure)
+            {
+                if (sum == 0) { list.Add("0"); }
+                else
+                {
+                    list.Add(((long.Parse(item) * 100 / sum)).ToString());
+                }
+            }
+            casestatfigure.AddRange(list);
+            return casestatfigure;
+        }
+        public static List<string> CaseDataOnFilter(string startdate,string enddate)
+        {
+            DateTime Strtday = DateTime.Today, EndDt = DateTime.Today;
+            if (!string.IsNullOrEmpty(startdate) && !string.IsNullOrEmpty(enddate))
+            {
+                Strtday = DateTime.Parse(startdate);
+                EndDt = DateTime.Parse(enddate);
+            }
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<string> cList = objdata.GetCaseStatusData(Strtday, EndDt);
+            return getpercentagefigure(cList);
+        }
+        public static List<tbl_UnassignedTickets> CaseDataTableOnFilter(string startdate, string enddate,string filter)
+        {
+            DateTime Strtday = DateTime.Today, EndDt = DateTime.Today;
+            if (!string.IsNullOrEmpty(startdate) && !string.IsNullOrEmpty(enddate))
+            {
+                Strtday = DateTime.Parse(startdate);
+                EndDt = DateTime.Parse(enddate);
+            }
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<tbl_UnassignedTickets> list = objdata.GetCaseStatusDataWithFilter(Strtday, EndDt,filter);
+            return list;
+        }
+
+        #endregion----------------------------------------------------------------------------------------------------
+
         #region-------------------------------Case History--------------------------------------------------------------------
         public static List<tbl_UnassignedTickets> GetCaseHistoryFilterd(ViewModelClass.FilterClass filter)
         {
@@ -22,7 +82,7 @@ namespace BankDashboard.Common
         }
         public static string GetQueryForTblUnassigned(ViewModelClass.FilterClass filter)
         {
-            
+
             string query = "Select * from tbl_UnassignedTickets where ";
             int qrylength = query.Length;
             if (filter.FeedbackID != null && !string.IsNullOrEmpty(filter.FeedbackID.Trim()))

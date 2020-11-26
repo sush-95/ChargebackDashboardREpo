@@ -11,12 +11,11 @@
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
 <style>
-    .durationTable {
-        width: 66%;
-        font-weight: bold;
-        color: #716662;
-        position: relative;
-        left: 20%;
+   #tbl1 th{
+padding-left:6px;
+   }
+    #tbl2 th {
+        padding-left: 7px;
     }
 
     .chartTable {
@@ -122,8 +121,7 @@
         }
 </style>
 <div class="card-header">
-    <div class="row">
-    
+    <div class="row">   
 
     </div>
     <div class="row">
@@ -131,25 +129,24 @@
     </div>
 </div>
 
-<div class="card-body">
-   
+<div class="card-body">   
     <div class="row">
         <div class="col-sm-6 p-3">
             <div class="shadow card">
                 <div class="card-header">
                     <div class="row">
-                        <div class="col-sm-3">
-                            <b>Cases Status</b>
+                        <div class="col-sm-5">
+                            <b>Cases Status(To Day)</b>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-1">
                         </div>
                         <div class="col-sm-2">
                         </div>
                         <div class="col-sm-4">
-                            <button class="btn btn-sm btn-lh" onclick="setPbarOndate()">
+                            <a class="btn btn-sm btn-lh" href="/app/CB/CaseViewFrom?getval=1">
                                 View From
                                 <img src="~/Images/calender.png" height="22" />
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -209,32 +206,31 @@
             <div class="shadow card">
                 <div class="card-header">
                     <div class="row">
-                        <div class="col-sm-6">
-                            <b>Routing Portal Statistics</b>
+                        <div class="col-sm-8">
+                            <b>Routing Portal Statistics(To Day)</b>
                         </div>
-                        <div class="col-sm-2">                         
-                        </div>
+                       
                         <div class="col-sm-4">
-                            <button class="btn btn-sm btn-lh" onclick="setPbarOndate()">
+                            <a class="btn btn-sm btn-lh"  href="/app/CB/CaseViewFrom?getval=2">
                                 View From
                                 <img src="~/Images/calender.png" height="22" />
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
-                <div class="card-body" style="width:510px;height:290px;position: relative;left: 9%;">
+                <div class="card-body" style="width:510px;height:290px;position:relative;left:3%">
                    
                     <div class="col-md-12">
                         <canvas id="doughnutChart"></canvas>                        
                     </div>
                     <div>
-                        <table style="font-size: 14px;position:relative;left:2%">
+                        <table id="tbl2" style="font-size: 14px;position:relative;left:1%">
                             <tr>
-                                <th style="color:#F7464A">MasterCard :56</th></>
-                                <th style="color:#46BFBD">Visa :56</th></>
-                                <th style="color:#FDB45C">OmanNet :26</th></>
-                                <th style="color:#949FB1">Onus :06</th></>
-                                <th style="color:#686cda">POSECOM :56</th>
+                                <th style="color:#F7464A">MasterCard :@botstatobj.RoutingPortalFigures[0]</th>
+                                <th style="color:#46BFBD">Visa :@botstatobj.RoutingPortalFigures[1]</th>
+                                <th style="color:#FDB45C">OmanNet :@botstatobj.RoutingPortalFigures[2]</th>
+                                <th style="color:#949FB1">Onus :@botstatobj.RoutingPortalFigures[3]</th>
+                                <th style="color:#686cda">POSECOM :@botstatobj.RoutingPortalFigures[4]</th>
                             </tr>
                         </table>
                     </div>
@@ -265,25 +261,30 @@
                 </div>
                 <div class="card-image-wrapper" style="text-align:center;height: 178px;">
                     <b style="color: #565451;font-family: emoji;"></b>
-                    <h1 class="Count" style="  font-size: 6.4rem;color: #4e907a">234</h1>
+                    <a style="text-decoration:none"  href="/app/CB/CaseViewFrom?getval=3">
+                        <h1 class="Count" style="  font-size: 6.4rem;color: #4e907a">@botstatobj.CaseReadyForAction[0]</h1>
+                    </a>  
+                    <table id="tbl1" style="position: relative;left: 17%;font-size: 13px;color:#628881">
+                        <tr >
+                            <th>Master Card:</th>
+                            <td>@botstatobj.CaseReadyForAction[1]</td>
+                            <th>Visa:</th>
+                            <td>@botstatobj.CaseReadyForAction[2]</td>
+                            <th>OmanNet:</th>
+                            <td>@botstatobj.CaseReadyForAction[3]</td>
+                            <th>Onus:</th>
+                            <td>@botstatobj.CaseReadyForAction[4]</td>
+                            <th>POSECOM:</th>
+                            <td>@botstatobj.CaseReadyForAction[5]</td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="card-footer">
                     <b style="color:#6d7979;font-size:12px;">Showing data from 23-Mar -till date</b>
                 </div>
             </div>
         </div>
-        @*<div class="col-sm-6 p-3">
-                <div class="shadow card">
-                    <div class="card-image-wrapper" style="text-align:center">
-                        <b style="color: #565451;font-family: emoji;">Hours Saved. And Counting..</b>
-                        <h1 class="Count" style="  font-size: 6.4rem;color: #4e907a">24</h1>
-                        <b style="color:#4e907a;">Hrs</b>
-                    </div>
-                    <div class="card-footer">
-                        <b style="color:#6d7979;font-size:12px;">Showing data from 23-Mar -till date</b>
-                    </div>
-                </div>
-            </div>*@
+     
     </div>
 
 </div>
@@ -307,10 +308,4 @@
         }
     });
 
-    function setPbarOndate() {
-        document.getElementById("p1").setAttribute("style", "width:50%")
-        document.getElementById("p2").setAttribute("style", "width:30%")
-        document.getElementById("p3").setAttribute("style", "width:15%")
-        document.getElementById("p4").setAttribute("style", "width:5%")
-    }
 </script>
