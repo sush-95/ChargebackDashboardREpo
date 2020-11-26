@@ -62,12 +62,12 @@
         }
 
     .pbar1 {
-        background-color: #34d234;
+        background-color: rgb(146, 208, 80);
         border-right: none;
     }
 
     .pbar2 {
-        background-color: #dcd500;
+        background-color: #0d274d;
         border-right: none;
         border-left: none;
     }
@@ -100,7 +100,7 @@
 
 <div class="card-header">
     <div class="row">
-        <table class="durationTable">
+        @*<table class="durationTable">
             <tr>
                 <td style="text-align: center;"><b>Duration : </b></td>
                 <td><input type="radio" value="Realtime" name="Duration" /> Realtime</td>
@@ -108,7 +108,7 @@
                 <td><input type="radio" value="3 Months" name="Duration" /> 3 Months</td>
                 <td><input type="radio" value="3 Months" name="Duration" /> Custom</td>
             </tr>
-        </table>
+        </table>*@
     </div>
 </div>
 <div class="card-body">
@@ -139,6 +139,8 @@
             </div>
         </div>
     </div>
+
+
     <div class="row">
         <div class="col-sm-1"></div>
         <div class="col-sm-10">
@@ -227,7 +229,7 @@
             </div>
         </div>
     </div>
-
+</div>
     <script>
         var x = new Chart(document.getElementById("horizontalBar"), {
             "type": "horizontalBar",
