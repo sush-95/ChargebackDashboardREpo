@@ -1,7 +1,9 @@
-﻿
+﻿@using BankDashboard.Common;
 @{
     ViewBag.Title = "WeCare Statistics";
     Layout = "~/Views/Shared/_CBLayout.cshtml";
+    ViewModelClass.WCStatModel botstatobj = (ViewModelClass.WCStatModel)ViewBag.WCObj;
+
 }
 <script src="~/JavaScript/mdb/mdb.min.js"></script>
 
@@ -10,6 +12,12 @@
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
 <style>
+    .btn-lh {
+        background-color: #484541;
+        color: white;
+        font-weight: bold;
+        font-size: 12px;
+    }
     .durationTable {
         width: 66%;
         font-weight: bold;
@@ -49,7 +57,7 @@
         transition-property: width;
         transition-duration: 1s;
         border-color: #c5acb1;
-        border: solid;
+        border: none;
         border-width: 1px;
         border-radius: 0px;
     }
@@ -62,32 +70,23 @@
         }
 
     .pbar1 {
-        background-color: rgb(146, 208, 80);
+        background: url(/Images/greentexture.PNG);
         border-right: none;
     }
 
     .pbar2 {
-        background-color: #0d274d;
+        background: url(/Images/bluetexture.PNG);
         border-right: none;
         border-left: none;
     }
 
     .pbar3 {
-        background-color: #0f60da;
+        background: url(/Images/redtexture.PNG);
+        background-color: red;
         border-left: none;
     }
 
-    .pabrraised1 {
-        width: 50%;
-    }
 
-    .pabrraised2 {
-        width: 35%;
-    }
-
-    .pabrraised3 {
-        width: 10%;
-    }
 
     .invoice {
         width: 80%;
@@ -96,91 +95,69 @@
         color: #8c9894;
         font-weight: bold;
     }
+    .btn-lh:hover {
+        background-color: #2d2b38;
+        color: white;
+    }
 </style>
 
 <div class="card-header">
     <div class="row">
-        @*<table class="durationTable">
-            <tr>
-                <td style="text-align: center;"><b>Duration : </b></td>
-                <td><input type="radio" value="Realtime" name="Duration" /> Realtime</td>
-                <td><input type="radio" value="1 Month" name="Duration" /> 1 Month</td>
-                <td><input type="radio" value="3 Months" name="Duration" /> 3 Months</td>
-                <td><input type="radio" value="3 Months" name="Duration" /> Custom</td>
-            </tr>
-        </table>*@
     </div>
 </div>
 <div class="card-body">
     <div class="row">
-        <div class="col-sm-1 p-3">
-
-        </div>
-        <div class="col-sm-10 p-3">
+        @*--------------------------------------------Case Status-----------------------------------------------------*@
+        <div class="col-sm-6">
             <div class="shadow card">
                 <div class="card-header">
                     <div class="row">
-                        <div class="col-sm-6">
-                            <b>Issue Type</b>
+                        <div class="col-sm-8">
+                            <b>Cases Status(Historical)</b>
                         </div>
-                        <div class="col-sm-6">
-                        </div>
-
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="col-md-10">
-                        <canvas id="horizontalBar"></canvas>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="row">
-        <div class="col-sm-1"></div>
-        <div class="col-sm-10">
-            <div class="shadow card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <b>Cases Status</b>
-                        </div>
-
+                        <div class="col-sm-4">
+                            <a class="btn btn-sm btn-lh" href="/app/CB/WCViewFrom?getval=1">
+                                View From
+                                <img src="~/Images/calender.png" height="22" />
+                            </a>
+                        </div>                   
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="col-sm-11 row">
+                        <div class="pbar1 progress" id="p1" data-toggle="tooltip" data-placement="top" title="Closed">
+                            <input type="hidden" value="@botstatobj.WCCaseStatus[3]" id="xp1" />
+                            <b class="Count">@botstatobj.WCCaseStatus[0]</b>
+                        </div>
+                        <div class="pbar2 progress" id="p2" data-toggle="tooltip" data-placement="top" title="In Progress">
+                            <input type="hidden" value="@botstatobj.WCCaseStatus[4]" id="xp2" />
+                            <b class="Count">@botstatobj.WCCaseStatus[1]</b>
+                        </div>
+                        <div class="pbar3 progress" id="p3" data-toggle="tooltip" data-placement="top" title="Action Pending">
+                            <input type="hidden" value="@botstatobj.WCCaseStatus[5]" id="xp3" />
+                            <b class="Count">@botstatobj.WCCaseStatus[2]</b>
+                        </div>
 
-                        <div class="pbar1 progress" id="p1">
-                            <b class="Count">45</b>
-                        </div>
-                        <div class="pbar2 progress" id="p2">
-                            <b class="Count">23</b>
-                        </div>
-                        <div class="pbar3 progress" id="p3">
-                            <b class="Count">15</b>
-                        </div>
                     </div>
                     <br />
                     <div class="col-sm-11 row">
-                        <table style=" color: #7f7571;font-size: 14px;height:92px;">
+                        <table style=" color: #7f7571;font-size: 14px;height: 170px;">
                             <tr>
-                                <td style="width: 36px;"><div style="height: 16px;background-color: #0aca0a;width: 16px;"></div></td>
-                                <th>Closed</th>
+                                <td><div style="height: 16px;background:url(/Images/greentexture.PNG);width: 16px;"></div></td>
+                                <th>Closed :  @botstatobj.WCCaseStatus[0]</th>
+                                <th> </th>
                             </tr>
                             <tr>
-                                <td><div style="height: 16px;background-color: #dcd500;width: 16px;"></div></td>
-                                <th>In Progress</th>
+                                <td style="width: 36px;"><div style="height: 16px;background:url(/Images/bluetexture.PNG);width: 16px;"></div></td>
+                                <th>In Progress :  @botstatobj.WCCaseStatus[1]</th>
+                                <th> </th>
                             </tr>
                             <tr>
-                                <td><div style="height: 16px;background-color: #0f60da;width: 16px;"></div></td>
-                                <th>Resolved</th>
+                                <td><div style="height: 16px;background:url(/Images/redtexture.PNG);width: 16px;"></div></td>
+                                <th>Pending Action :   @botstatobj.WCCaseStatus[2]</th>
+                                <th> </th>
                             </tr>
+
                         </table>
                     </div>
 
@@ -190,6 +167,37 @@
                 </div>
             </div>
         </div>
+        @*--------------------------------------------Issue Type-----------------------------------------------------*@
+        <div class="col-sm-6">
+            <div class="shadow card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <b>Issue Type(Yesterday)</b>
+                        </div>
+                        <div class="col-sm-4">
+                            <a class="btn btn-sm btn-lh" href="/app/CB/WCViewFrom?getval=2">
+                                View From
+                                <img src="~/Images/calender.png" height="22" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" style="height: 262px;width: 515px;">                
+                     <canvas id="horizontalBar"></canvas>                 
+                </div>
+                <div class="card-footer">
+                    <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                </div>
+            </div>
+        </div>
+        @*--------------------------------------------Issue Type-----------------------------------------------------*@
+    </div>
+
+
+    @*<div class="row">
+        <div class="col-sm-1"></div>
+
     </div>
     <br />
     <div class="row">
@@ -228,102 +236,100 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>*@
 </div>
-    <script>
-        var x = new Chart(document.getElementById("horizontalBar"), {
-            "type": "horizontalBar",
-            "data": {
-                "labels": ["Wrong Charges", "Transactionpaid by other means card", "Requestfor transfer confirmation", "Payment to wrong School", "Partial amount received",
-                    "Incorrect amount debited", "Credit card claims not refunded", "Card Captured", "Amount Debited More than Once", "Account not closed"],
-                "datasets": [{
-                    "label": "Issue Type Graph",
-                    "data": [22, 33, 55, 12, 86, 23, 14, 29, 34, 56],
-                    "fill": false,
-                    "backgroundColor": ["rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)",
-                        "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(54, 162, 235, 0.2)",
-                        "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)", "rgba(100, 206, 157, 0.2)", "rgba(222, 255, 133, 0.36)", "rgba(174, 76, 122, 0.58)"
-                    ],
-                    "borderColor": ["rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)",
-                        "rgb(75, 192, 192)", "rgb(54, 162, 235)", "rgb(153, 102, 255)", "rgb(201, 203, 207)", "rgba(100, 206, 157)", "rgba(222, 255, 133)", "rgba(174, 76, 122)"
-                    ],
-                    "borderWidth": 1
+<script>
+    issuetypename=@Html.Raw(Json.Encode(botstatobj.Itypes.Issuetypes)) ;
+    issuetypefigure =@Html.Raw(Json.Encode(botstatobj.Itypes.Issuetypesfigures)) ;
+    backcolor =@Html.Raw(Json.Encode(botstatobj.Itypes.IssuetypesBackColor)) ;
+    borderColor =@Html.Raw(Json.Encode(botstatobj.Itypes.IssuetypesBordercolor)) ;
+    var x = new Chart(document.getElementById("horizontalBar"), {
+        "type": "horizontalBar",
+        "data": {
+            "labels": issuetypename,
+            "datasets": [{
+                "label": "Issue Type Graph",
+                "data": issuetypefigure,
+                "fill": false,
+                "backgroundColor": backcolor,
+                "borderColor": borderColor,
+                "borderWidth": 1
+            }]
+        },
+        "options": {
+            "scales": {
+                "xAxes": [{
+                    "ticks": {
+                        "beginAtZero": true
+                    }
                 }]
-            },
-            "options": {
-                "scales": {
-                    "xAxes": [{
-                        "ticks": {
-                            "beginAtZero": true
-                        }
-                    }]
-                }
             }
-        });
+        }
+    });
 
 
 
-        //line
-        var ctxL = document.getElementById("lineChart").getContext('2d');
-        var myLineChart = new Chart(ctxL, {
-            type: 'line',
-            data: {
-                labels: ["10/1/2020", "10/2/2020", "10/3/2020", "10/4/2020", "10/5/2020", "10/6/2020", "10/7/2020", "10/8/2020", "10/9/2020", "10/10/2020"],
-                datasets: [{
-                    label: "Daily Cases",
-                    data: [65, 59, 80, 81, 56, 55, 40, 34, 56, 70],
-                    backgroundColor: [
-                        'rgba(12, 152, 223, 0.64)',
-                    ],
-                    borderColor: [
-                        'rgba(12, 152, 223, 7)',
-                    ],
-                    borderWidth: 2
-                }
-                ]
-            },
-            options: {
-                responsive: true
-            }
-        });
+    ////line
+    //var ctxL = document.getElementById("lineChart").getContext('2d');
+    //var myLineChart = new Chart(ctxL, {
+    //    type: 'line',
+    //    data: {
+    //        labels: ["10/1/2020", "10/2/2020", "10/3/2020", "10/4/2020", "10/5/2020", "10/6/2020", "10/7/2020", "10/8/2020", "10/9/2020", "10/10/2020"],
+    //        datasets: [{
+    //            label: "Daily Cases",
+    //            data: [65, 59, 80, 81, 56, 55, 40, 34, 56, 70],
+    //            backgroundColor: [
+    //                'rgba(12, 152, 223, 0.64)',
+    //            ],
+    //            borderColor: [
+    //                'rgba(12, 152, 223, 7)',
+    //            ],
+    //            borderWidth: 2
+    //        }
+    //        ]
+    //    },
+    //    options: {
+    //        responsive: true
+    //    }
+    //});
 
 
-        //bar
-        var ctxB = document.getElementById("barChart").getContext('2d');
-        var myBarChart = new Chart(ctxB, {
-            type: 'bar',
-            data: {
-                labels: ["January", "February", "March", "April", "May", "June"],
-                datasets: [{
-                    label: '',
-                    data: [12, 19, 3, 5, 2, 3],
-                    backgroundColor: [
-                        'rgba(123, 55, 241, 1)',
-                        'rgba(123, 55, 241, 1)',
-                        'rgba(123, 55, 241, 1)',
-                        'rgba(123, 55, 241, 1)',
-                        'rgba(123, 55, 241, 1)',
-                        'rgba(123, 55, 241, 1)',
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
+    ////bar
+    //var ctxB = document.getElementById("barChart").getContext('2d');
+    //var myBarChart = new Chart(ctxB, {
+    //    type: 'bar',
+    //    data: {
+    //        labels: ["January", "February", "March", "April", "May", "June"],
+    //        datasets: [{
+    //            label: '',
+    //            data: [12, 19, 3, 5, 2, 3],
+    //            backgroundColor: [
+    //                'rgba(123, 55, 241, 1)',
+    //                'rgba(123, 55, 241, 1)',
+    //                'rgba(123, 55, 241, 1)',
+    //                'rgba(123, 55, 241, 1)',
+    //                'rgba(123, 55, 241, 1)',
+    //                'rgba(123, 55, 241, 1)',
+    //            ],
+    //            borderColor: [
+    //                'rgba(255,99,132,1)',
+    //                'rgba(54, 162, 235, 1)',
+    //                'rgba(255, 206, 86, 1)',
+    //                'rgba(75, 192, 192, 1)',
+    //                'rgba(153, 102, 255, 1)',
+    //                'rgba(255, 159, 64, 1)'
+    //            ],
+    //            borderWidth: 1
+    //        }]
+    //    },
+    //    options: {
+    //        scales: {
+    //            yAxes: [{
+    //                ticks: {
+    //                    beginAtZero: true
+    //                }
+    //            }]
+    //        }
+    //    }
+    //});
+</script>

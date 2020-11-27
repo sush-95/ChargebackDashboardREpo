@@ -65,6 +65,42 @@ namespace BankDashboard.Common
             List<tbl_UnassignedTickets> list = objdata.GetCaseStatusDataWithFilter(Strtday, EndDt,filter);
             return list;
         }
+        public static List<string> GetRoutingPortalForToday()
+        {
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<string> cList = objdata.GetRoutingPortalGraph(DateTime.Today, DateTime.Today);
+            return cList;
+        }
+        public static List<string> RoutingPortaOnFilter(string startdate, string enddate)
+        {
+            DateTime Strtday = DateTime.Today, EndDt = DateTime.Today;
+            if (!string.IsNullOrEmpty(startdate) && !string.IsNullOrEmpty(enddate))
+            {
+                Strtday = DateTime.Parse(startdate);
+                EndDt = DateTime.Parse(enddate);
+            }
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<string> cList = objdata.GetRoutingPortalGraph(Strtday, EndDt);
+            return cList;
+        }
+        public static List<string> RoutingTableOnFilter(string startdate, string enddate,string Filter)
+        {
+            DateTime Strtday = DateTime.Today, EndDt = DateTime.Today;
+            if (!string.IsNullOrEmpty(startdate) && !string.IsNullOrEmpty(enddate))
+            {
+                Strtday = DateTime.Parse(startdate);
+                EndDt = DateTime.Parse(enddate);
+            }
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<string> cList = objdata.GetRoutingPortalGraph(Strtday, EndDt);
+            return cList;
+        }
+        public static List<string> GetCaseReadyForAction()
+        {
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<string> cList = objdata.GetCaseReadyForAction();
+            return cList;
+        }
 
         #endregion----------------------------------------------------------------------------------------------------
 

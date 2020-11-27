@@ -679,6 +679,7 @@
     <Content Include="Views\CB\UnmatchedFinTransaction.cshtml" />
     <Content Include="Views\CB\AuthCode.cshtml" />
     <Content Include="Views\CB\CaseViewFrom.cshtml" />
+    <Content Include="Views\CB\WCViewFrom.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -30,6 +30,19 @@ namespace BankDashboard.Common
             public List<string> CaseReadyForAction { get; set; }
             public string flag { get; set; }
         }
+        public class WCStatModel
+        {
+            public List<string> WCCaseStatus{ get; set; }
+            public IssueType Itypes { get; set; }
+            public string flag { get; set; }
+        }
+        public class IssueType
+        {
+            public List<string> Issuetypes { get; set; }
+            public List<string> Issuetypesfigures { get; set; }
+            public List<string> IssuetypesBackColor { get; set; }
+            public List<string> IssuetypesBordercolor { get; set; }
+        }
         public class CaseFilter
         {
             public string Fromdate { get; set; }
