@@ -49,10 +49,12 @@ namespace BankDashboard.Controllers
                     else if (getval == "2")
                     {
                         obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
+                        ViewBag.list = CBHelper.getRoutingPortalTable();
                     }
                     else if (getval == "3")
                     {
                         obj.CaseReadyForAction = new List<string>() { "24", "35", "56", "21", "76" };
+                        ViewBag.list = CBHelper.GetCaseReadyTable();
                     }
                     ViewBag.casestat = obj;
                 }
@@ -74,10 +76,13 @@ namespace BankDashboard.Controllers
             else if (Flag == "2")
             {
                 obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
+                TempData["list"] = CBHelper.getRoutingPortalTable(Fromdate, Todate, Filter);
+                TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
             }
             else if (Flag == "3")
             {
                 obj.CaseReadyForAction = new List<string>() { "24", "35", "56", "21", "76" };
+                TempData["list"] = CBHelper.GetCaseReadyTable();
             }
             TempData["caseObj"] = obj;
             return RedirectToAction("CaseViewFrom", new { getval = Flag });
@@ -102,12 +107,13 @@ namespace BankDashboard.Controllers
         public ActionResult WC()
         {
             ViewBag.Dashboard = "show";
-            ViewBag.wcstat = "active";
+            ViewBag.wcarestat = "active";
             try
             {
                 WCStatModel obj = new WCStatModel();
-                obj.WCCaseStatus = getpercentagefigure(new List<string>() { "23", "34", "54" });
-                obj.Itypes = IssueTypeFigure();
+                List<tbl_WeCareReactive> tblWC = new List<tbl_WeCareReactive>();
+                obj.WCCaseStatus = CBHelper.WCScaseStatusFigure(ref tblWC);
+                obj.Itypes = CBHelper.GetListOfIssueTypes("", "", "");
                 ViewBag.WCObj = obj;
             }
             catch (Exception ex)
@@ -116,44 +122,43 @@ namespace BankDashboard.Controllers
             }
             return View();
         }
-        public IssueType IssueTypeFigure(int issue = 0)
-        {
-
-            List<string> name = new List<string>(), data = new List<string>(), backcolor = new List<string>(), bordercolor = new List<string>();
-            IssueType obj = new IssueType();
-            obj.Issuetypes = new List<string>() { "Amount not closed", "Amount Debited more than Once", "Card Captured", "Credit Card claims not Refunded",
-                "Incorrect Amount Debited", "Partial amount received", "Payment to wrong School", "Request for Transfer Confirmation" };
-            obj.Issuetypesfigures = new List<string>() { "23", "30", "42", "70", "53", "21", "65", "43" };
-            if (issue == 0 && obj.Issuetypesfigures.Count > 5)
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    name.Add(obj.Issuetypes[i]);
-                    data.Add(obj.Issuetypesfigures[i]);
-                    backcolor.Add("rgba(241, 46, 35, 0.5)");
-                    bordercolor.Add("rgba(241, 46, 35)");
-                }
-                obj.Issuetypes = name;
-                obj.Issuetypesfigures = data;
-                obj.IssuetypesBackColor = backcolor;
-                obj.IssuetypesBordercolor = bordercolor;
-            }
-            else
-            {
-                for (int i = 0; i < obj.Issuetypesfigures.Count; i++)
-                {
-                    backcolor.Add("rgba(241, 46, 35, 0.5)");
-                    bordercolor.Add("rgba(241, 46, 35)");
-                }
-                obj.IssuetypesBackColor = backcolor;
-                obj.IssuetypesBordercolor = bordercolor;
-            }
-            return obj;
-        }
+        //public IssueType IssueTypeFigure(int issue = 0)
+        //{
+        //    List<string> name = new List<string>(), data = new List<string>(), backcolor = new List<string>(), bordercolor = new List<string>();
+        //    IssueType obj = new IssueType();
+        //    obj.Issuetypes = new List<string>() { "Amount not closed", "Amount Debited more than Once", "Card Captured", "Credit Card claims not Refunded",
+        //        "Incorrect Amount Debited", "Partial amount received", "Payment to wrong School", "Request for Transfer Confirmation" };
+        //    obj.Issuetypesfigures = new List<string>() { "23", "30", "42", "70", "53", "21", "65", "43" };
+        //    if (issue == 0 && obj.Issuetypesfigures.Count > 5)
+        //    {
+        //        for (int i = 0; i < 5; i++)
+        //        {
+        //            name.Add(obj.Issuetypes[i]);
+        //            data.Add(obj.Issuetypesfigures[i]);
+        //            backcolor.Add("rgba(241, 46, 35, 0.5)");
+        //            bordercolor.Add("rgba(241, 46, 35)");
+        //        }
+        //        obj.Issuetypes = name;
+        //        obj.Issuetypesfigures = data;
+        //        obj.IssuetypesBackColor = backcolor;
+        //        obj.IssuetypesBordercolor = bordercolor;
+        //    }
+        //    else
+        //    {
+        //        for (int i = 0; i < obj.Issuetypesfigures.Count; i++)
+        //        {
+        //            backcolor.Add("rgba(241, 46, 35, 0.5)");
+        //            bordercolor.Add("rgba(241, 46, 35)");
+        //        }
+        //        obj.IssuetypesBackColor = backcolor;
+        //        obj.IssuetypesBordercolor = bordercolor;
+        //    }
+        //    return obj;
+        //}
         public ActionResult WCViewFrom(string getval)
         {
             ViewBag.Dashboard = "show";
-            ViewBag.wcstat = "active";
+            ViewBag.wcarestat = "active";
             try
             {
                 WCStatModel obj = new WCStatModel();
@@ -166,13 +171,14 @@ namespace BankDashboard.Controllers
                 else
                 {
                     if (getval == "1")
-                    {
-                        obj.WCCaseStatus = getpercentagefigure(new List<string>() { "23", "34", "54" });
-                        // ViewBag.list = CBHelper.CaseTableDataForToday();
+                    {                        
+                        List<tbl_WeCareReactive> tblWC = new List<tbl_WeCareReactive>();
+                        obj.WCCaseStatus = getpercentagefigure(CBHelper.WCScaseStatusFigure(ref tblWC));
+                        ViewBag.list = tblWC;
                     }
                     else if (getval == "2")
                     {
-                        obj.Itypes = IssueTypeFigure(1);
+                        obj.Itypes = CBHelper.GetListOfIssueTypes("","","",1);
                     }
                     ViewBag.WCstat = obj;
                 }

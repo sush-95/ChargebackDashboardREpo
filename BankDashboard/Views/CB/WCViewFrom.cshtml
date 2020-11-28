@@ -90,50 +90,51 @@
     //    filter = (ViewModelClass.CaseFilter)TempData["filter"];
     //}
     <div class="card-header" style="border-bottom: #f11a1a;border-bottom-style: solid;height: 56px">
-        <form>
+        
             <div class="row">
                 <div class="col-md-8">
+                    <form>
+                        <input type="hidden" name="Flag" value="@botstatobj.flag" />
+                        <table style=" color: #5d5d55; font-size: 12px;">
+                            <tr>
+                                <th>From:</th>
+                                <td>
+                                    <input type="text" class="form-control invoice" autocomplete="off" name="Fromdate" />
+                                </td>
+                                <th style="padding-left: 21px;">To:</th>
+                                <td>
+                                    <input type="text" class="form-control invoice" autocomplete="off" name="Todate" />
 
-                    <input type="hidden" name="Flag" value="@botstatobj.flag" />
-                    <table style=" color: #5d5d55; font-size: 12px;">
-                        <tr>
-                            <th>From:</th>
-                            <td>
-                                <input type="text" class="form-control invoice" autocomplete="off" name="Fromdate" />
-                            </td>
-                            <th style="padding-left: 21px;">To:</th>
-                            <td>
-                                <input type="text" class="form-control invoice" autocomplete="off" name="Todate" />
+                                </td>
+                                <th style="padding-left: 21px;">Filter:</th>
+                                <td>
+                                    <select class="form-control" name="Filter" style="padding: 0px;">
 
-                            </td>
-                            <th style="padding-left: 21px;">Filter:</th>
-                            <td>
-                                <select class="form-control" name="Filter" style="padding: 0px;">
+                                        <option value="">Select</option>
+                                        <option value="Closed">Closed</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Pending Action">Pending Action</option>
 
-                                    <option value="">Select</option>
-                                    <option value="Closed">Closed</option>
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Pending Action">Pending Action</option>
-
-                                </select>
-                            </td>
-                            <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
-                            <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=1">Reset</a></td>
-                        </tr>
-                    </table>
+                                    </select>
+                                </td>
+                                <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
+                                <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=1">Reset</a></td>
+                            </tr>
+                        </table>
+                    </form>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-3">
                     <button class="btn btn-sm btn-light">
                         Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
                     </button>
-                    <button class="btn btn-sm btn-light">
+                    <button class="btn btn-sm btn-light" id="create_pdf">
                         Export<img src="~/Images/pdf.png" />
                     </button>
                 </div>
 
             </div>
-        </form>
+       
     </div>
     <div class="card-body">
         <div class="row">
@@ -160,17 +161,17 @@
                             <table style=" color: #7f7571;font-size: 14px;">
                                 <tr>
                                     <td><div style="height: 16px;background:url(/Images/greentexture.PNG);width: 16px;"></div></td>
-                                    <th>Closed :  @botstatobj.WCCaseStatus[2]</th>
+                                    <th>Closed : @botstatobj.WCCaseStatus[0] </th>
                                     <th> </th>
                                 </tr>
                                 <tr>
                                     <td style="width: 36px;"><div style="height: 16px;background:url(/Images/bluetexture.PNG);width: 16px;"></div></td>
-                                    <th>In Progress :  @botstatobj.WCCaseStatus[0]</th>
+                                    <th>In Progress :  @botstatobj.WCCaseStatus[1]</th>
                                     <th> </th>
                                 </tr>
                                 <tr>
                                     <td><div style="height: 16px;background:url(/Images/redtexture.PNG);width: 16px;"></div></td>
-                                    <th>Pending Action :   @botstatobj.WCCaseStatus[1]</th>
+                                    <th>Pending Action :  @botstatobj.WCCaseStatus[2] </th>
                                     <th> </th>
                                 </tr>
 
@@ -179,7 +180,7 @@
 
                     </div>
                     <div class="card-footer">
-                        <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                        <b style="color:#6d7979;font-size:12px">Showing data @botstatobj.WCCaseStatus[6]</b>
                     </div>
                 </div>
 
@@ -191,7 +192,7 @@
                         <tr>
                             <th>Feedback Id</th>
                             <th>Assigned User ID</th>
-                            <th>Ragistration Date</th>
+                            <th>Registration Date</th>
                             <th>Resolution Date</th>
                             <th>Stage</th>
                         </tr>
@@ -202,11 +203,11 @@
                             foreach (var item in ViewBag.list)
                             {
                                 <tr>
-                                    <td>@item.FeedbackId</td>
-                                    <td>@item.Issue</td>
-                                    <td>@item.Status</td>
-                                    <td>@item.BotRemarks</td>
-                                    <td>@item.BotDataEntryTime</td>
+                                    <td>@item.FeedbackID</td>
+                                    <td>@item.AssignedUserID</td>
+                                    <td>@item.IncidentDate</td>
+                                    <td>@item.ResolutionDate</td>
+                                    <td>@item.Stage</td>
                                 </tr>
 
                             }
@@ -221,50 +222,51 @@
 else
 {
     <div class="card-header" style="border-bottom: #f11a1a;border-bottom-style: solid;height: 56px">
-        <form>
+       
             <div class="row">
                 <div class="col-md-8">
+                    <form>
+                        <input type="hidden" name="Flag" value="@botstatobj.flag" />
+                        <table style=" color: #5d5d55; font-size: 12px;">
+                            <tr>
+                                <th>From:</th>
+                                <td>
+                                    <input type="text" class="form-control invoice" autocomplete="off" name="Fromdate" />
+                                </td>
+                                <th style="padding-left: 21px;">To:</th>
+                                <td>
+                                    <input type="text" class="form-control invoice" autocomplete="off" name="Todate" />
 
-                    <input type="hidden" name="Flag" value="@botstatobj.flag" />
-                    <table style=" color: #5d5d55; font-size: 12px;">
-                        <tr>
-                            <th>From:</th>
-                            <td>
-                                <input type="text" class="form-control invoice" autocomplete="off" name="Fromdate" />
-                            </td>
-                            <th style="padding-left: 21px;">To:</th>
-                            <td>
-                                <input type="text" class="form-control invoice" autocomplete="off" name="Todate" />
+                                </td>
+                                <th style="padding-left: 21px;">Filter:</th>
+                                <td>
+                                    <select class="form-control" name="Filter" style="padding: 0px;">
 
-                            </td>
-                            <th style="padding-left: 21px;">Filter:</th>
-                            <td>
-                                <select class="form-control" name="Filter" style="padding: 0px;">
+                                        <option value="">Select</option>
+                                        <option value="Closed">Closed</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Pending Action">Pending Action</option>
 
-                                    <option value="">Select</option>
-                                    <option value="Closed">Closed</option>
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Pending Action">Pending Action</option>
-
-                                </select>
-                            </td>
-                            <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
-                            <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=1">Reset</a></td>
-                        </tr>
-                    </table>
+                                    </select>
+                                </td>
+                                <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
+                                <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=1">Reset</a></td>
+                            </tr>
+                        </table>
+                    </form>
                 </div>
                 <div class="col-md-1"></div>
                 <div class="col-md-3">
                     <button class="btn btn-sm btn-light">
                         Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
                     </button>
-                    <button class="btn btn-sm btn-light">
+                    <button class="btn btn-sm btn-light" id="create_pdf">
                         Export<img src="~/Images/pdf.png" />
                     </button>
                 </div>
 
             </div>
-        </form>
+      
     </div>
     <div class="card-body">
         <div class="row">
@@ -276,7 +278,7 @@ else
                         </div>
                     </div>
                     <div class="card-footer">
-                        <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                        <b style="color:#6d7979;font-size:12px">Showing data @botstatobj.Itypes.datelbl </b>
                     </div>
                 </div>
 
@@ -291,7 +293,7 @@ else
 @if (botstatobj.Itypes != null)
 {
     <script>
-        issuetypename=@Html.Raw(Json.Encode(botstatobj.Itypes.Issuetypes)) ;
+    issuetypename=@Html.Raw(Json.Encode(botstatobj.Itypes.Issuetypes)) ;
     issuetypefigure =@Html.Raw(Json.Encode(botstatobj.Itypes.Issuetypesfigures)) ;
     backcolor =@Html.Raw(Json.Encode(botstatobj.Itypes.IssuetypesBackColor)) ;
     borderColor =@Html.Raw(Json.Encode(botstatobj.Itypes.IssuetypesBordercolor)) ;

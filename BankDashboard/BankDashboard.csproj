@@ -354,6 +354,7 @@
     <Content Include="Images\wc.png" />
     <Content Include="JavaScript\CryptoJS\crypto-js.js" />
     <Content Include="JavaScript\mdb\mdb.min.js" />
+    <Content Include="Js\jspdf.js" />
     <Content Include="Js\ReportsUserWise.js" />
     <Content Include="Login_v3\css\main.css" />
     <Content Include="Login_v3\css\util.css" />

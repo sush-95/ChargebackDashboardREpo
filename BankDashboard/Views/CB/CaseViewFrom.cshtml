@@ -8,6 +8,7 @@
 <script src="~/JavaScript/mdb/mdb.min.js"></script>
 <script src="~/Scripts/jquery-3.3.1.min.js"></script>
 <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 <style>
     .btn-light {
@@ -81,6 +82,10 @@
         background-color: #5e5858;
         border-left: none;
     }
+
+    table {
+        text-align: center;
+    }
 </style>
 @if (botstatobj.castStatFigures != null)
 {
@@ -92,7 +97,7 @@
         <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterData" method="post">
             <div class="row">
                 <div class="col-md-8">
-                 
+
                     <input type="hidden" name="Flag" value="@botstatobj.flag" />
                     <table style=" color: #5d5d55; font-size: 12px;">
                         <tr>
@@ -116,7 +121,7 @@
                                     <option value="Processed">Processed</option>
                                     <option value="Business Rule Exception">Business Rule Exception</option>
                                     <option value="OmanNet">Application Exception</option>
-                                    <option value="Unprocessed">Unprocessed</option>                                   
+                                    <option value="Unprocessed">Unprocessed</option>
                                 </select>
                             </td>
                             <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
@@ -129,7 +134,7 @@
                     <button class="btn btn-sm btn-light">
                         Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
                     </button>
-                    <button class="btn btn-sm btn-light">
+                    <button class="btn btn-sm btn-light" id="create_pdf">
                         Export<img src="~/Images/pdf.png" />
                     </button>
                 </div>
@@ -162,7 +167,7 @@
                         </div>
                         <br />
                         <div class="col-sm-11 row">
-                            <table style=" color: #7f7571;font-size: 14px;height: 107px;">
+                            <table style=" color: #7f7571;font-size: 14px;height: 107px;text-align:left">
                                 <tr>
                                     <td style="width: 36px;"><div style="height: 16px;background:url(/Images/greentexture.PNG);width: 16px;"></div></td>
                                     <th>Processed :  @botstatobj.castStatFigures[0]</th>
@@ -229,37 +234,50 @@
 }
 else if (botstatobj.RoutingPortalFigures != null)
 {
+    if (TempData["filter"] != null)
+    {
+        filter = (ViewModelClass.CaseFilter)TempData["filter"];
+    }
     <div class="card-header" style="border-bottom: #f11a1a;border-bottom-style: solid;">
+
         <div class="row">
             <div class="col-md-8">
-                <table style=" color: #5d5d55; font-size: 12px;">
-                    <tr>
-                        <th>From:</th>
-                        <td> <input type="text" class="form-control invoice" autocomplete="off" name="Fromdate" /></td>
-                        <th style="padding-left: 21px;">To:</th>
-                        <td> <input type="text" class="form-control invoice" autocomplete="off" name="Todate" /></td>
-                        <th style="padding-left: 21px;">Filter:</th>
-                        <td>
-                            <select class="form-control" name="filter" style="padding: 0px;">
-                                <option value="">Select</option>
-                                <option value="MasterCard">MasterCard</option>
-                                <option value="Visa">Visa</option>
-                                <option value="OmanNet">OmanNet</option>
-                                <option value="Onus">Onus</option>
-                                <option value="POSECOM">POSECOM</option>
-                            </select>
-                        </td>
-                        <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
-                        <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=2">Reset</a></td>
-                    </tr>
-                </table>
+                <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterData" method="post">
+                    <input type="hidden" name="Flag" value="@botstatobj.flag" />
+                    <table style=" color: #5d5d55; font-size: 12px;">
+                        <tr>
+                            <th>From:</th>
+                            <td> <input type="text" class="form-control invoice" value="@filter.Fromdate" autocomplete="off" name="Fromdate" /></td>
+                            <th style="padding-left: 21px;">To:</th>
+                            <td> <input type="text" class="form-control invoice" value="@filter.Todate" autocomplete="off" name="Todate" /></td>
+                            <th style="padding-left: 21px;">Filter:</th>
+                            <td>
+                                <select class="form-control" name="filter" style="padding: 0px;">
+                                    <option value="">Select</option>
+                                    @if (filter.Filter != null)
+                                    {
+                                        <option value="@filter.Filter" selected hidden>@filter.Filter</option>
+                                    }
+                                    <option value="MasterCard">MasterCard</option>
+                                    <option value="Visa">Visa</option>
+                                    <option value="Omanet">Omanet</option>
+                                    <option value="Onus">Onus</option>
+                                    <option value="POSECOM">POSECOM</option>
+                                </select>
+                            </td>
+                            <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
+                            <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=2">Reset</a></td>
+                        </tr>
+                    </table>
+                </form>
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-3">
                 <button class="btn btn-sm btn-light">
                     Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
                 </button>
-                <button class="btn btn-sm btn-light">
+             
+                <button class="btn btn-sm btn-light" id="create_pdf" >
                     Export<img src="~/Images/pdf.png" />
                 </button>
             </div>
@@ -273,7 +291,7 @@ else if (botstatobj.RoutingPortalFigures != null)
             <div class="row">
                 <div class="col-md-4">
                     <div>
-                        <table style=" font-size: 14px;position: relative; left:82%;top:85px;height:173px">
+                        <table style=" font-size: 14px;position: relative; left:82%;top:41px;height:173px">
                             <tr style="color:#0d274d">
                                 <th>MasterCard :@botstatobj.RoutingPortalFigures[0]</th>
                             </tr>
@@ -325,10 +343,11 @@ else if (botstatobj.RoutingPortalFigures != null)
                     {
                         <tr>
                             <td>@item.FeedbackId</td>
-                            <td>@item.Issue</td>
-                            <td>@item.Category</td>
-                            <td>@item.CIFNo</td>
-                            <td>@item.BankingWith</td>
+                            <td>@item.AuthCode</td>
+                            <td>@item.Amount</td>
+                            <td>@item.Routing_Channel</td>
+                            <td>@item.CardNumber</td>
+                            <td>@item.Status</td>
                         </tr>
 
                     }
@@ -376,10 +395,11 @@ else if (botstatobj.CaseReadyForAction != null)
                     {
                         <tr>
                             <td>@item.FeedbackId</td>
-                            <td>@item.Issue</td>
-                            <td>@item.Category</td>
                             <td>@item.CIFNo</td>
-                            <td>@item.BankingWith</td>
+                            <td>@item.CustomerName</td>
+                            <td>@item.IncidentDate</td>
+                            <td>@item.CardNumber</td>
+                            <td>@item.Status</td>
                         </tr>
 
                     }
@@ -402,7 +422,7 @@ else if (botstatobj.CaseReadyForAction != null)
                 data: datafig,
                 //data: ["84","64","54","78","89"],
                 backgroundColor: ["#0d274d", "#c00000", "#8a8f92", "#92d028", "#558fd5"],
-                hoverBackgroundColor: ["#FF5A5E", "#5AD3D1", "#FFC870", "#A8B3C5", "#686cda"]
+                hoverBackgroundColor: ["#0d274d8f", "#c0000085", "#8a8f9285", "#92d0288c", "#558fd58a"]
             }]
         },
         options: {
@@ -410,4 +430,6 @@ else if (botstatobj.CaseReadyForAction != null)
         }
     });
     </script>
+
 }
+ 

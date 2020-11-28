@@ -42,6 +42,7 @@ namespace BankDashboard.Common
             public List<string> Issuetypesfigures { get; set; }
             public List<string> IssuetypesBackColor { get; set; }
             public List<string> IssuetypesBordercolor { get; set; }
+            public string datelbl { get; set; }
         }
         public class CaseFilter
         {
