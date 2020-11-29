@@ -146,8 +146,8 @@
     <Compile Include="CBModel\Custom_GLReconciliationTable.cs" />
     <Compile Include="CBModel\Matched_FinancialTransaction.cs" />
     <Compile Include="CBModel\NonCustom_GLReconciliationTable.cs" />
+    <Compile Include="CBModel\Robot_Config.cs" />
     <Compile Include="CBModel\tbl_AuthCode.cs" />
-    <Compile Include="CBModel\tbl_AuthCodeTransactionInfo.cs" />
     <Compile Include="CBModel\tbl_IssuingIncomingVISA.cs" />
     <Compile Include="CBModel\tbl_IssuingOutgoingVISA.cs" />
     <Compile Include="CBModel\tbl_MasterCardAcquiring.cs" />
@@ -348,6 +348,7 @@
     <Content Include="Images\recon.png" />
     <Content Include="Images\redtexture.PNG" />
     <Content Include="Images\report1.png" />
+    <Content Include="Images\stat.png" />
     <Content Include="Images\umtran.png" />
     <Content Include="Images\user1.png" />
     <Content Include="Images\view.png" />
@@ -681,6 +682,7 @@
     <Content Include="Views\CB\AuthCode.cshtml" />
     <Content Include="Views\CB\CaseViewFrom.cshtml" />
     <Content Include="Views\CB\WCViewFrom.cshtml" />
+    <Content Include="Views\CB\SLA.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

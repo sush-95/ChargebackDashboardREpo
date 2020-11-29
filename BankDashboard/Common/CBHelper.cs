@@ -208,7 +208,7 @@ namespace BankDashboard.Common
                 }
                 objI = GetColorOnIssueType(objI, issue);
             }
-            catch {}
+            catch { }
             return objI;
         }
         public static IssueType GetColorOnIssueType(IssueType obj, int issue)
@@ -241,6 +241,16 @@ namespace BankDashboard.Common
             return obj;
         }
         #endregion---------------------------------------------------------------------------------------
+        #region----------------------------SLA------------------------------------------------------------
+        public static void GetSla()
+        {
+            try {
+
+
+            } catch { }
+
+        }
+        #endregion-------------------------------------------------------------------------------------------
 
         #region-------------------------------Case History--------------------------------------------------------------------
         public static List<tbl_UnassignedTickets> GetCaseHistoryFilterd(ViewModelClass.FilterClass filter)

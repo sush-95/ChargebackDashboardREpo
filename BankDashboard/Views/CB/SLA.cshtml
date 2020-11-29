@@ -1,0 +1,155 @@
+﻿@using BankDashboard.Common;
+@{
+    ViewBag.Title = "SLA Status";
+    Layout = "~/Views/Shared/_CBLayout.cshtml";
+    var filterobj = new ViewModelClass.CaseFilter();
+}
+<style>
+    .form-control {
+        height: calc(1.5em + -0.4rem + 10px);
+    }
+
+    #inputheader .form-control {
+        font-size: 12px;
+    }
+
+    #example {
+        text-align: center
+    }
+
+    .tbl .form-control {
+        width: 107px;
+    }
+
+    .tbl th {
+        font-weight: bold;
+        font-size: 13px;
+        color: #61605d;
+        text-align: right;
+    }
+
+    #inputheader {
+        font-size: 10px;
+        text-align: center;
+    }
+
+        #inputheader th {
+            width: 14.28%;
+        }
+
+    .col-sm-3 .invoice {
+        height: 27px;
+        width: 164px;
+    }
+
+    .btnImg {
+        height: 13px;
+        margin-bottom: 12px;
+        margin-left: -3px;
+    }
+</style>
+<div class="card-header">
+    <div class="row">
+        <div class="col-sm-2">
+            <h4 style="color:#758484"></h4>
+        </div>
+        <div class="col-sm-8"></div>
+        <div class="col-sm-2">
+            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
+                <button class="btn btn-success" type="submit">
+                    <img src="~/Images/exl.png" style="height: 19px;" />Export
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card-body">
+    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/CaseHistory" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-md-12">
+                <table class="tbl" style="width:67%;height:74px">
+                    <tr>
+                        <th>SLA Days:</th>
+                        <td><input type="number" name="SLADays" class="form-control" value="75" /></td>
+                        <th>Search cases nearing SLA in next </th>
+                        <th width="113px"><input type="number" value="10" name="CloseToSla" class="form-control" /></th>
+                        <th style="text-align:left">Days</th>
+                    </tr>
+                    <tr>
+                        <th>Total Count:</th>
+                        <th><input type="text" readonly style="width:50px" class="form-control" value="40" /></th>
+                        <th>Filter:</th>
+                        <th>
+                            <select class="form-control" name="Filter" style="padding: 0px;">
+                                <option value="">Select</option>
+                                <option value="Closed">Closed</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Pending Action">Pending Action</option>
+
+                            </select>
+                        </th>
+                        <th></th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-9"></div>
+            <div class="col-md-3">
+                <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" />
+                <a class="btn btn-sm btn-secondary" href="/app/CB/SLA">Reset</a>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 9px;">
+                <thead style="background-color:#1d40b1;color:white;text-align: center;">
+                    <tr>
+                        <th>Feedback Id</th>
+                        <th>Registration Date</th>
+                        <th>Assigned User ID</th>
+                        <th>SLA Date</th>
+                        <th>Incident Date</th>
+                        <th>Days Left</th>                       
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.list != null)
+                    {
+                        foreach (var item in ViewBag.list)
+                        {
+                            <tr>
+                                <td>@item.FeedbackId</td>
+                                <td>@item.Issue</td>
+                                <td>@item.Category</td>
+                                <td>@item.CIFNo</td>
+                                <td>@item.BankingWith</td>
+                                <td>@item.IncidentDate</td>
+                                <td>@item.Amount</td>
+                                <td></td>
+                                <td>@item.BotRemarks</td>
+                                <td>
+                                    <button class="btn tbn-sm btn-success" data-toggle="modal" onclick="getAuthcode('@item.FeedbackId')" data-target="#myModal" style="background-color: #5bc142;border-color: #a8d6a8;">
+                                        <img class="btnImg" src="~/Images/detail.png" />
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn tbn-sm btn-info" data-toggle="tooltip" data-placement="bottom" title="View">
+                                        <img class="btnImg" src="~/Images/view.png" />
+                                    </button>
+                                </td>
+                            </tr>
+
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
