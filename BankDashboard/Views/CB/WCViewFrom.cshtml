@@ -5,6 +5,7 @@
     ViewBag.Title = "WCViewFrom";
     Layout = "~/Views/Shared/_CBLayout.cshtml";
     ViewModelClass.WCStatModel botstatobj = (ViewModelClass.WCStatModel)ViewBag.WCstat;
+    ViewModelClass.CaseFilter filter = new ViewModelClass.CaseFilter();
 }
 <script src="~/JavaScript/mdb/mdb.min.js"></script>
 <script src="~/Scripts/jquery-3.3.1.min.js"></script>
@@ -85,56 +86,59 @@
 </style>
 @if (botstatobj.WCCaseStatus != null)
 {
-    //if (TempData["filter"] != null)
-    //{
-    //    filter = (ViewModelClass.CaseFilter)TempData["filter"];
-    //}
+    if (TempData["filter"] != null)
+    {
+        filter = (ViewModelClass.CaseFilter)TempData["filter"];
+    }
     <div class="card-header" style="border-bottom: #f11a1a;border-bottom-style: solid;height: 56px">
-        
-            <div class="row">
-                <div class="col-md-8">
-                    <form>
-                        <input type="hidden" name="Flag" value="@botstatobj.flag" />
-                        <table style=" color: #5d5d55; font-size: 12px;">
-                            <tr>
-                                <th>From:</th>
-                                <td>
-                                    <input type="text" class="form-control invoice" autocomplete="off" name="Fromdate" />
-                                </td>
-                                <th style="padding-left: 21px;">To:</th>
-                                <td>
-                                    <input type="text" class="form-control invoice" autocomplete="off" name="Todate" />
 
-                                </td>
-                                <th style="padding-left: 21px;">Filter:</th>
-                                <td>
-                                    <select class="form-control" name="Filter" style="padding: 0px;">
+        <div class="row">
+            <div class="col-md-8">
+                <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterDataWC" method="post">
+                    <input type="hidden" name="Flag" value="@botstatobj.flag" />
+                    <table style=" color: #5d5d55; font-size: 12px;">
+                        <tr>
+                            <th>From:</th>
+                            <td>
+                                <input type="text" class="form-control invoice" value="@filter.Fromdate" autocomplete="off" name="Fromdate" />
+                            </td>
+                            <th style="padding-left: 21px;">To:</th>
+                            <td>
+                                <input type="text" class="form-control invoice" value="@filter.Todate" autocomplete="off" name="Todate" />
 
-                                        <option value="">Select</option>
-                                        <option value="Closed">Closed</option>
-                                        <option value="In Progress">In Progress</option>
-                                        <option value="Pending Action">Pending Action</option>
+                            </td>
+                            <th style="padding-left: 21px;">Filter:</th>
+                            <td>
+                                <select class="form-control" name="Filter" style="padding: 0px;">
+                                    @if (!string.IsNullOrEmpty(filter.Filter))
+                                    {
+                                    <option value="@filter.Filter" selected hidden>@filter.Filter</option>
+                                    }
+                                    <option value="">Select</option>
+                                    <option value="Closed">Closed</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Pending Action">Pending Action</option>
 
-                                    </select>
-                                </td>
-                                <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
-                                <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=1">Reset</a></td>
-                            </tr>
-                        </table>
-                    </form>
-                </div>
-                <div class="col-md-1"></div>
-                <div class="col-md-3">
-                    <button class="btn btn-sm btn-light">
-                        Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
-                    </button>
-                    <button class="btn btn-sm btn-light" id="create_pdf">
-                        Export<img src="~/Images/pdf.png" />
-                    </button>
-                </div>
-
+                                </select>
+                            </td>
+                            <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
+                            <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/WCViewFrom?getval=1">Reset</a></td>
+                        </tr>
+                    </table>
+                </form>
             </div>
-       
+            <div class="col-md-1"></div>
+            <div class="col-md-3">
+                <button class="btn btn-sm btn-light">
+                    Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
+                </button>
+                <button class="btn btn-sm btn-light" id="create_pdf">
+                    Export<img src="~/Images/pdf.png" />
+                </button>
+            </div>
+
+        </div>
+
     </div>
     <div class="card-body">
         <div class="row">
@@ -188,7 +192,7 @@
 
             <div class="col-sm-12">
                 <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
-                    <thead style="background-color:#1d40b1;color:white;text-align: center;">
+                    <thead style="color:white;text-align: center;">
                         <tr>
                             <th>Feedback Id</th>
                             <th>Assigned User ID</th>
@@ -221,52 +225,56 @@
 }
 else
 {
+    if (TempData["filter"] != null)
+    {
+        filter = (ViewModelClass.CaseFilter)TempData["filter"];
+    }
     <div class="card-header" style="border-bottom: #f11a1a;border-bottom-style: solid;height: 56px">
-       
-            <div class="row">
-                <div class="col-md-8">
-                    <form>
-                        <input type="hidden" name="Flag" value="@botstatobj.flag" />
-                        <table style=" color: #5d5d55; font-size: 12px;">
-                            <tr>
-                                <th>From:</th>
-                                <td>
-                                    <input type="text" class="form-control invoice" autocomplete="off" name="Fromdate" />
-                                </td>
-                                <th style="padding-left: 21px;">To:</th>
-                                <td>
-                                    <input type="text" class="form-control invoice" autocomplete="off" name="Todate" />
 
-                                </td>
-                                <th style="padding-left: 21px;">Filter:</th>
-                                <td>
-                                    <select class="form-control" name="Filter" style="padding: 0px;">
+        <div class="row">
+            <div class="col-md-8">
+                <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterDataWC" method="post">
+                    <input type="hidden" name="Flag" value="@botstatobj.flag" />
+                    <table style=" color: #5d5d55; font-size: 12px;">
+                        <tr>
+                            <th>From:</th>
+                            <td>
+                                <input type="text" class="form-control invoice" value="@filter.Fromdate" autocomplete="off" name="Fromdate" />
+                            </td>
+                            <th style="padding-left: 21px;">To:</th>
+                            <td>
+                                <input type="text" class="form-control invoice" value="@filter.Todate" autocomplete="off" name="Todate" />
 
-                                        <option value="">Select</option>
-                                        <option value="Closed">Closed</option>
-                                        <option value="In Progress">In Progress</option>
-                                        <option value="Pending Action">Pending Action</option>
-
-                                    </select>
-                                </td>
-                                <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
-                                <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=1">Reset</a></td>
-                            </tr>
-                        </table>
-                    </form>
-                </div>
-                <div class="col-md-1"></div>
-                <div class="col-md-3">
-                    <button class="btn btn-sm btn-light">
-                        Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
-                    </button>
-                    <button class="btn btn-sm btn-light" id="create_pdf">
-                        Export<img src="~/Images/pdf.png" />
-                    </button>
-                </div>
-
+                            </td>
+                            <th style="padding-left: 21px;">Filter:</th>
+                            <td>
+                                <select class="form-control" name="Filter" style="padding: 0px;">
+                                    <option value="">Select</option>
+                                    <option value="@filter.Filter" selected hidden>@filter.Filter</option>
+                                    @foreach (string item in (List<string>)TempData["issuelist"])
+                                    {
+                                        <option value="@item">@item</option>
+                                    }
+                                </select>
+                            </td>
+                            <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
+                            <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/WCViewFrom?getval=2">Reset</a></td>
+                        </tr>
+                    </table>
+                </form>
             </div>
-      
+            <div class="col-md-1"></div>
+            <div class="col-md-3">
+                <button class="btn btn-sm btn-light">
+                    Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
+                </button>
+                <button class="btn btn-sm btn-light" id="create_pdf">
+                    Export<img src="~/Images/pdf.png" />
+                </button>
+            </div>
+
+        </div>
+
     </div>
     <div class="card-body">
         <div class="row">

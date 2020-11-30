@@ -35,16 +35,16 @@
 }
 
 .nav2 {
-    height: 34px;
-    background-color: #ff2300;
+    height: 32px;
+    background-color: #f12928;
     position: fixed;
-    top: 56px;
+    top: 58px;
     right: 0;
     left: 0;
     z-index: 1030;
     border: solid;
-    border-color: #564a46;
-    border-radius: 6px;
+    border-color: #f12928;
+    border-radius: 2px;
 }
 
 body {
@@ -91,7 +91,7 @@ body {
 }
 
 .sidebar a.active {
-    background-color: #ea5082;
+    background-color: #f12928;  
     color: white;
     font-size: 17px;
     font-family: inherit;

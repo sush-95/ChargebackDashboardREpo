@@ -51,7 +51,14 @@ namespace BankDashboard.Common
             public string Filter { get; set; }
             public string Flag { get; set; }
         }
+        public class SLAFilter
+        {
+            public string SLADays { get; set; }
+            public string CloseToSla { get; set; }
+            public string SlACount { get; set; }
+            public string Filter { get; set; }
+        }
 
-      
+
     }
 }

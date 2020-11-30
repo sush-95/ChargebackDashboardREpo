@@ -242,13 +242,24 @@ namespace BankDashboard.Common
         }
         #endregion---------------------------------------------------------------------------------------
         #region----------------------------SLA------------------------------------------------------------
-        public static void GetSla()
+        public static List<tbl_WeCareReactive> GetSla(SLAFilter obj)
         {
-            try {
-
-
-            } catch { }
-
+            CBDB db = new CBDB();
+            List<tbl_WeCareReactive> list = new List<tbl_WeCareReactive>();
+            try
+            {
+                if (!string.IsNullOrEmpty(obj.Filter))
+                {
+                    list = db.tbl_WeCareReactive.Where(x=>x.AssignedUserID.Equals(obj.Filter)).ToList();
+                }
+                else
+                {
+                    list = db.tbl_WeCareReactive.ToList();
+                }               
+            
+            }
+            catch { }
+            return list;
         }
         #endregion-------------------------------------------------------------------------------------------
 

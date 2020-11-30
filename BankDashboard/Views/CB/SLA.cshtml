@@ -2,7 +2,9 @@
 @{
     ViewBag.Title = "SLA Status";
     Layout = "~/Views/Shared/_CBLayout.cshtml";
-    var filterobj = new ViewModelClass.CaseFilter();
+    var filterobj = (ViewModelClass.SLAFilter)ViewBag.filterobj;
+    DateTime slatoday = DateTime.Today; int dateDiff = 0;
+    long sladays = 0, closetosla = 0, slacount = 0;
 }
 <style>
     .form-control {
@@ -66,29 +68,36 @@
     </div>
 </div>
 <div class="card-body">
-    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/CaseHistory" method="post">
+    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/SLA" method="post">
         @Html.AntiForgeryToken()
         <div class="row">
             <div class="col-md-12">
                 <table class="tbl" style="width:67%;height:74px">
                     <tr>
                         <th>SLA Days:</th>
-                        <td><input type="number" name="SLADays" class="form-control" value="75" /></td>
+                        <td><input type="number" name="SLADays" class="form-control" value="@filterobj.SLADays" /></td>
                         <th>Search cases nearing SLA in next </th>
-                        <th width="113px"><input type="number" value="10" name="CloseToSla" class="form-control" /></th>
+                        <th width="113px"><input type="number" value="@filterobj.CloseToSla" name="CloseToSla" class="form-control" /></th>
                         <th style="text-align:left">Days</th>
                     </tr>
                     <tr>
                         <th>Total Count:</th>
-                        <th><input type="text" readonly style="width:50px" class="form-control" value="40" /></th>
+                        <th><input type="text" readonly class="form-control" id="slacount" name="SlACount" /></th>
                         <th>Filter:</th>
                         <th>
                             <select class="form-control" name="Filter" style="padding: 0px;">
                                 <option value="">Select</option>
-                                <option value="Closed">Closed</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Pending Action">Pending Action</option>
-
+                                @if (!string.IsNullOrEmpty(filterobj.Filter))
+                                {
+                                    <option value="@filterobj.Filter" selected hidden>@filterobj.Filter</option>
+                                }
+                                @if (ViewBag.userlist != null)
+                                {
+                                    foreach (string item in (List<string>)ViewBag.userlist)
+                                    {
+                                        <option value="@item">@item</option>
+                                    }
+                                }
                             </select>
                         </th>
                         <th></th>
@@ -100,7 +109,7 @@
         <div class="row">
             <div class="col-md-9"></div>
             <div class="col-md-3">
-                <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" />
+                <input type="submit" value="Find" name="find" class="btn btn-sm btn-info" />
                 <a class="btn btn-sm btn-secondary" href="/app/CB/SLA">Reset</a>
             </div>
         </div>
@@ -108,42 +117,51 @@
     <div class="row">
         <div class="col-md-12">
             <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 9px;">
-                <thead style="background-color:#1d40b1;color:white;text-align: center;">
+                <thead style="color:white;text-align: center;">
                     <tr>
                         <th>Feedback Id</th>
                         <th>Registration Date</th>
                         <th>Assigned User ID</th>
                         <th>SLA Date</th>
                         <th>Incident Date</th>
-                        <th>Days Left</th>                       
+                        <th>Days Left</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (ViewBag.list != null)
                     {
-                        foreach (var item in ViewBag.list)
+                        foreach (var item in (List<BankDashboard.CBModel.tbl_WeCareReactive>)ViewBag.list)
                         {
-                            <tr>
-                                <td>@item.FeedbackId</td>
-                                <td>@item.Issue</td>
-                                <td>@item.Category</td>
-                                <td>@item.CIFNo</td>
-                                <td>@item.BankingWith</td>
-                                <td>@item.IncidentDate</td>
-                                <td>@item.Amount</td>
-                                <td></td>
-                                <td>@item.BotRemarks</td>
-                                <td>
-                                    <button class="btn tbn-sm btn-success" data-toggle="modal" onclick="getAuthcode('@item.FeedbackId')" data-target="#myModal" style="background-color: #5bc142;border-color: #a8d6a8;">
-                                        <img class="btnImg" src="~/Images/detail.png" />
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="btn tbn-sm btn-info" data-toggle="tooltip" data-placement="bottom" title="View">
-                                        <img class="btnImg" src="~/Images/view.png" />
-                                    </button>
-                                </td>
-                            </tr>
+                            string color = ""; var datex = (Convert.ToDateTime(item.RegistrationDate).AddDays(long.Parse(filterobj.SLADays)));
+                            datex = datex.Date;slatoday = slatoday.Date;
+                            if (datex < slatoday&& item.Stage.Equals("In Progress") || item.Stage.ToLower().Equals("InProgress".ToLower()))
+                            {
+                                color = "red";
+                                dateDiff = (datex - slatoday).Days;
+                                slacount += 1;
+                            }
+                            else if (datex >= slatoday && datex <= slatoday.AddDays(long.Parse(filterobj.CloseToSla))&&
+                                item.Stage.Equals("In Progress") || item.Stage.ToLower().Equals("InProgress".ToLower()))
+                            {
+                                color = "green";
+                                slacount += 1;
+                                dateDiff = (datex - slatoday).Days;
+                            }
+
+                            if (color.Equals("red") || color.Equals("green"))
+                            {
+                                <tr >
+                                    <td>@item.FeedbackID</td>
+                                    <td>@item.RegistrationDate</td>
+                                    <td>@item.AssignedUserID</td>
+                                    <td>@item.SLADate</td>
+                                    <td>@item.IncidentDate</td>
+                                    <td style='color:@color'>
+                                        @dateDiff
+                                    </td>
+                                </tr>
+                            }
+
 
                         }
                     }
@@ -153,3 +171,7 @@
         </div>
     </div>
 </div>
+<script>
+    var x = document.getElementById("slacount")
+    x.value="@Html.Raw(slacount)"
+</script>

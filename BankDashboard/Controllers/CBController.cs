@@ -122,9 +122,8 @@ namespace BankDashboard.Controllers
             }
             return View();
         }
-        
-        public ActionResult WCViewFrom(string getval)
 
+        public ActionResult WCViewFrom(string getval)
         {
             ViewBag.Dashboard = "show";
             ViewBag.wcarestat = "active";
@@ -134,36 +133,81 @@ namespace BankDashboard.Controllers
                 obj.flag = getval;
                 if (TempData["WCObj"] != null)
                 {
-                    ViewBag.casestat = TempData["WCObj"];
+                    ViewBag.WCstat = TempData["WCObj"];
                     ViewBag.list = TempData["list"];
                 }
                 else
                 {
                     if (getval == "1")
-                    {                        
+                    {
                         List<tbl_WeCareReactive> tblWC = new List<tbl_WeCareReactive>();
                         obj.WCCaseStatus = CBHelper.WCScaseStatusFigure(ref tblWC);
                         ViewBag.list = tblWC;
                     }
                     else if (getval == "2")
                     {
-                        obj.Itypes = CBHelper.GetListOfIssueTypes("","","",1);
+                        obj.Itypes = CBHelper.GetListOfIssueTypes("", "", "", 1);
+                        CBDB db = new CBDB();
+                        TempData["issuelist"] = db.tbl_WeCareReactive.Select(x => x.Issue).Distinct().ToList();
                     }
                     ViewBag.WCstat = obj;
                 }
             }
-            catch(Exception ex) { }
+            catch (Exception ex) { }
             return View();
+        }
+        public ActionResult GetFilterDataWC(string Flag, string Todate, string Fromdate, string Filter)
+        {
+            try
+            {
+                WCStatModel obj = new WCStatModel();
+                obj.flag = Flag;
+                if (Flag == "1")
+                {
+                    List<tbl_WeCareReactive> tblWC = new List<tbl_WeCareReactive>();
+                    obj.WCCaseStatus = CBHelper.WCScaseStatusFigure(ref tblWC, Fromdate, Todate,Filter);
+                    TempData["list"] = tblWC;
+                    TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
+                }
+                else if (Flag == "2")
+                {
+                    
+                    obj.Itypes = CBHelper.GetListOfIssueTypes(Fromdate, Todate, Filter, 1);                   
+                    TempData["list"] = CBHelper.getRoutingPortalTable(Fromdate, Todate, Filter);
+                    TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
+                    CBDB db = new CBDB();
+                    TempData["issuelist"] = db.tbl_WeCareReactive.Select(x => x.Issue).Distinct().ToList();
+                }               
+                TempData["WCObj"] = obj;
+               
+            }
+            catch { }
+            return RedirectToAction("WCViewFrom", new { getval = Flag });
         }
         #endregion------------------------------------------------------------------------------
 
         #region---------------------------SLA-------------------------------------------
-        public ActionResult SLA()
+        public ActionResult SLA(SLAFilter obj, string find)
         {
             ViewBag.Dashboard = "show";
             ViewBag.SLAStat = "active";
-
-            ViewBag.list=
+            CBDB db = new CBDB();
+            try
+            {               
+                if (find != null)
+                {
+                    ViewBag.list = CBHelper.GetSla(obj);
+                }
+                else
+                {                  
+                    ViewBag.list = db.tbl_WeCareReactive.ToList();
+                    obj = new SLAFilter() { SLADays = "75", CloseToSla = "10", SlACount = "", Filter = "" };
+                 
+                }
+                ViewBag.filterobj = obj;
+                ViewBag.userlist = db.tbl_WeCareReactive.Select(x => x.AssignedUserID).Distinct().ToList();
+            }
+            catch { }
             return View();
         }
         #endregion-----------------------------------------------------------------------

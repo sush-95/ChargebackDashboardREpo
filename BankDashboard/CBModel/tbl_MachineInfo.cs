@@ -1,4 +1,4 @@
-namespace BankDashboard.ModelFd
+﻿namespace BankDashboard.CBModel
 {
     using System;
     using System.Collections.Generic;

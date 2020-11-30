@@ -150,9 +150,11 @@
     <Compile Include="CBModel\tbl_AuthCode.cs" />
     <Compile Include="CBModel\tbl_IssuingIncomingVISA.cs" />
     <Compile Include="CBModel\tbl_IssuingOutgoingVISA.cs" />
+    <Compile Include="CBModel\tbl_MachineInfo.cs" />
     <Compile Include="CBModel\tbl_MasterCardAcquiring.cs" />
     <Compile Include="CBModel\tbl_MasterCardIssuing.cs" />
     <Compile Include="CBModel\tbl_UnassignedTickets.cs" />
+    <Compile Include="CBModel\Tbl_User_Detail.cs" />
     <Compile Include="CBModel\tbl_VisaAcquiringIncoming.cs" />
     <Compile Include="CBModel\tbl_VisaAcquiringOutgoing.cs" />
     <Compile Include="CBModel\tbl_WeCareReactive.cs" />
@@ -171,16 +173,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="LogFile\WriteToLogFile.cs" />
-    <Compile Include="ModelFd\AssetsConfig.cs" />
-    <Compile Include="ModelFd\BOT_Status.cs" />
-    <Compile Include="ModelFd\DBFD.cs" />
-    <Compile Include="ModelFd\FDRequest.cs" />
-    <Compile Include="ModelFd\MailConfig.cs" />
-    <Compile Include="ModelFd\SettingAndConstant.cs" />
-    <Compile Include="ModelFd\SMSConfig.cs" />
-    <Compile Include="ModelFd\TblTermLength.cs" />
-    <Compile Include="ModelFd\tbl_MachineInfo.cs" />
-    <Compile Include="ModelFd\Tbl_User_Detail.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
@@ -497,6 +489,7 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Content\bodyOptimizer.css" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile2.pubxml" />

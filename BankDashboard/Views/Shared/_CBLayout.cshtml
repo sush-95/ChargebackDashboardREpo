@@ -1,4 +1,4 @@
-﻿@using BankDashboard.ModelFd;
+﻿@using BankDashboard.CBModel;
 @{
     Layout = null;
 }
@@ -10,6 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link href="~/Content/Sidebar.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/bodyOptimizer.css" rel="stylesheet" />
     <title>_FDLayout</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
@@ -19,12 +20,18 @@
     <link href="~/Scripts/dt/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
     <style>
+        #example thead {
+            background-color: #0d274d;
+        }
+
+
+
         .submenu li a:hover {
-            background-color: #ea5082;
+            background-color: #f12928;        
         }
 
         .submenu a.active {
-            background-color: #ea5082;
+            background-color: #f12928;          
             color: white;
             font-size: 16px;
             font-family: inherit;
@@ -41,7 +48,7 @@
             list-style: none;
         }
 
-        
+
 
         .submenu {
             display: none;
@@ -76,8 +83,7 @@
                 <b style="color:#6d7979;font-size:21px">@Session["USerName"]</b>
                 <b style="color:#6d7979;font-size:12px">(@user.Usergroup)</b>
             }
-            <b style="color:#6d7979;font-size:21px">Sushil</b>
-            <b style="color:#6d7979;font-size:12px">(Admin)</b>
+          
 
         </div>
         <div class="col-md-1">

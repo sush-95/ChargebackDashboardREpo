@@ -29,6 +29,8 @@ namespace BankDashboard.CBModel
         public virtual DbSet<tbl_WeCareReactive> tbl_WeCareReactive { get; set; }
         public virtual DbSet<Unmatched_FinancialTransaction> Unmatched_FinancialTransaction { get; set; }
         public virtual DbSet<Robot_Config> Robot_Config { get; set; }
+        public virtual DbSet<Tbl_User_Detail> Tbl_User_Detail { get; set; }
+        public virtual DbSet<tbl_MachineInfo> tbl_MachineInfo { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
