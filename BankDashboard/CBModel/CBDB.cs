@@ -5,8 +5,8 @@ namespace BankDashboard.CBModel
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
     using System.Configuration;
-    using System.Text;
     using System.Security.Cryptography;
+    using System.Text;
 
     public partial class CBDB : DbContext
     {
@@ -19,7 +19,6 @@ namespace BankDashboard.CBModel
         public virtual DbSet<Matched_FinancialTransaction> Matched_FinancialTransaction { get; set; }
         public virtual DbSet<NonCustom_GLReconciliationTable> NonCustom_GLReconciliationTable { get; set; }
         public virtual DbSet<tbl_AuthCode> tbl_AuthCode { get; set; }
-        public virtual DbSet<tbl_AuthCodeTransactionInfo> tbl_AuthCodeTransactionInfo { get; set; }
         public virtual DbSet<tbl_IssuingIncomingVISA> tbl_IssuingIncomingVISA { get; set; }
         public virtual DbSet<tbl_IssuingOutgoingVISA> tbl_IssuingOutgoingVISA { get; set; }
         public virtual DbSet<tbl_MasterCardAcquiring> tbl_MasterCardAcquiring { get; set; }
@@ -29,6 +28,9 @@ namespace BankDashboard.CBModel
         public virtual DbSet<tbl_VisaAcquiringOutgoing> tbl_VisaAcquiringOutgoing { get; set; }
         public virtual DbSet<tbl_WeCareReactive> tbl_WeCareReactive { get; set; }
         public virtual DbSet<Unmatched_FinancialTransaction> Unmatched_FinancialTransaction { get; set; }
+        public virtual DbSet<Robot_Config> Robot_Config { get; set; }
+        public virtual DbSet<Tbl_User_Detail> Tbl_User_Detail { get; set; }
+        public virtual DbSet<tbl_MachineInfo> tbl_MachineInfo { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -44,6 +46,7 @@ namespace BankDashboard.CBModel
                 .Property(e => e.Status)
                 .IsFixedLength();
         }
+
         public static string GetSqlConnection()
         {
             string x = ConfigurationManager.AppSettings["getstr"].ToString();

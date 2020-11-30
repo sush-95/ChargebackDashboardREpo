@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using static BankDashboard.Common.ViewModelClass;
 
 namespace BankDashboard.Common
 {
@@ -19,7 +20,7 @@ namespace BankDashboard.Common
         public static List<tbl_UnassignedTickets> CaseTableDataForToday()
         {
             CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
-            List<tbl_UnassignedTickets> list = objdata.GetCaseStatusDataWithFilter(DateTime.Today,DateTime.Today,"");
+            List<tbl_UnassignedTickets> list = objdata.GetCaseStatusDataWithFilter(DateTime.Today, DateTime.Today, "");
             return list;
         }
         public static List<string> getpercentagefigure(List<string> casestatfigure)
@@ -41,7 +42,7 @@ namespace BankDashboard.Common
             casestatfigure.AddRange(list);
             return casestatfigure;
         }
-        public static List<string> CaseDataOnFilter(string startdate,string enddate)
+        public static List<string> CaseDataOnFilter(string startdate, string enddate)
         {
             DateTime Strtday = DateTime.Today, EndDt = DateTime.Today;
             if (!string.IsNullOrEmpty(startdate) && !string.IsNullOrEmpty(enddate))
@@ -53,7 +54,7 @@ namespace BankDashboard.Common
             List<string> cList = objdata.GetCaseStatusData(Strtday, EndDt);
             return getpercentagefigure(cList);
         }
-        public static List<tbl_UnassignedTickets> CaseDataTableOnFilter(string startdate, string enddate,string filter)
+        public static List<tbl_UnassignedTickets> CaseDataTableOnFilter(string startdate, string enddate, string filter)
         {
             DateTime Strtday = DateTime.Today, EndDt = DateTime.Today;
             if (!string.IsNullOrEmpty(startdate) && !string.IsNullOrEmpty(enddate))
@@ -62,11 +63,205 @@ namespace BankDashboard.Common
                 EndDt = DateTime.Parse(enddate);
             }
             CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
-            List<tbl_UnassignedTickets> list = objdata.GetCaseStatusDataWithFilter(Strtday, EndDt,filter);
+            List<tbl_UnassignedTickets> list = objdata.GetCaseStatusDataWithFilter(Strtday, EndDt, filter);
             return list;
         }
+        public static List<string> GetRoutingPortalForToday()
+        {
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<string> cList = objdata.GetRoutingPortalGraph(DateTime.Today, DateTime.Today);
+            return cList;
+        }
+        public static List<string> RoutingPortaOnFilter(string startdate, string enddate)
+        {
+            DateTime Strtday = DateTime.Today, EndDt = DateTime.Today;
+            if (!string.IsNullOrEmpty(startdate) && !string.IsNullOrEmpty(enddate))
+            {
+                Strtday = DateTime.Parse(startdate);
+                EndDt = DateTime.Parse(enddate);
+            }
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<string> cList = objdata.GetRoutingPortalGraph(Strtday, EndDt);
+            return cList;
+        }
 
+        public static List<tbl_AuthCode> getRoutingPortalTable(string fromdate = "", string todate = "", string filter = "")
+        {
+            CBDB db = new CBDB();
+            List<tbl_AuthCode> list = db.tbl_AuthCode.SqlQuery(GetQueryForTblAuthCode(fromdate, todate, filter)).ToList();
+            return list;
+        }
+        public static string GetQueryForTblAuthCode(string fromdate = "", string todate = "", string filter = "")
+        {
+            string query = "SELECT [Id] ,[FeedbackId] ,[AuthCode] ,[CardNumber] ,[RetrievalRefNo] ,[TransactionAmount] ,[TranId] ,[ARN Number] as ARN_Number ,[RRN Number]as RRN_Number ,[Routing Channel] as Routing_Channel ,[Amount] ,[Issuer] ,[Acquirer] ,[MCC Value] as MCC_Value ,[VROL Case No] as VROL_Case_No ,[Card Type] as Card_Type ,[Status] ,[Exception] ,[Bot Remark] AS Bot_Remark ,[Bot Process StartTime] as Bot_Process_StartTime ,[Bot Process EndTime] as Bot_Process_EndTime ,[Bot EntryTime] as Bot_EntryTime ,[Bot UpdateTime] as Bot_UpdateTime FROM [Chargeback].[dbo].[tbl_AuthCode] where  ";
+            int qrylength = query.Length;
+            if (!string.IsNullOrEmpty(filter))
+            {
+                query = query + "[Routing Channel]='" + filter.Trim() + "'";
+            }
+            if (!string.IsNullOrEmpty(fromdate) && !string.IsNullOrEmpty(todate))
+            {
+                DateTime fdate = Convert.ToDateTime(fromdate), Todate = Convert.ToDateTime(todate).AddHours(23);
+                query = query + ((query.Length > qrylength + 3) ? " and [Bot EntryTime] between '" + fdate.Date.ToString() + "' and '" + Todate.Date.ToString() + "'" :
+                    "  [Bot EntryTime] between '" + fdate.Date.ToString() + "' and '" + Todate.Date.ToString() + "'");
+            }
+            if (qrylength == query.Length)
+            {
+                query = "SELECT TOP (1000) [Id] ,[FeedbackId] ,[AuthCode] ,[CardNumber] ,[RetrievalRefNo] ,[TransactionAmount] ,[TranId] ,[ARN Number] as ARN_Number ,[RRN Number]as RRN_Number ,[Routing Channel] as Routing_Channel ,[Amount] ,[Issuer] ,[Acquirer] ,[MCC Value] as MCC_Value ,[VROL Case No] as VROL_Case_No ,[Card Type] as Card_Type ,[Status] ,[Exception] ,[Bot Remark] AS Bot_Remark ,[Bot Process StartTime] as Bot_Process_StartTime ,[Bot Process EndTime] as Bot_Process_EndTime ,[Bot EntryTime] as Bot_EntryTime ,[Bot UpdateTime] as Bot_UpdateTime FROM [Chargeback].[dbo].[tbl_AuthCode];";
+            }
+            return query;
+        }
+        public static List<string> GetCaseReadyForAction()
+        {
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<string> cList = objdata.GetCaseReadyForAction();
+            return cList;
+        }
+        public static List<tbl_UnassignedTickets> GetCaseReadyTable()
+        {
+            CBDB db = new CBDB();
+            List<tbl_UnassignedTickets> list = db.tbl_UnassignedTickets.SqlQuery("select * from tbl_UnassignedTickets where Status in ('processed','businessruleexception');").ToList();
+            return list;
+        }
         #endregion----------------------------------------------------------------------------------------------------
+
+        #region--------------------------------Wc Statisstics-------------------------------------------
+        public static List<string> WCScaseStatusFigure(ref List<tbl_WeCareReactive> tblWC, string startdate = "", string enddate = "", string Filter = "")
+        {
+            CBDB db = new CBDB();
+            List<tbl_WeCareReactive> wclist = new List<tbl_WeCareReactive>();
+            List<string> wccount = new List<string>();
+            string daterange = string.Empty;
+            try
+            {
+                if (!string.IsNullOrEmpty(startdate) && !string.IsNullOrEmpty(enddate))
+                {
+                    DateTime stdt = Convert.ToDateTime(startdate).Date, Tdt = Convert.ToDateTime(enddate).Date;
+                    wclist = db.tbl_WeCareReactive.Where(x => x.BotEntryTime >= stdt && x.BotEntryTime <= Tdt).ToList();
+                    daterange = "from " + startdate + " to" + enddate;
+                }
+                else
+                {
+                    wclist = db.tbl_WeCareReactive.ToList();
+                    var wc = wclist.OrderByDescending(x => x.BotEntryTime).LastOrDefault();
+                    if (wc != null && wc.BotEntryTime != null)
+                    {
+                        daterange = Convert.ToDateTime(wc.BotEntryTime).ToString("dd-MMM-yyyy");
+                    }
+
+                    daterange = "from " + daterange + " till date.";
+                }
+                wccount.Add(wclist.Where(x => x.Stage.Contains("Closed") || x.Stage.Contains("Resolved")).ToList().Count.ToString());
+                wccount.Add(wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID != null).ToList().Count.ToString());
+                wccount.Add(wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID == null).ToList().Count.ToString());
+                wccount = getpercentagefigure(wccount);
+                wccount.Add(daterange);
+                //-----------------------------------------------Table----------------------------------------------------------------
+                if (!string.IsNullOrEmpty(Filter))
+                {
+                    if (Filter.Equals("Closed"))
+                    {
+                        wclist = wclist.Where(x => x.Stage.Contains("Closed") || x.Stage.Contains("Resolved")).ToList();
+                    }
+                    else if (Filter.Equals("In Progress"))
+                    {
+                        wclist = wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID != null).ToList();
+                    }
+                    else
+                    {
+                        wclist = wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID == null).ToList();
+                    }
+                }
+                tblWC = wclist;
+            }
+            catch { }
+            return wccount;
+        }
+        public static IssueType GetListOfIssueTypes(string startdate = "", string enddate = "", string Filter = "", int issue = 0)
+        {
+            CBDB db = new CBDB();
+            IssueType objI = new IssueType();
+            List<tbl_WeCareReactive> wclist = db.tbl_WeCareReactive.ToList();
+            try
+            {
+                if (!string.IsNullOrEmpty(startdate) && !string.IsNullOrEmpty(enddate))
+                {
+                    DateTime stdt = Convert.ToDateTime(startdate).Date, Tdt = Convert.ToDateTime(enddate).Date;
+                    wclist = db.tbl_WeCareReactive.Where(x => x.BotEntryTime >= stdt && x.BotEntryTime <= Tdt).ToList();
+                    objI.datelbl = "from " + startdate + " to " + enddate;
+                }
+                else
+                {
+                    wclist = db.tbl_WeCareReactive.ToList();
+                    objI.datelbl = "for " + DateTime.Today.AddDays(-1).ToString("dd-MMM-yyyy");
+                }
+                if (!string.IsNullOrEmpty(Filter))
+                {
+                    wclist = wclist.Where(x => x.Issue.Equals(Filter)).ToList();
+                }
+                List<string> issues = wclist.Select(x => x.Issue).Distinct().ToList();
+                objI.Issuetypes = issues;
+                objI.Issuetypesfigures = new List<string>();
+                foreach (string item in objI.Issuetypes)
+                {
+                    objI.Issuetypesfigures.Add(wclist.Where(x => x.Issue.Equals(item)).ToList().Count.ToString());
+                }
+                objI = GetColorOnIssueType(objI, issue);
+            }
+            catch { }
+            return objI;
+        }
+        public static IssueType GetColorOnIssueType(IssueType obj, int issue)
+        {
+            List<string> name = new List<string>(), data = new List<string>(), backcolor = new List<string>(), bordercolor = new List<string>();
+            if (issue == 0 && obj.Issuetypesfigures.Count > 5)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    name.Add(obj.Issuetypes[i]);
+                    data.Add(obj.Issuetypesfigures[i]);
+                    backcolor.Add("rgba(241, 46, 35, 0.5)");
+                    bordercolor.Add("rgba(241, 46, 35)");
+                }
+                obj.Issuetypes = name;
+                obj.Issuetypesfigures = data;
+                obj.IssuetypesBackColor = backcolor;
+                obj.IssuetypesBordercolor = bordercolor;
+            }
+            else
+            {
+                for (int i = 0; i < obj.Issuetypesfigures.Count; i++)
+                {
+                    backcolor.Add("rgba(241, 46, 35, 0.5)");
+                    bordercolor.Add("rgba(241, 46, 35)");
+                }
+                obj.IssuetypesBackColor = backcolor;
+                obj.IssuetypesBordercolor = bordercolor;
+            }
+            return obj;
+        }
+        #endregion---------------------------------------------------------------------------------------
+        #region----------------------------SLA------------------------------------------------------------
+        public static List<tbl_WeCareReactive> GetSla(SLAFilter obj)
+        {
+            CBDB db = new CBDB();
+            List<tbl_WeCareReactive> list = new List<tbl_WeCareReactive>();
+            try
+            {
+                if (!string.IsNullOrEmpty(obj.Filter))
+                {
+                    list = db.tbl_WeCareReactive.Where(x=>x.AssignedUserID.Equals(obj.Filter)).ToList();
+                }
+                else
+                {
+                    list = db.tbl_WeCareReactive.ToList();
+                }               
+            
+            }
+            catch { }
+            return list;
+        }
+        #endregion-------------------------------------------------------------------------------------------
 
         #region-------------------------------Case History--------------------------------------------------------------------
         public static List<tbl_UnassignedTickets> GetCaseHistoryFilterd(ViewModelClass.FilterClass filter)

@@ -9,7 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using BankDashboard.LogFile;
 using System.Text.RegularExpressions;
-using BankDashboard.ModelFd;
+using BankDashboard.CBModel;
 
 namespace BankDashboard.Controllers
 {
@@ -56,7 +56,7 @@ namespace BankDashboard.Controllers
             string ErrorMsg = string.Empty; string Action = string.Empty; string cntrlr = string.Empty, groupname = string.Empty;
 
             Tbl_User_Detail user = new Tbl_User_Detail();
-           
+
             //ADManager AdObj = new ADManager();
             //logincheck = AdObj.ChcekLogin(uname, pwd, ref groupname);
 
@@ -78,7 +78,7 @@ namespace BankDashboard.Controllers
                         UserName = uname,
                         Usergroup = groupname,
                     };
-                     // user.GroupPages = MvcHelper.GetGroupPages(groupname);
+                    // user.GroupPages = MvcHelper.GetGroupPages(groupname);
 
 
                     bool check = FDHelper.CheckMachine(user.UserName.Trim().ToString());
@@ -88,7 +88,7 @@ namespace BankDashboard.Controllers
                     {
                         Session["USerName"] = user.UserName.Trim().ToString();
                         FDHelper.SaveUser(user);
-                        Action = "OverView"; cntrlr = "FD";
+                        Action = "Index"; cntrlr = "CB";
                         //WriteToLogFile.writeMessage("Machine is available User will be Redirected to -- Action = index cntrlr = Dashboard");
                     }
                     else

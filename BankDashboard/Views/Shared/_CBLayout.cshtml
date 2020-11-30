@@ -1,4 +1,4 @@
-﻿@using BankDashboard.ModelFd;
+﻿@using BankDashboard.CBModel;
 @{
     Layout = null;
 }
@@ -10,6 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link href="~/Content/Sidebar.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/bodyOptimizer.css" rel="stylesheet" />
     <title>_FDLayout</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
@@ -19,12 +20,18 @@
     <link href="~/Scripts/dt/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
     <style>
+        #example thead {
+            background-color: #0d274d;
+        }
+
+
+
         .submenu li a:hover {
-            background-color: #ea5082;
+            background-color: #f12928;        
         }
 
         .submenu a.active {
-            background-color: #ea5082;
+            background-color: #f12928;          
             color: white;
             font-size: 16px;
             font-family: inherit;
@@ -41,7 +48,7 @@
             list-style: none;
         }
 
-        
+
 
         .submenu {
             display: none;
@@ -76,8 +83,7 @@
                 <b style="color:#6d7979;font-size:21px">@Session["USerName"]</b>
                 <b style="color:#6d7979;font-size:12px">(@user.Usergroup)</b>
             }
-            <b style="color:#6d7979;font-size:21px">Sushil</b>
-            <b style="color:#6d7979;font-size:12px">(Admin)</b>
+          
 
         </div>
         <div class="col-md-1">
@@ -107,8 +113,13 @@
                                 </a>
                             </li>
                             <li>
-                                <a  href="/app/CB/WC" class="@ViewBag.wcstat">
+                                <a href="/app/CB/WC" class="@ViewBag.wcarestat">
                                     <img src="~/Images/wc.png" height="26" /> WC Statistics
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/app/CB/SLA" class="@ViewBag.SLAStat">
+                                    <img src="~/Images/stat.png" height="26" /> SLA Status
                                 </a>
                             </li>
                         </ul>
@@ -151,7 +162,7 @@
 
             </div>
             <div class="col-md-10" id="contentDiv">
-                <div class="card">
+                <div class="card" id="mainbody">
                     @RenderBody()
                 </div>
                 <div style="width:100%">
@@ -185,23 +196,24 @@
     <script src="~/Scripts/jquery-3.3.1.js"></script>
     <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
     <script src="~/Scripts/dt/js/jquery.dataTables.min.js"></script>
+    <script src="~/Js/jspdf.js"></script>
 
     <script>
         $(document).ready(function () {
             $("#success").fadeOut(4000);
             $("#error").fadeOut(4000);
-       //----------------------------------------------------------------------------------------------           
+            //----------------------------------------------------------------------------------------------
             $("#p1").attr("style", "width:" + $("#xp1").val() + "%")
             $("#p2").attr("style", "width:" + $("#xp2").val() + "%")
             $("#p3").attr("style", "width:" + $("#xp3").val() + "%")
-            $("#p4").attr("style", "width:" + $("#xp4").val() + "%")  
-       //--------------------------------------------------------------------------------------
+            $("#p4").attr("style", "width:" + $("#xp4").val() + "%")
+            //--------------------------------------------------------------------------------------
             var table = $('#example').DataTable();
             $('#example tbody').on('click', 'tr', function () {
                 var data = table.row(this).data();
             });
 
-          
+
             $('.Count').each(function () {
                 var $this = $(this);
                 jQuery({ Counter: 0 }).animate({ Counter: $this.text() }, {
@@ -245,6 +257,47 @@
         $("#rep").click(function () {
             $("#rep1").toggleClass("show")
         })
+    </script>
+    <script>
+
+        (function () {
+            var
+                form = $('#mainbody'),
+                cache_width = form.width(),
+                a4 = [595.28, 841.89]; // for a4 size paper width and height
+
+            $('#create_pdf').on('click', function () {
+                $('body').scrollTop(0);
+                createPDF();
+            });
+            //create pdf
+            function createPDF() {
+                $('.card-header').hide();
+                getCanvas().then(function (canvas) {
+                    var
+                        img = canvas.toDataURL("image/png"),
+                        doc = new jsPDF({
+                            unit: 'px',
+                            format: 'a4'
+                        });
+                    doc.addImage(img, 'JPEG', 20, 20);
+                    doc.save('Report.pdf');
+                    form.width(cache_width);
+                });
+                $('.card-header').show();
+            }
+
+            // create canvas object
+            function getCanvas() {
+                form.width((a4[0] * 1.33333) - 80).css('max-width', 'none');
+                return html2canvas(form, {
+                    imageTimeout: 2000,
+                    removeContainer: true
+                });
+            }
+
+        }());
+
     </script>
 </body>
 </html>

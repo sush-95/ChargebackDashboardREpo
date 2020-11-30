@@ -20,13 +20,13 @@ namespace BankDashboard.Controllers
             ViewBag.botstat = "active";
             BOtStatModel obj = new BOtStatModel();
             obj.castStatFigures = CBHelper.CaseForToday();
-            obj.RoutingPortalFigures = new List<string>() { "24", "35", "56", "21", "76" };
-            obj.CaseReadyForAction = new List<string>() { "20", "5", "10", "2", "1" ,"2"};
+            obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
+            obj.CaseReadyForAction = CBHelper.GetCaseReadyForAction();
             ViewBag.casestat = obj;
             return View();
         }
-       
-        public ActionResult CaseViewFrom(string getval, CaseFilter filter)
+
+        public ActionResult CaseViewFrom(string getval)
         {
             ViewBag.Dashboard = "show";
             ViewBag.botstat = "active";
@@ -40,7 +40,7 @@ namespace BankDashboard.Controllers
                     ViewBag.list = TempData["list"];
                 }
                 else
-                {   
+                {
                     if (getval == "1")
                     {
                         obj.castStatFigures = CBHelper.CaseForToday();
@@ -48,36 +48,41 @@ namespace BankDashboard.Controllers
                     }
                     else if (getval == "2")
                     {
-                        obj.RoutingPortalFigures = new List<string>() { "24", "35", "56", "21", "76" };
+                        obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
+                        ViewBag.list = CBHelper.getRoutingPortalTable();
                     }
                     else if (getval == "3")
                     {
                         obj.CaseReadyForAction = new List<string>() { "24", "35", "56", "21", "76" };
+                        ViewBag.list = CBHelper.GetCaseReadyTable();
                     }
                     ViewBag.casestat = obj;
                 }
-               
             }
             catch { throw; }
             return View();
         }
-    
-        public ActionResult GetFilterData(string Flag,string Todate,string Fromdate,string Filter)
+
+        public ActionResult GetFilterData(string Flag, string Todate, string Fromdate, string Filter)
         {
             BOtStatModel obj = new BOtStatModel();
-           
+            obj.flag = Flag;
             if (Flag == "1")
             {
                 obj.castStatFigures = CBHelper.CaseDataOnFilter(Fromdate, Todate);
                 TempData["list"] = CBHelper.CaseDataTableOnFilter(Fromdate, Todate, Filter);
+                TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
             }
             else if (Flag == "2")
             {
-                obj.RoutingPortalFigures = new List<string>() { "24", "35", "56", "21", "76" };
+                obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
+                TempData["list"] = CBHelper.getRoutingPortalTable(Fromdate, Todate, Filter);
+                TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
             }
             else if (Flag == "3")
             {
                 obj.CaseReadyForAction = new List<string>() { "24", "35", "56", "21", "76" };
+                TempData["list"] = CBHelper.GetCaseReadyTable();
             }
             TempData["caseObj"] = obj;
             return RedirectToAction("CaseViewFrom", new { getval = Flag });
@@ -102,10 +107,14 @@ namespace BankDashboard.Controllers
         public ActionResult WC()
         {
             ViewBag.Dashboard = "show";
-            ViewBag.wcstat = "active";
+            ViewBag.wcarestat = "active";
             try
             {
-
+                WCStatModel obj = new WCStatModel();
+                List<tbl_WeCareReactive> tblWC = new List<tbl_WeCareReactive>();
+                obj.WCCaseStatus = CBHelper.WCScaseStatusFigure(ref tblWC);
+                obj.Itypes = CBHelper.GetListOfIssueTypes("", "", "");
+                ViewBag.WCObj = obj;
             }
             catch (Exception ex)
             {
@@ -113,7 +122,95 @@ namespace BankDashboard.Controllers
             }
             return View();
         }
+
+        public ActionResult WCViewFrom(string getval)
+        {
+            ViewBag.Dashboard = "show";
+            ViewBag.wcarestat = "active";
+            try
+            {
+                WCStatModel obj = new WCStatModel();
+                obj.flag = getval;
+                if (TempData["WCObj"] != null)
+                {
+                    ViewBag.WCstat = TempData["WCObj"];
+                    ViewBag.list = TempData["list"];
+                }
+                else
+                {
+                    if (getval == "1")
+                    {
+                        List<tbl_WeCareReactive> tblWC = new List<tbl_WeCareReactive>();
+                        obj.WCCaseStatus = CBHelper.WCScaseStatusFigure(ref tblWC);
+                        ViewBag.list = tblWC;
+                    }
+                    else if (getval == "2")
+                    {
+                        obj.Itypes = CBHelper.GetListOfIssueTypes("", "", "", 1);
+                        CBDB db = new CBDB();
+                        TempData["issuelist"] = db.tbl_WeCareReactive.Select(x => x.Issue).Distinct().ToList();
+                    }
+                    ViewBag.WCstat = obj;
+                }
+            }
+            catch (Exception ex) { }
+            return View();
+        }
+        public ActionResult GetFilterDataWC(string Flag, string Todate, string Fromdate, string Filter)
+        {
+            try
+            {
+                WCStatModel obj = new WCStatModel();
+                obj.flag = Flag;
+                if (Flag == "1")
+                {
+                    List<tbl_WeCareReactive> tblWC = new List<tbl_WeCareReactive>();
+                    obj.WCCaseStatus = CBHelper.WCScaseStatusFigure(ref tblWC, Fromdate, Todate,Filter);
+                    TempData["list"] = tblWC;
+                    TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
+                }
+                else if (Flag == "2")
+                {
+                    
+                    obj.Itypes = CBHelper.GetListOfIssueTypes(Fromdate, Todate, Filter, 1);                   
+                    TempData["list"] = CBHelper.getRoutingPortalTable(Fromdate, Todate, Filter);
+                    TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
+                    CBDB db = new CBDB();
+                    TempData["issuelist"] = db.tbl_WeCareReactive.Select(x => x.Issue).Distinct().ToList();
+                }               
+                TempData["WCObj"] = obj;
+               
+            }
+            catch { }
+            return RedirectToAction("WCViewFrom", new { getval = Flag });
+        }
         #endregion------------------------------------------------------------------------------
+
+        #region---------------------------SLA-------------------------------------------
+        public ActionResult SLA(SLAFilter obj, string find)
+        {
+            ViewBag.Dashboard = "show";
+            ViewBag.SLAStat = "active";
+            CBDB db = new CBDB();
+            try
+            {               
+                if (find != null)
+                {
+                    ViewBag.list = CBHelper.GetSla(obj);
+                }
+                else
+                {                  
+                    ViewBag.list = db.tbl_WeCareReactive.ToList();
+                    obj = new SLAFilter() { SLADays = "75", CloseToSla = "10", SlACount = "", Filter = "" };
+                 
+                }
+                ViewBag.filterobj = obj;
+                ViewBag.userlist = db.tbl_WeCareReactive.Select(x => x.AssignedUserID).Distinct().ToList();
+            }
+            catch { }
+            return View();
+        }
+        #endregion-----------------------------------------------------------------------
 
         #region-------------------------Case History----------------------------------------------
         public ActionResult CaseHistory(FilterClass filter, string find)

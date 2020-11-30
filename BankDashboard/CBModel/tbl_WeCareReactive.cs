@@ -25,8 +25,7 @@ namespace BankDashboard.CBModel
         [StringLength(50)]
         public string AssignedUserID { get; set; }
 
-        [StringLength(50)]
-        public string RegistrationDate { get; set; }
+        public DateTime? RegistrationDate { get; set; }
 
         [StringLength(50)]
         public string DateModified { get; set; }
@@ -376,8 +375,7 @@ namespace BankDashboard.CBModel
         [StringLength(50)]
         public string RerouteUserGroup { get; set; }
 
-        [StringLength(50)]
-        public string ResolutionDate { get; set; }
+        public DateTime? ResolutionDate { get; set; }
 
         [StringLength(50)]
         public string ResolvedByGroup { get; set; }
@@ -451,5 +449,7 @@ namespace BankDashboard.CBModel
 
         [StringLength(50)]
         public string FileType { get; set; }
+
+        public DateTime? BotUpdateTime { get; set; }
     }
 }

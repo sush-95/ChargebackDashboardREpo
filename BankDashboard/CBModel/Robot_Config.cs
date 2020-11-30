@@ -1,4 +1,4 @@
-namespace BankDashboard.ModelFd
+namespace BankDashboard.CBModel
 {
     using System;
     using System.Collections.Generic;
@@ -6,9 +6,9 @@ namespace BankDashboard.ModelFd
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class SettingAndConstant
+    public partial class Robot_Config
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
@@ -16,6 +16,12 @@ namespace BankDashboard.ModelFd
 
         public string Description { get; set; }
 
-        public int? EditFlag { get; set; }
+        public DateTime? UpdatedTime { get; set; }
+
+        public string UpdatedBy { get; set; }
+
+        public DateTime? AddedTime { get; set; }
+
+        public string AddedBy { get; set; }
     }
 }

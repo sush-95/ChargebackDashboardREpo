@@ -1,6 +1,6 @@
 ﻿@using BankDashboard.Common;
 @{
-    ViewBag.Title = "Bot Statistics";
+    ViewBag.Title = "Case Statistics";
     Layout = "~/Views/Shared/_CBLayout.cshtml";
     ViewModelClass.BOtStatModel botstatobj = (ViewModelClass.BOtStatModel)ViewBag.casestat;
 }
@@ -84,17 +84,7 @@ padding-left:6px;
         border-left: none;
     }
 
-    .pabrraised1 {
-        width: 50%;
-    }
-
-    .pabrraised2 {
-        width: 35%;
-    }
-
-    .pabrraised3 {
-        width: 10%;
-    }
+  
 
     .invoice {
         width: 80%;
@@ -104,9 +94,7 @@ padding-left:6px;
         font-weight: bold;
     }
 
-    .pabrraised4 {
-        width: 5%;
-    }
+ 
 
     .btn-lh {
         background-color: #484541;
@@ -131,12 +119,12 @@ padding-left:6px;
 
 <div class="card-body">   
     <div class="row">
-        <div class="col-sm-6 p-3">
+        <div class="col-sm-6">
             <div class="shadow card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-5">
-                            <b>Cases Status(To Day)</b>
+                            <b>Cases Status (Today)</b>
                         </div>
                         <div class="col-sm-1">
                         </div>
@@ -202,12 +190,12 @@ padding-left:6px;
             </div>
 
         </div>
-        <div class="col-sm-6 p-3">
+        <div class="col-sm-6">
             <div class="shadow card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-8">
-                            <b>Routing Portal Statistics(To Day)</b>
+                            <b>Routing Portal Statistics (Today)</b>
                         </div>
                        
                         <div class="col-sm-4">
@@ -219,21 +207,21 @@ padding-left:6px;
                     </div>
                 </div>
                 <div class="card-body" style="width:510px;height:290px;position:relative;left:3%">
-                   
-                    <div class="col-md-12">
-                        <canvas id="doughnutChart"></canvas>                        
-                    </div>
                     <div>
                         <table id="tbl2" style="font-size: 14px;position:relative;left:1%">
                             <tr>
-                                <th style="color:#F7464A">MasterCard :@botstatobj.RoutingPortalFigures[0]</th>
-                                <th style="color:#46BFBD">Visa :@botstatobj.RoutingPortalFigures[1]</th>
-                                <th style="color:#FDB45C">OmanNet :@botstatobj.RoutingPortalFigures[2]</th>
-                                <th style="color:#949FB1">Onus :@botstatobj.RoutingPortalFigures[3]</th>
-                                <th style="color:#686cda">POSECOM :@botstatobj.RoutingPortalFigures[4]</th>
+                                <th style="color:#0d274d">MasterCard :@botstatobj.RoutingPortalFigures[0]</th>
+                                <th style="color:#c00000">Visa :@botstatobj.RoutingPortalFigures[1]</th>
+                                <th style="color:#8a8f92">OmanNet :@botstatobj.RoutingPortalFigures[2]</th>
+                                <th style="color:#92d028">Onus :@botstatobj.RoutingPortalFigures[3]</th>
+                                <th style="color:#558fd5">POSECOM :@botstatobj.RoutingPortalFigures[4]</th>
                             </tr>
                         </table>
                     </div>
+                    <div class="col-md-12">
+                        <canvas id="doughnutChart"></canvas>                        
+                    </div>
+                    
                 </div>
                 <div class="card-footer">
                     <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
@@ -264,7 +252,7 @@ padding-left:6px;
                     <a style="text-decoration:none"  href="/app/CB/CaseViewFrom?getval=3">
                         <h1 class="Count" style="  font-size: 6.4rem;color: #4e907a">@botstatobj.CaseReadyForAction[0]</h1>
                     </a>  
-                    <table id="tbl1" style="position: relative;left: 17%;font-size: 13px;color:#628881">
+                    @*<table id="tbl1" style="position: relative;left: 17%;font-size: 13px;color:#628881">
                         <tr >
                             <th>Master Card:</th>
                             <td>@botstatobj.CaseReadyForAction[1]</td>
@@ -277,7 +265,7 @@ padding-left:6px;
                             <th>POSECOM:</th>
                             <td>@botstatobj.CaseReadyForAction[5]</td>
                         </tr>
-                    </table>
+                    </table>*@
                 </div>
                 <div class="card-footer">
                     <b style="color:#6d7979;font-size:12px;">Showing data from 23-Mar -till date</b>
@@ -295,12 +283,12 @@ padding-left:6px;
     var myLineChart = new Chart(ctxD, {      
         type: 'doughnut',
         data: {
-            labels: ["MasterCard", "Visa", "OmanNet", "Onus","POSECOM"],
+            //labels: ["MasterCard", "Visa", "OmanNet", "Onus","POSECOM"],
             datasets: [{
                 data: datafig,               
                 //data: ["84","64","54","78","89"],
-                backgroundColor: ["#F7464A", "#46BFBD", "#FDB45C", "#949FB1", "#686cda"],
-                hoverBackgroundColor: ["#FF5A5E", "#5AD3D1", "#FFC870", "#A8B3C5", "#686cda"]
+                backgroundColor: ["#0d274d", "#c00000", "#8a8f92", "#92d028", "#558fd5"],
+                hoverBackgroundColor: ["#0d274d8f", "#c0000085", "#8a8f9285", "#92d0288c", "#558fd58a"]
             }]
         },
         options: {

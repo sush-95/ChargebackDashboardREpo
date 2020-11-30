@@ -81,6 +81,105 @@ namespace BankDashboard.DataAccessLayer
             catch { }
             return tbl;
         }
+
+        public List<string> GetRoutingPortalGraph(DateTime fromdate, DateTime todate)
+        {
+            List<string> CountList = new List<string>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataSet ds = new DataSet();
+                    SqlCommand cmd = new SqlCommand("UDSP_DASHBOARD_Get_RoutingPortal_Stats_tblAuthCode", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Param_FromDate", fromdate);
+                    cmd.Parameters.AddWithValue("@Param_ToDate", todate);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(ds);
+                    if (ds != null)
+                    {
+                        if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                        {
+                            foreach (DataRow dr in ds.Tables[0].Rows)
+                            {                              
+                                CountList.Add(dr["MasterCard_Count"].ToString());
+                                CountList.Add(dr["Visa_Count"].ToString());
+                                CountList.Add(dr["Omanet_Count"].ToString());
+                                CountList.Add(dr["Onus_Count"].ToString());
+                                CountList.Add(dr["Posecom_Count"].ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+            return CountList;
+        }
+        //public List<string> GetRoutingPortalTable(DateTime fromdate, DateTime todate,string Filter)
+        //{
+        //    List<tbl_UnassignedTickets> tbl = new List<tbl_UnassignedTickets>();
+        //    try
+        //    {
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            DataSet ds = new DataSet();
+        //            SqlCommand cmd = new SqlCommand("UDSP_DASHBOARD_Get_CaseStatus_TicketType_tblUnassigned", con);
+        //            cmd.CommandType = CommandType.StoredProcedure;
+        //            cmd.Parameters.AddWithValue("@Param_FromDate", fromdate);
+        //            cmd.Parameters.AddWithValue("@Param_ToDate", todate);
+        //            cmd.Parameters.AddWithValue("@Param_TicketStatus", filter);
+        //            SqlDataAdapter da = new SqlDataAdapter(cmd);
+        //            da.Fill(ds);
+        //            if (ds != null)
+        //            {
+        //                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+        //                {
+        //                    foreach (DataRow dr in ds.Tables[0].Rows)
+        //                    {
+        //                        tbl_UnassignedTickets obj = new tbl_UnassignedTickets();
+        //                        obj.FeedbackId = dr["FeedbackId"].ToString();
+        //                        obj.Issue = dr["Issue"].ToString();
+        //                        obj.Status = dr["Status"].ToString();
+        //                        obj.BotRemarks = dr["BotRemarks"].ToString();
+        //                        obj.BotDataEntryTime = Convert.ToDateTime(dr["BotDataEntryTime"].ToString());
+        //                        tbl.Add(obj);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch { }
+        //    return tbl;
+        //}
+
+        public List<string> GetCaseReadyForAction()
+        {
+            List<string> CountList = new List<string>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataSet ds = new DataSet();
+                    SqlCommand cmd = new SqlCommand("UDSP_DASHBOARD_Get_CaseReadyForAction_Count_tblAuthCode", con);
+                    cmd.CommandType = CommandType.StoredProcedure;                   
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(ds);
+                    if (ds != null)
+                    {
+                        if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                        {
+                            foreach (DataRow dr in ds.Tables[0].Rows)
+                            {
+                                CountList.Add(dr["Cases Ready For Action"].ToString());                              
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+            return CountList;
+        }
+
         public static string GetSqlConnection()
         {
             var x = System.Configuration.ConfigurationManager.AppSettings["getstr"];
