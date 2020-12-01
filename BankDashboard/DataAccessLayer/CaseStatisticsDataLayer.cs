@@ -94,5 +94,98 @@ namespace BankDashboard.DataAccessLayer
             tripleDES.Clear();
             return UTF8Encoding.UTF8.GetString(resultArray);
         }
+        
+        public void MarkAllReconciliationDataInActive()
+        {
+           
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("UDSP_DASHBOARD_InActiveAllData_NonCustom_GLReconciliationTable", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                    con.Close();               
+                }
+            }
+            catch(Exception e) { throw e; }
+            
+        }
+        
+        public void MarkReconciliationRecordInActive(string Id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("UDSP_DASHBOARD_InActiveRecord_NonCustom_GLReconciliationTable", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Param_RecordId", Id);
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+            }
+            catch (Exception e) { throw e; }
+
+        }
+        public List<string> GetRecordIdForReconsiliation()
+        {
+            List<string> RecordIds = new List<string>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataSet ds = new DataSet();
+                    SqlCommand cmd = new SqlCommand("UDSP_DASHBOARD_GetRecordIdForRconsile", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(ds);
+                    if (ds != null)
+                    {
+                        if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                        {
+                            RecordIds.Add(ds.Tables[0].Rows[0]["idDebit"].ToString());
+                            RecordIds.Add(ds.Tables[0].Rows[0]["idCredit"].ToString());
+                            foreach (DataRow dr in ds.Tables[0].Rows)
+                            {
+                                string idDebit  = dr["idDebit"].ToString();
+                                string idCredit = dr["idCredit"].ToString();
+                                
+                                if(!RecordIds.Contains(idCredit) && !RecordIds.Contains(idDebit))
+                                {
+                                    RecordIds.Add(idDebit);
+                                    RecordIds.Add(idCredit);
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception e) { throw e; }
+
+            return RecordIds;
+
+        }
+
+        public void MarkReconciliationRecordsInActive_IdsList(string Ids)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("UDSP_DASHBOARD_InActiveRecords_IDsList_NonCustom_GLReconciliationTable", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@param_IdsList", Ids);
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+            }
+            catch (Exception e) { throw e; }
+
+        }
     }
 }

@@ -679,6 +679,9 @@
     <Content Include="Views\CB\UnmatchedFinTransaction.cshtml" />
     <Content Include="Views\CB\AuthCode.cshtml" />
     <Content Include="Views\CB\CaseViewFrom.cshtml" />
+    <Content Include="Views\CB\ReconsiliationReport.cshtml" />
+    <Content Include="Views\CB\AddRowReconsiliationTable.cshtml" />
+    <Content Include="Views\CB\ClosureReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

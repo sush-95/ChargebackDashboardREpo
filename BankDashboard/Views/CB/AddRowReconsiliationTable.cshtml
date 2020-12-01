@@ -1,0 +1,58 @@
+﻿
+@using BankDashboard.Common;
+
+@{
+    ViewBag.Title = "AddRowReconsiliationTable";
+    Layout = "~/Views/Shared/_CBLayout.cshtml";
+    BankDashboard.CBModel.NonCustom_GLReconciliationTable addObj = new BankDashboard.CBModel.NonCustom_GLReconciliationTable();
+    
+}
+
+<div class="card-body">
+    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/AddRowReconsiliationTable" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-sm-2">
+                <span> Value Date:</span>
+                <input type="text" class="form-control invoice" value="@addObj.ValueDate" autocomplete="off" name="ValueDate" />
+            </div>
+            <div class="col-sm-2">
+                <span> Post Date:</span>
+                <input type="text" class="form-control" value="@addObj.PostDate" autocomplete="off" name="PostDate" />
+            </div>
+            <div class="col-sm-2">
+                <span> MemberCase</span>
+                <input type="text" class="form-control" value="@addObj.MemberCase" autocomplete="off" name="MemberCase" />
+            </div>
+            <div class="col-sm-2">
+                <span> Name</span>
+                <input type="text" class="form-control" value="@addObj.Name" autocomplete="off" name="Name" />
+            </div>
+            <div class="col-sm-2">
+                <span> Reference</span>
+                <input type="text" class="form-control" value="@addObj.Reference" autocomplete="off" name="Reference" />
+            </div>
+            <div class="col-sm-2">
+                <span> Card Number</span>
+                <input type="text" class="form-control" value="@addObj.CardNumber" autocomplete="off" name="CardNumber" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <span> Debit</span>
+                <input type="text" class="form-control" value="@addObj.Debit" autocomplete="off" name="Debit" />
+            </div>
+            <div class="col-sm-2">
+                <span> Credit</span>
+                <input type="text" class="form-control" value="@addObj.Credit" autocomplete="off" name="Credit" />
+            </div>
+            
+            <div class="col-sm-2">
+                <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;" name="submit" value="submit">Submit</button>
+            </div>
+            <div class="col-sm-6"></div>
+        </div>
+    </form>
+    <br />
+
+</div>

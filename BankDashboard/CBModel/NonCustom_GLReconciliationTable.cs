@@ -1,5 +1,6 @@
 namespace BankDashboard.CBModel
 {
+    using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -36,6 +37,13 @@ namespace BankDashboard.CBModel
 
         public DateTime? FileScheduleDate { get; set; }
 
+        [StringLength(4)]
+        public string Year { get; set; }
+
+        public string Comments { get; set; }
+
         public DateTime? BotEntryTime { get; set; }
+
+        public bool? IsActive { get; set; }
     }
 }
