@@ -263,5 +263,8 @@ namespace BankDashboard.CBModel
         public DateTime? FileScheduleDate { get; set; }
 
         public DateTime? AcceptCloseTime { get; set; }
+
+        [StringLength(50)]
+        public string CaseClosureStatus { get; set; }
     }
 }

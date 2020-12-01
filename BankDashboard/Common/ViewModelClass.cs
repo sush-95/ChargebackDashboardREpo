@@ -58,7 +58,19 @@ namespace BankDashboard.Common
             public string SlACount { get; set; }
             public string Filter { get; set; }
         }
+        public class ReconciliationFilter
+        {
+            public string CardNumber { get; set; }
+            public string MemberCaseNumber { get; set; }
+        }
+        public class ClosureReportFilter
+        {
+            public DateTime FromDate { get; set; }
+            public DateTime ToDate { get; set; }
+            public string ROLCaseNumber { get; set; }
+            public string Status { get; set; }
+            public string FinancialCPD { get; set; }
 
-
+        }
     }
 }

@@ -676,6 +676,9 @@
     <Content Include="Views\CB\CaseViewFrom.cshtml" />
     <Content Include="Views\CB\WCViewFrom.cshtml" />
     <Content Include="Views\CB\SLA.cshtml" />
+    <Content Include="Views\CB\AddRowReconsiliationTable.cshtml" />
+    <Content Include="Views\CB\ClosureReport.cshtml" />
+    <Content Include="Views\CB\ReconsiliationReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

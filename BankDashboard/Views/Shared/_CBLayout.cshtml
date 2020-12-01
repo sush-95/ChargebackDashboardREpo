@@ -11,7 +11,7 @@
     <link href="~/Content/Sidebar.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width" />
     <link href="~/Content/bodyOptimizer.css" rel="stylesheet" />
-    <title>_FDLayout</title>
+    <title>BankMuscat::Chargeback</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
@@ -23,17 +23,19 @@
         #example thead {
             background-color: #0d274d;
         }
-
-
-
         .submenu li a:hover {
-            background-color: #f12928;        
+            background-color: #f12928;
+            font-size: 13px;
         }
-
+        .pagetilte {
+            font-family: sans-serif;
+            color: #f12928;
+            font-weight:bold;
+        }
         .submenu a.active {
-            background-color: #f12928;          
+            background-color: #f12928;
             color: white;
-            font-size: 16px;
+            font-size: 13px;
             font-family: inherit;
             font-weight: bold;
             text-decoration: none;
@@ -41,7 +43,7 @@
 
         .submenu li a {
             padding-left: 38px;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .submenu li {
@@ -54,9 +56,7 @@
             display: none;
         }
 
-            .submenu li a:hover {
-                font-size: 15px;
-            }
+          
 
         .show {
             display: block;
@@ -94,10 +94,10 @@
         </div>
     </nav>
     <nav class="nav2">
-        <b>@ViewBag.Title</b>
+    
     </nav>
 
-    <div class="container-fluid" style=" margin-top:46px">
+    <div class="container-fluid" style=" margin-top:33px">
         <div class="row">
             <div class="col-md-2" style="margin-left: -14px;" id="sideDiv">
                 <ul class="sidebar">
@@ -136,6 +136,11 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="/app/CB/ClosureReport" class="@ViewBag.ClosureReport">
+                                    <img src="~/Images/casedetail.png" />Accepted Case &nbsp;Closure
+                                </a>
+                            </li>
+                            <li>
                                 <a href="/app/CB/MatchedFinTransaction" class="@ViewBag.matchedTran">
                                     <img src="~/Images/mtran.png" height="26" />Matched Tran
                                 </a>
@@ -146,15 +151,15 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#home">
+                                <a href="/app/CB/ReconsiliationReport" class="@ViewBag.Reconsiliation">
                                     <img src="~/Images/recon.png" height="26" />Reconciliation
                                 </a>
                             </li>
-                            <li>
+                            @*<li>
                                 <a href="#home">
                                     <img src="~/Images/bot.png" height="26" />BOT Config
                                 </a>
-                            </li>
+                            </li>*@
                         </ul>
                     </li>
                 </ul>

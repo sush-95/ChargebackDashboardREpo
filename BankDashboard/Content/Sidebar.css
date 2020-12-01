@@ -2,7 +2,15 @@
 #example {
     font-size: 12px;
 }
-
+#example_length label{
+    font-size:12px
+}
+#example_info {
+    font-size: 12px
+}
+#example_paginate {
+    font-size: 12px
+}
 .dataTables_length label select {
     border-radius: 0.25rem;
     border-color: #b0bdbd;
@@ -35,10 +43,10 @@
 }
 
 .nav2 {
-    height: 32px;
+    height: 7px;
     background-color: #f12928;
     position: fixed;
-    top: 58px;
+    top: 63px;
     right: 0;
     left: 0;
     z-index: 1030;
@@ -63,10 +71,10 @@ body {
 .sidebar {
     margin: 0;
     padding: 0;
-    width: 209px;
+    width: 223px;
     background-color: #463c3a;
     position: fixed;
-    top: 91px;
+    top: 83px;
     overflow: auto;
     border-radius: 4px;
 }

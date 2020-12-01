@@ -537,5 +537,380 @@ namespace BankDashboard.Controllers
         }
 
         #endregion------------------------------------------------------------------------------
+
+        #region---------------------------------------Reconciliation----------------------------------------------
+
+
+        public ActionResult AddRowReconsiliationTable(NonCustom_GLReconciliationTable obj, string submit)
+        {
+            ViewBag.Report = "show";
+            ViewBag.Reconsiliation = "active";
+            if (submit != null && obj != null)
+            {
+                CBHelper.AddRow_NonCustom_GLReconciliationTable(obj);
+                return RedirectToAction("ReconsiliationReport");
+            }
+            return View();
+
+        }
+        public ActionResult ReconsiliationReport(ReconciliationFilter filter, string find, string removeAll, string remove)
+        {
+            ViewBag.Report = "show";
+            ViewBag.Reconsiliation = "active";
+            try
+            {
+                CBDB db = new CBDB();
+                if (find != null)
+                {
+                    ViewBag.list = CBHelper.GetReconsiledReportFilterd(filter);
+                    ViewBag.filter = filter;
+                }
+                else if (removeAll != null)
+                {
+
+                    CBHelper.MarkAllRecordsAsInActive();
+                    ViewBag.list = CBHelper.GetReconsiledReportFilterd(new ReconciliationFilter { CardNumber = "", MemberCaseNumber = "" });
+                }
+                else if (remove != null)
+                {
+                    CBHelper.MarkRecordsAsInActive(remove);
+                    ViewBag.list = CBHelper.GetReconsiledReportFilterd(new ReconciliationFilter { CardNumber = "", MemberCaseNumber = "" });
+                }
+                else
+                {
+                    CBHelper.ReconsiledReport();
+                    ViewBag.list = CBHelper.GetReconsiledReportFilterd(new ReconciliationFilter { CardNumber = "", MemberCaseNumber = "" });
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Somthing went wrong.." + ex.Message;
+            }
+            return View();
+
+        }
+        public ActionResult GetExcel_ReconciliationReport(string hfilter)
+        {
+            ViewModelClass.ReconciliationFilter filterobj = new ViewModelClass.ReconciliationFilter();
+            try
+            {
+                List<NonCustom_GLReconciliationTable> list = new List<NonCustom_GLReconciliationTable>();
+                if (!hfilter.Equals("null"))
+                {
+                    filterobj = JsonConvert.DeserializeObject<ViewModelClass.ReconciliationFilter>(hfilter);
+                    list = CBHelper.GetReconsiledReportFilterd(filterobj).ToList();
+                }
+                else
+                {
+
+                    list = CBHelper.GetReconsiledReportFilterd(new ReconciliationFilter { CardNumber = "", MemberCaseNumber = "" }).ToList();
+                }
+                FormattoExcel_ReconsiliationReport(list, "ReconsiliationReport_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
+            }
+            catch
+            {
+                TempData["Error"] = "Something went wrong..!";
+            }
+            return RedirectToAction("ReconsiliationReport", new { filter = filterobj });
+            //return RedirectToAction("Report", new { filter = filterobj, Apply = "" });
+        }
+        void FormattoExcel_ReconsiliationReport(List<NonCustom_GLReconciliationTable> p, string sname)
+        {
+
+
+            System.Web.HttpContext.Current.Response.Clear();
+            System.Web.HttpContext.Current.Response.ClearContent();
+            System.Web.HttpContext.Current.Response.ClearHeaders();
+            System.Web.HttpContext.Current.Response.Buffer = true;
+            System.Web.HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
+            System.Web.HttpContext.Current.Response.Write(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">");
+            System.Web.HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + sname + ".xls"); /*" + sname + "*/
+
+            System.Web.HttpContext.Current.Response.Charset = "utf-8";
+            System.Web.HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("windows-1250");
+            //sets font
+            System.Web.HttpContext.Current.Response.Write("<font style='font-size:10.0pt; font-family:Calibri;'>");
+            System.Web.HttpContext.Current.Response.Write("<BR><BR><BR>");
+            System.Web.HttpContext.Current.Response.Write("<Table border='1' bgColor='#ffffff' " + "borderColor='#000000' cellSpacing='0' cellPadding='0' " +
+              "style='font-size:10.0pt; font-family:Calibri; background:white;'> <TR>");
+
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Post Date");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Member Case");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Card Number");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Debit");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Credit");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Year");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Comments");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+
+
+            System.Web.HttpContext.Current.Response.Write("</Tr>");
+
+
+
+            foreach (NonCustom_GLReconciliationTable pdata in p)
+            {
+                System.Web.HttpContext.Current.Response.Write("<TR>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.PostDate);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.MemberCase);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.CardNumber);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Debit);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Credit);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Year);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Comments);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+
+                System.Web.HttpContext.Current.Response.Write("</TR>");
+
+            }
+            System.Web.HttpContext.Current.Response.Write("</Table>");
+            System.Web.HttpContext.Current.Response.Write("</font>");
+            System.Web.HttpContext.Current.Response.Flush();
+            System.Web.HttpContext.Current.Response.End();
+            System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
+        }
+
+
+        #endregion--------------------------------------------------------------------------------------------------
+
+        #region-------------------------------------Closure Report----------------------------------------
+        public ActionResult ClosureReport(ClosureReportFilter filter, string find)
+        {
+            ViewBag.Report = "show";
+            ViewBag.ClosureReport = "active";
+
+            try
+            {
+                CBDB db = new CBDB();
+                if (find != null && filter != null)
+                {
+                    ViewBag.list = CBHelper.AcceptedCaseClosureReportFilter(filter);
+                    ViewBag.filter = filter;
+                }
+                else
+                {
+                    ViewBag.list = CBHelper.AcceptedCaseClosureReportDefaultData();
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Somthing went wrong.." + ex.Message;
+            }
+
+
+            return View();
+        }
+        public ActionResult GetExcel_AcceptedCaseClosureReport(string hfilter)
+        {
+            ViewModelClass.ClosureReportFilter filterobj = new ViewModelClass.ClosureReportFilter();
+            try
+            {
+                List<tbl_IssuingIncomingVISA> list = new List<tbl_IssuingIncomingVISA>();
+                if (!hfilter.Equals("null"))
+                {
+                    filterobj = JsonConvert.DeserializeObject<ViewModelClass.ClosureReportFilter>(hfilter);
+                    list = CBHelper.AcceptedCaseClosureReportFilter(filterobj).ToList();
+                }
+                else
+                {
+
+                    list = CBHelper.AcceptedCaseClosureReportDefaultData().ToList();
+                }
+                FormattoExcel_AcceptedCaseClosureReport(list, "AcceptedCaseClosureReport_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
+            }
+            catch
+            {
+                TempData["Error"] = "Something went wrong..!";
+            }
+            return RedirectToAction("ReconsiliationReport", new { filter = filterobj });
+            //return RedirectToAction("Report", new { filter = filterobj, Apply = "" });
+        }
+        void FormattoExcel_AcceptedCaseClosureReport(List<tbl_IssuingIncomingVISA> p, string sname)
+        {
+
+
+            System.Web.HttpContext.Current.Response.Clear();
+            System.Web.HttpContext.Current.Response.ClearContent();
+            System.Web.HttpContext.Current.Response.ClearHeaders();
+            System.Web.HttpContext.Current.Response.Buffer = true;
+            System.Web.HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
+            System.Web.HttpContext.Current.Response.Write(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">");
+            System.Web.HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + sname + ".xls"); /*" + sname + "*/
+
+            System.Web.HttpContext.Current.Response.Charset = "utf-8";
+            System.Web.HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("windows-1250");
+            //sets font
+            System.Web.HttpContext.Current.Response.Write("<font style='font-size:10.0pt; font-family:Calibri;'>");
+            System.Web.HttpContext.Current.Response.Write("<BR><BR><BR>");
+            System.Web.HttpContext.Current.Response.Write("<Table border='1' bgColor='#ffffff' " + "borderColor='#000000' cellSpacing='0' cellPadding='0' " +
+              "style='font-size:10.0pt; font-family:Calibri; background:white;'> <TR>");
+
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Feedback Id");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("ROL Case No.");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Financial CPD");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("ARN Number");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Message Type");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Case Closure Report");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+
+
+
+
+            System.Web.HttpContext.Current.Response.Write("</Tr>");
+
+
+
+            foreach (tbl_IssuingIncomingVISA pdata in p)
+            {
+                System.Web.HttpContext.Current.Response.Write("<TR>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write("");
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.ROLCaseNo);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.FinancialCPD);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write("");
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.MessageType);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.CaseClosureStatus);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("</TR>");
+
+            }
+            System.Web.HttpContext.Current.Response.Write("</Table>");
+            System.Web.HttpContext.Current.Response.Write("</font>");
+            System.Web.HttpContext.Current.Response.Flush();
+            System.Web.HttpContext.Current.Response.End();
+            System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
+        }
+        #endregion----------------------------------------------------------------------------------------
+
+
     }
 }

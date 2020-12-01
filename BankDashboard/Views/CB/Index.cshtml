@@ -11,9 +11,10 @@
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
 <style>
-   #tbl1 th{
-padding-left:6px;
-   }
+    #tbl1 th {
+        padding-left: 6px;
+    }
+
     #tbl2 th {
         padding-left: 7px;
     }
@@ -45,7 +46,7 @@ padding-left:6px;
 
     .progress {
         width: 0px;
-        height: 27px;
+        height: 50px;
         transition-property: width;
         transition-duration: 1s;
         border-color: #c5acb1;
@@ -57,12 +58,13 @@ padding-left:6px;
         .progress b {
             padding-left: 50%;
             padding-right: 50%;
-            padding-top: 10px;
+            padding-top: 25px;
             color: white;
+            font-size: 13px;
         }
 
     .pbar1 {
-        background:url(/Images/greentexture.PNG);
+        background: url(/Images/greentexture.PNG);
         border-right: none;
     }
 
@@ -84,7 +86,7 @@ padding-left:6px;
         border-left: none;
     }
 
-  
+
 
     .invoice {
         width: 80%;
@@ -94,7 +96,7 @@ padding-left:6px;
         font-weight: bold;
     }
 
- 
+
 
     .btn-lh {
         background-color: #484541;
@@ -108,16 +110,11 @@ padding-left:6px;
             color: white;
         }
 </style>
-<div class="card-header">
-    <div class="row">   
-
-    </div>
-    <div class="row">
-
-    </div>
+<div class="card-header" style="text-align:center">
+    <span class="pagetilte">@ViewBag.Title </span>
 </div>
 
-<div class="card-body">   
+<div class="card-body">
     <div class="row">
         <div class="col-sm-6">
             <div class="shadow card">
@@ -140,7 +137,7 @@ padding-left:6px;
                 </div>
                 <div class="card-body">
                     <div class="col-sm-11 row">
-                        <div class="pbar1 progress" id="p1"  data-toggle="tooltip" data-placement="top" title="Processed">
+                        <div class="pbar1 progress" id="p1" data-toggle="tooltip" data-placement="top" title="Processed">
                             <input type="hidden" value="@botstatobj.castStatFigures[4]" id="xp1" />
                             <b class="Count">@botstatobj.castStatFigures[0]</b>
                         </div>
@@ -148,18 +145,18 @@ padding-left:6px;
                             <input type="hidden" value="@botstatobj.castStatFigures[5]" id="xp2" />
                             <b class="Count">@botstatobj.castStatFigures[1]</b>
                         </div>
-                        <div class="pbar3 progress" id="p3" data-toggle="tooltip"  data-placement="top" title="Application Exception">
+                        <div class="pbar3 progress" id="p3" data-toggle="tooltip" data-placement="top" title="Application Exception">
                             <input type="hidden" value="@botstatobj.castStatFigures[6]" id="xp3" />
                             <b class="Count">@botstatobj.castStatFigures[2]</b>
                         </div>
-                        <div class="pbar4 progress" id="p4" data-toggle="tooltip"  data-placement="top" title="Unprocessed" >
-                            <input type="hidden" value="@botstatobj.castStatFigures[7]" id="xp4"  />
+                        <div class="pbar4 progress" id="p4" data-toggle="tooltip" data-placement="top" title="Unprocessed">
+                            <input type="hidden" value="@botstatobj.castStatFigures[7]" id="xp4" />
                             <b class="Count">@botstatobj.castStatFigures[3]</b>
                         </div>
                     </div>
                     <br />
                     <div class="col-sm-11 row">
-                        <table style=" color: #7f7571;font-size: 14px;height: 199px;">
+                        <table style=" color: #7f7571;font-size: 14px;height: 176px;">
                             <tr>
                                 <td style="width: 36px;"><div style="height: 16px;background:url(/Images/greentexture.PNG);width: 16px;"></div></td>
                                 <th>Processed :  @botstatobj.castStatFigures[0]</th>
@@ -185,7 +182,7 @@ padding-left:6px;
 
                 </div>
                 <div class="card-footer">
-                    <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                    <b style="color:#6d7979;font-size:12px">Showing data from @DateTime.Today.ToString("dd-MMM-yyyy") -till date</b>
                 </div>
             </div>
 
@@ -197,9 +194,9 @@ padding-left:6px;
                         <div class="col-sm-8">
                             <b>Routing Portal Statistics (Today)</b>
                         </div>
-                       
+
                         <div class="col-sm-4">
-                            <a class="btn btn-sm btn-lh"  href="/app/CB/CaseViewFrom?getval=2">
+                            <a class="btn btn-sm btn-lh" href="/app/CB/CaseViewFrom?getval=2">
                                 View From
                                 <img src="~/Images/calender.png" height="22" />
                             </a>
@@ -219,12 +216,12 @@ padding-left:6px;
                         </table>
                     </div>
                     <div class="col-md-12">
-                        <canvas id="doughnutChart"></canvas>                        
+                        <canvas id="doughnutChart"></canvas>
                     </div>
-                    
+
                 </div>
                 <div class="card-footer">
-                    <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                    <b style="color:#6d7979;font-size:12px">Showing data from @DateTime.Today.ToString("dd-MMM-yyyy") -till date</b>
                 </div>
             </div>
         </div>
@@ -243,36 +240,36 @@ padding-left:6px;
                         <div class="col-sm-2">
                         </div>
                         <div class="col-sm-4">
-                          
+
                         </div>
                     </div>
                 </div>
                 <div class="card-image-wrapper" style="text-align:center;height: 178px;">
                     <b style="color: #565451;font-family: emoji;"></b>
-                    <a style="text-decoration:none"  href="/app/CB/CaseViewFrom?getval=3">
+                    <a style="text-decoration:none" href="/app/CB/CaseViewFrom?getval=3">
                         <h1 class="Count" style="  font-size: 6.4rem;color: #4e907a">@botstatobj.CaseReadyForAction[0]</h1>
-                    </a>  
+                    </a>
                     @*<table id="tbl1" style="position: relative;left: 17%;font-size: 13px;color:#628881">
-                        <tr >
-                            <th>Master Card:</th>
-                            <td>@botstatobj.CaseReadyForAction[1]</td>
-                            <th>Visa:</th>
-                            <td>@botstatobj.CaseReadyForAction[2]</td>
-                            <th>OmanNet:</th>
-                            <td>@botstatobj.CaseReadyForAction[3]</td>
-                            <th>Onus:</th>
-                            <td>@botstatobj.CaseReadyForAction[4]</td>
-                            <th>POSECOM:</th>
-                            <td>@botstatobj.CaseReadyForAction[5]</td>
-                        </tr>
-                    </table>*@
+                            <tr >
+                                <th>Master Card:</th>
+                                <td>@botstatobj.CaseReadyForAction[1]</td>
+                                <th>Visa:</th>
+                                <td>@botstatobj.CaseReadyForAction[2]</td>
+                                <th>OmanNet:</th>
+                                <td>@botstatobj.CaseReadyForAction[3]</td>
+                                <th>Onus:</th>
+                                <td>@botstatobj.CaseReadyForAction[4]</td>
+                                <th>POSECOM:</th>
+                                <td>@botstatobj.CaseReadyForAction[5]</td>
+                            </tr>
+                        </table>*@
                 </div>
                 <div class="card-footer">
-                    <b style="color:#6d7979;font-size:12px;">Showing data from 23-Mar -till date</b>
+                    <b style="color:#6d7979;font-size:12px;">Showing data from @DateTime.Today.ToString("dd-MMM-yyyy") -till date</b>
                 </div>
             </div>
         </div>
-     
+
     </div>
 
 </div>
@@ -280,12 +277,12 @@ padding-left:6px;
 
     datafig =@Html.Raw(Json.Encode(botstatobj.RoutingPortalFigures)) ;
     var ctxD = document.getElementById("doughnutChart").getContext('2d');
-    var myLineChart = new Chart(ctxD, {      
+    var myLineChart = new Chart(ctxD, {
         type: 'doughnut',
         data: {
             //labels: ["MasterCard", "Visa", "OmanNet", "Onus","POSECOM"],
             datasets: [{
-                data: datafig,               
+                data: datafig,
                 //data: ["84","64","54","78","89"],
                 backgroundColor: ["#0d274d", "#c00000", "#8a8f92", "#92d028", "#558fd5"],
                 hoverBackgroundColor: ["#0d274d8f", "#c0000085", "#8a8f9285", "#92d0288c", "#558fd58a"]
