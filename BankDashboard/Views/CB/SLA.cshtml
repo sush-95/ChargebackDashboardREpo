@@ -116,7 +116,7 @@
     </form>
     <div class="row">
         <div class="col-md-12">
-            <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 9px;">
+            <table id="example" class="table-bordered table table-striped table-condensed">
                 <thead style="color:white;text-align: center;">
                     <tr>
                         <th>Feedback Id</th>
@@ -152,9 +152,10 @@
                             {
                                 <tr >
                                     <td>@item.FeedbackID</td>
-                                    <td>@item.RegistrationDate</td>
+                               
+                                    <td>@Convert.ToDateTime(item.RegistrationDate).ToString("M/dd/yyyy")</td>
                                     <td>@item.AssignedUserID</td>
-                                    <td>@item.SLADate</td>
+                                    <td>@Convert.ToDateTime(item.RegistrationDate).AddDays(long.Parse(filterobj.SLADays)).ToString("M/dd/yyyy")</td>
                                     <td>@item.IncidentDate</td>
                                     <td style='color:@color'>
                                         @dateDiff

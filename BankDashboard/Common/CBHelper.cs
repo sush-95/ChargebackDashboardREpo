@@ -27,6 +27,7 @@ namespace BankDashboard.Common
         }
         public static List<string> getpercentagefigure(List<string> casestatfigure)
         {
+            decimal res = 0;
             List<string> list = new List<string>();
             long sum = 0;
             foreach (string item in casestatfigure)
@@ -38,7 +39,8 @@ namespace BankDashboard.Common
                 if (sum == 0) { list.Add("0"); }
                 else
                 {
-                    list.Add(((long.Parse(item) * 100 / sum)).ToString());
+                    res = (decimal.Parse(item) * 100 / sum);
+                    list.Add(res==0?"0":res.ToString(".##"));
                 }
             }
             casestatfigure.AddRange(list);
@@ -521,5 +523,23 @@ namespace BankDashboard.Common
             return query + ";";
         }
         #endregion
+
+        #region----------------------------------User Management-------------------------------------
+        public static List<Tbl_User_Detail> GetUsersForProfile()
+        {
+            List<Tbl_User_Detail> list = new List<Tbl_User_Detail>();
+            CBDB db = new CBDB();
+            list = db.Tbl_User_Detail.Where(x => !x.Usergroup.Equals("Parameter Management Team")).ToList();
+            return list;
+        }
+        public static void SaveUserPages(int userid,string pages)
+        {          
+            CBDB db = new CBDB();
+            var user = db.Tbl_User_Detail.Where(x => x.ID == userid).FirstOrDefault();
+            user.GroupPages = pages;
+            db.SaveChanges();
+        }
+        #endregion------------------------------------------------------------------------------------
+
     }
 }

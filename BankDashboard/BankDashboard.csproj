@@ -326,8 +326,10 @@
     <Content Include="Images\calender.png" />
     <Content Include="Images\casedetail.png" />
     <Content Include="Images\center-logo.png" />
+    <Content Include="Images\closure.png" />
     <Content Include="Images\dashboard.png" />
     <Content Include="Images\detail.png" />
+    <Content Include="Images\edit.png" />
     <Content Include="Images\exl.png" />
     <Content Include="Images\greentexture.PNG" />
     <Content Include="Images\greytexture.PNG" />
@@ -679,6 +681,7 @@
     <Content Include="Views\CB\AddRowReconsiliationTable.cshtml" />
     <Content Include="Views\CB\ClosureReport.cshtml" />
     <Content Include="Views\CB\ReconsiliationReport.cshtml" />
+    <Content Include="Views\CB\UserManagement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

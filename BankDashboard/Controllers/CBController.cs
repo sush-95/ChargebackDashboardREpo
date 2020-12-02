@@ -165,21 +165,21 @@ namespace BankDashboard.Controllers
                 if (Flag == "1")
                 {
                     List<tbl_WeCareReactive> tblWC = new List<tbl_WeCareReactive>();
-                    obj.WCCaseStatus = CBHelper.WCScaseStatusFigure(ref tblWC, Fromdate, Todate,Filter);
+                    obj.WCCaseStatus = CBHelper.WCScaseStatusFigure(ref tblWC, Fromdate, Todate, Filter);
                     TempData["list"] = tblWC;
                     TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
                 }
                 else if (Flag == "2")
                 {
-                    
-                    obj.Itypes = CBHelper.GetListOfIssueTypes(Fromdate, Todate, Filter, 1);                   
+
+                    obj.Itypes = CBHelper.GetListOfIssueTypes(Fromdate, Todate, Filter, 1);
                     TempData["list"] = CBHelper.getRoutingPortalTable(Fromdate, Todate, Filter);
                     TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
                     CBDB db = new CBDB();
                     TempData["issuelist"] = db.tbl_WeCareReactive.Select(x => x.Issue).Distinct().ToList();
-                }               
+                }
                 TempData["WCObj"] = obj;
-               
+
             }
             catch { }
             return RedirectToAction("WCViewFrom", new { getval = Flag });
@@ -193,16 +193,16 @@ namespace BankDashboard.Controllers
             ViewBag.SLAStat = "active";
             CBDB db = new CBDB();
             try
-            {               
+            {
                 if (find != null)
                 {
                     ViewBag.list = CBHelper.GetSla(obj);
                 }
                 else
-                {                  
+                {
                     ViewBag.list = db.tbl_WeCareReactive.ToList();
                     obj = new SLAFilter() { SLADays = "75", CloseToSla = "10", SlACount = "", Filter = "" };
-                 
+
                 }
                 ViewBag.filterobj = obj;
                 ViewBag.userlist = db.tbl_WeCareReactive.Select(x => x.AssignedUserID).Distinct().ToList();
@@ -911,6 +911,28 @@ namespace BankDashboard.Controllers
         }
         #endregion----------------------------------------------------------------------------------------
 
+        #region-----------------------------------User Management--------------------------------------
+        public ActionResult UserManagement()
+        {
+            try
+            {
+                ViewBag.userlist = CBHelper.GetUsersForProfile();
+            }
+            catch{ }
+            return View();
+        }
+        [HttpPost]
+        public ActionResult UserManagement(string ID,string pages)
+        {
+            try
+            {
+                CBHelper.SaveUserPages(int.Parse(ID),pages);
+                TempData["Success"] = "Data saved successfully.";
+            }
+            catch { TempData["Error"] = "Something went wrong."; }
+            return RedirectToAction("UserManagement");
+        }
+        #endregion---------------------------------------------------------------------------------------
 
     }
 }

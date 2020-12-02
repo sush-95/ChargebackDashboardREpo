@@ -139,19 +139,19 @@
                     <div class="col-sm-11 row">
                         <div class="pbar1 progress" id="p1" data-toggle="tooltip" data-placement="top" title="Processed">
                             <input type="hidden" value="@botstatobj.castStatFigures[4]" id="xp1" />
-                            <b class="Count">@botstatobj.castStatFigures[0]</b>
+                            <b>@botstatobj.castStatFigures[0]</b>
                         </div>
                         <div class="pbar2 progress" id="p2" data-toggle="tooltip" data-placement="top" title="Business Rule Exception">
                             <input type="hidden" value="@botstatobj.castStatFigures[5]" id="xp2" />
-                            <b class="Count">@botstatobj.castStatFigures[1]</b>
+                            <b>@botstatobj.castStatFigures[1]</b>
                         </div>
                         <div class="pbar3 progress" id="p3" data-toggle="tooltip" data-placement="top" title="Application Exception">
                             <input type="hidden" value="@botstatobj.castStatFigures[6]" id="xp3" />
-                            <b class="Count">@botstatobj.castStatFigures[2]</b>
+                            <b >@botstatobj.castStatFigures[2]</b>
                         </div>
                         <div class="pbar4 progress" id="p4" data-toggle="tooltip" data-placement="top" title="Unprocessed">
                             <input type="hidden" value="@botstatobj.castStatFigures[7]" id="xp4" />
-                            <b class="Count">@botstatobj.castStatFigures[3]</b>
+                            <b >@botstatobj.castStatFigures[3]</b>
                         </div>
                     </div>
                     <br />
@@ -203,24 +203,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body" style="width:510px;height:290px;position:relative;left:3%">
-                    <div>
-                        <table id="tbl2" style="font-size: 14px;position:relative;left:1%">
-                            <tr>
-                                <th style="color:#0d274d">MasterCard :@botstatobj.RoutingPortalFigures[0]</th>
-                                <th style="color:#c00000">Visa :@botstatobj.RoutingPortalFigures[1]</th>
-                                <th style="color:#8a8f92">OmanNet :@botstatobj.RoutingPortalFigures[2]</th>
-                                <th style="color:#92d028">Onus :@botstatobj.RoutingPortalFigures[3]</th>
-                                <th style="color:#558fd5">POSECOM :@botstatobj.RoutingPortalFigures[4]</th>
-                            </tr>
-                        </table>
-                    </div>
+                <div class="card-body" style="width:510px;height:267px;position:relative;left:3%;">
                     <div class="col-md-12">
                         <canvas id="doughnutChart"></canvas>
                     </div>
 
                 </div>
                 <div class="card-footer">
+                    <div>
+                        <table id="tbl2" style="font-size: 14px;position:relative;left:-2%;color: #546f6f;">
+                            <tr>
+                                <th>MasterCard :@botstatobj.RoutingPortalFigures[0]</th>
+                                <th>Visa :@botstatobj.RoutingPortalFigures[1]</th>
+                                <th>OmanNet :@botstatobj.RoutingPortalFigures[2]</th>
+                                <th>Onus :@botstatobj.RoutingPortalFigures[3]</th>
+                                <th>POSECOM :@botstatobj.RoutingPortalFigures[4]</th>
+                            </tr>
+                        </table>
+                    </div>
+
                     <b style="color:#6d7979;font-size:12px">Showing data from @DateTime.Today.ToString("dd-MMM-yyyy") -till date</b>
                 </div>
             </div>
@@ -280,7 +281,7 @@
     var myLineChart = new Chart(ctxD, {
         type: 'doughnut',
         data: {
-            //labels: ["MasterCard", "Visa", "OmanNet", "Onus","POSECOM"],
+            labels: ["MasterCard", "Visa", "OmanNet", "Onus","POSECOM"],
             datasets: [{
                 data: datafig,
                 //data: ["84","64","54","78","89"],
@@ -294,3 +295,6 @@
     });
 
 </script>
+<style>
+    
+</style>

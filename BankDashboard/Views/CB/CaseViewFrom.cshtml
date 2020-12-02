@@ -11,6 +11,13 @@
 
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 <style>
+    #tblx1 th{
+        text-align:left
+    }
+    #tblx1 td {
+        text-align: center;
+        font-weight:bold
+    }
     .btn-light {
         border-radius: 5px;
         height: 36px;
@@ -263,7 +270,7 @@ else if (botstatobj.RoutingPortalFigures != null)
                                     <td>
                                         <select class="form-control" name="filter" style="padding: 0px;">
                                             <option value="">Select</option>
-                                            @if (filter.Filter != null)
+                                            @if (!string.IsNullOrEmpty(filter.Filter))
                                             {
                                                 <option value="@filter.Filter" selected hidden>@filter.Filter</option>
                                             }
@@ -296,21 +303,21 @@ else if (botstatobj.RoutingPortalFigures != null)
             <div class="row">
                 <div class="col-md-4">
                     <div>
-                        <table style=" font-size: 14px;position: relative; left:82%;top:41px;height:173px">
-                            <tr style="color:#0d274d">
-                                <th>MasterCard :@botstatobj.RoutingPortalFigures[0]</th>
+                        <table id="tblx1"  style=" font-size: 14px;position: relative; left:82%;top:67px;height:173px;color: #546f6f;">
+                            <tr>
+                                <th>MasterCard </th><td>@botstatobj.RoutingPortalFigures[0]</td>
                             </tr>
                             <tr>
-                                <th style="color:#c00000">Visa :@botstatobj.RoutingPortalFigures[1]</th>
+                                <th>Visa </th><td>@botstatobj.RoutingPortalFigures[1]</td>
                             </tr>
                             <tr>
-                                <th style="color:#8a8f92">OmanNet :@botstatobj.RoutingPortalFigures[2]</th>
+                                <th>OmanNet </th><td>@botstatobj.RoutingPortalFigures[2]</td>
                             </tr>
                             <tr>
-                                <th style="color:#92d028">Onus :@botstatobj.RoutingPortalFigures[3]</th>
+                                <th>Onus </th><td>@botstatobj.RoutingPortalFigures[3]</td>
                             </tr>
                             <tr>
-                                <th style="color:#558fd5">POSECOM :@botstatobj.RoutingPortalFigures[4]</th>
+                                <th>POSECOM </th><td>@botstatobj.RoutingPortalFigures[4]</td>
                             </tr>
                         </table>
                     </div>
@@ -322,7 +329,7 @@ else if (botstatobj.RoutingPortalFigures != null)
                 </div>
             </div>
             <div class="card-footer">
-                <b style="color:#6d7979;font-size:12px">Showing data from @botstatobj.RoutingPortalFigures[5] -till date</b>
+                <b style="color:#6d7979;font-size:12px">Showing data from @botstatobj.RoutingPortalFigures[5] </b>
             </div>
         </div>
     </div>
@@ -420,7 +427,7 @@ else if (botstatobj.CaseReadyForAction != null)
     var myLineChart = new Chart(ctxD, {
         type: 'doughnut',
         data: {
-            //labels: ["MasterCard", "Visa", "OmanNet", "Onus","POSECOM"],
+            labels: ["MasterCard", "Visa", "OmanNet", "Onus","POSECOM"],
             datasets: [{
                 data: datafig,
                 //data: ["84","64","54","78","89"],
