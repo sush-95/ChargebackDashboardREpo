@@ -50,26 +50,12 @@
         margin-left: -3px;
     }
 </style>
-<div class="card-header">
-    <div class="row">
-        <div class="col-sm-2">
-            <h4 style="color:#758484"></h4>
-        </div>
-        <div class="col-sm-8"></div>
-        <div class="col-sm-2">
-            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
-                <button class="btn btn-success" type="submit">
-                    <img src="~/Images/exl.png" style="height: 19px;" />Export
-                </button>
-            </form>
-        </div>
-    </div>
+<div class="card-header" style="text-align:center">
+    <span class="pagetilte">@ViewBag.Title </span>
 </div>
 <div class="card-body">
     <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/SLA" method="post">
-        @Html.AntiForgeryToken()
+
         <div class="row">
             <div class="col-md-12">
                 <table class="tbl" style="width:67%;height:74px">
@@ -111,12 +97,15 @@
             <div class="col-md-3">
                 <input type="submit" value="Find" name="find" class="btn btn-sm btn-info" />
                 <a class="btn btn-sm btn-secondary" href="/app/CB/SLA">Reset</a>
+                <button class="btn btn-sm btn-success" value="Excel" name="Excel" type="submit">
+                    Export<img style="border-radius: 3px;margin-left: 3px;margin-top: -3px;" src="~/Images/exl.png" />
+                </button>
             </div>
         </div>
     </form>
     <div class="row">
         <div class="col-md-12">
-            <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 9px;">
+            <table id="example" class="table-bordered table table-striped table-condensed">
                 <thead style="color:white;text-align: center;">
                     <tr>
                         <th>Feedback Id</th>
@@ -133,14 +122,14 @@
                         foreach (var item in (List<BankDashboard.CBModel.tbl_WeCareReactive>)ViewBag.list)
                         {
                             string color = ""; var datex = (Convert.ToDateTime(item.RegistrationDate).AddDays(long.Parse(filterobj.SLADays)));
-                            datex = datex.Date;slatoday = slatoday.Date;
-                            if (datex < slatoday&& item.Stage.Equals("In Progress") || item.Stage.ToLower().Equals("InProgress".ToLower()))
+                            datex = datex.Date; slatoday = slatoday.Date;
+                            if (datex < slatoday && item.Stage.Equals("In Progress") || item.Stage.ToLower().Equals("InProgress".ToLower()))
                             {
                                 color = "red";
                                 dateDiff = (datex - slatoday).Days;
                                 slacount += 1;
                             }
-                            else if (datex >= slatoday && datex <= slatoday.AddDays(long.Parse(filterobj.CloseToSla))&&
+                            else if (datex >= slatoday && datex <= slatoday.AddDays(long.Parse(filterobj.CloseToSla)) &&
                                 item.Stage.Equals("In Progress") || item.Stage.ToLower().Equals("InProgress".ToLower()))
                             {
                                 color = "green";
@@ -150,11 +139,12 @@
 
                             if (color.Equals("red") || color.Equals("green"))
                             {
-                                <tr >
+                                <tr>
                                     <td>@item.FeedbackID</td>
-                                    <td>@item.RegistrationDate</td>
+
+                                    <td>@Convert.ToDateTime(item.RegistrationDate).ToString("M/dd/yyyy")</td>
                                     <td>@item.AssignedUserID</td>
-                                    <td>@item.SLADate</td>
+                                    <td>@Convert.ToDateTime(item.RegistrationDate).AddDays(long.Parse(filterobj.SLADays)).ToString("M/dd/yyyy")</td>
                                     <td>@item.IncidentDate</td>
                                     <td style='color:@color'>
                                         @dateDiff

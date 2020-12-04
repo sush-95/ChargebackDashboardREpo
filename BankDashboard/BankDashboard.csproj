@@ -326,8 +326,11 @@
     <Content Include="Images\calender.png" />
     <Content Include="Images\casedetail.png" />
     <Content Include="Images\center-logo.png" />
+    <Content Include="Images\closure.png" />
     <Content Include="Images\dashboard.png" />
     <Content Include="Images\detail.png" />
+    <Content Include="Images\edit.png" />
+    <Content Include="Images\error.png" />
     <Content Include="Images\exl.png" />
     <Content Include="Images\greentexture.PNG" />
     <Content Include="Images\greytexture.PNG" />
@@ -343,6 +346,7 @@
     <Content Include="Images\stat.png" />
     <Content Include="Images\umtran.png" />
     <Content Include="Images\user1.png" />
+    <Content Include="Images\UserSetting.png" />
     <Content Include="Images\view.png" />
     <Content Include="Images\wc.png" />
     <Content Include="JavaScript\CryptoJS\crypto-js.js" />
@@ -676,6 +680,11 @@
     <Content Include="Views\CB\CaseViewFrom.cshtml" />
     <Content Include="Views\CB\WCViewFrom.cshtml" />
     <Content Include="Views\CB\SLA.cshtml" />
+    <Content Include="Views\CB\AddRowReconsiliationTable.cshtml" />
+    <Content Include="Views\CB\ClosureReport.cshtml" />
+    <Content Include="Views\CB\ReconsiliationReport.cshtml" />
+    <Content Include="Views\CB\UserManagement.cshtml" />
+    <Content Include="Views\CB\Errorpage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

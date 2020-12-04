@@ -101,9 +101,8 @@
     }
 </style>
 
-<div class="card-header">
-    <div class="row">
-    </div>
+<div class="card-header" style="text-align:center">
+    <span class="pagetilte">@ViewBag.Title </span>
 </div>
 <div class="card-body">
     <div class="row">
@@ -113,7 +112,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-8">
-                            <b>Cases Status(Historical)</b>
+                            <b>Cases Status (Historical)</b>
                         </div>
                         <div class="col-sm-4">
                             <a class="btn btn-sm btn-lh" href="/app/CB/WCViewFrom?getval=1">
@@ -127,15 +126,15 @@
                     <div class="col-sm-11 row">
                         <div class="pbar1 progress" id="p1" data-toggle="tooltip" data-placement="top" title="Closed">
                             <input type="hidden" value="@botstatobj.WCCaseStatus[3]" id="xp1" />
-                            <b class="Count">@botstatobj.WCCaseStatus[0]</b>
+                            <b>@botstatobj.WCCaseStatus[0]</b>
                         </div>
                         <div class="pbar2 progress" id="p2" data-toggle="tooltip" data-placement="top" title="In Progress">
                             <input type="hidden" value="@botstatobj.WCCaseStatus[4]" id="xp2" />
-                            <b class="Count">@botstatobj.WCCaseStatus[1]</b>
+                            <b >@botstatobj.WCCaseStatus[1]</b>
                         </div>
                         <div class="pbar3 progress" id="p3" data-toggle="tooltip" data-placement="top" title="Action Pending">
                             <input type="hidden" value="@botstatobj.WCCaseStatus[5]" id="xp3" />
-                            <b class="Count">@botstatobj.WCCaseStatus[2]</b>
+                            <b >@botstatobj.WCCaseStatus[2]</b>
                         </div>
 
                     </div>
@@ -173,7 +172,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-8">
-                            <b>Issue Type(Yesterday)</b>
+                            <b>Issue Type (Yesterday)</b>
                         </div>
                         <div class="col-sm-4">
                             <a class="btn btn-sm btn-lh" href="/app/CB/WCViewFrom?getval=2">

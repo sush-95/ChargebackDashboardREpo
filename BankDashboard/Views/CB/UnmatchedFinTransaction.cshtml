@@ -1,7 +1,8 @@
-﻿
+﻿@using BankDashboard.Common;
 @{
     ViewBag.Title = "Unmatched Financial Transaction";
     Layout = "~/Views/Shared/_CBLayout.cshtml";
+    ViewModelClass.FilterClass filterobj = (ViewModelClass.FilterClass)ViewBag.filter;
 }
 
 <style>
@@ -50,7 +51,7 @@
         <div class="col-sm-2">
             <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB" method="post">
                 @Html.AntiForgeryToken()
-                <input type="hidden" value="" name="hfilter" />
+                <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
                 <button class="btn btn-success" type="submit">
                     <img src="~/Images/exl.png" style="height: 19px;" />Export
                 </button>
@@ -64,16 +65,30 @@
         <div class="row">
             <div class="col-sm-2">
                 <span> From Date:</span>
-                <input type="text" class="form-control invoice" autocomplete="off" name="FromDate" />
+                @if (filterobj == null)
+                {
+                    <input type="text" class="form-control invoice" autocomplete="off" name="Fromdate" />
+                }
+                else
+                {
+                    <input type="text" class="form-control invoice" value="@filterobj.Fromdate" autocomplete="off" name="Fromdate" />
+                }
             </div>
             <div class="col-sm-2">
                 <span> To Date:</span>
-                <input type="text" class="form-control invoice" autocomplete="off" name="ToDate" />
+                @if (filterobj == null)
+                {
+                    <input type="text" class="form-control invoice" autocomplete="off" name="Todate" />
+                }
+                else
+                {
+                    <input type="text" class="form-control invoice" value="@filterobj.Todate" autocomplete="off" name="Todate" />
+                }
             </div>
 
             <div class="col-sm-3">
-                <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;">Find</button>
-                <a class="btn btn-sm btn-secondary" href="/app/CB/MatchedFinTransaction" style="margin-top: 19px;">Reset</a>
+                <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;" name="find" value="find">Find</button>
+                <a class="btn btn-sm btn-secondary" href="/app/CB/UnmatchedFinTransaction" style="margin-top: 19px;">Reset</a>
             </div>
         </div>
     </form>
@@ -81,12 +96,12 @@
     <div class="row">
         <div class="col-md-12">
             <table id="example" class="table-bordered table table-striped table-condensed">
-                <thead style="background-color:#1d40b1;color:white;text-align: center;">
+                <thead style="color:white;text-align: center;">
                     <tr>
                         <th>Sl No</th>
                         <th>Member Case</th>
                         <th>Status</th>
-                       
+
                     </tr>
                 </thead>
                 <tbody>
@@ -97,7 +112,7 @@
                             <tr>
                                 <td>@item.Id</td>
                                 <td>@item.MemberCase</td>
-                                <td>@item.Status</td>                               
+                                <td>@item.Status</td>
                             </tr>
 
                         }

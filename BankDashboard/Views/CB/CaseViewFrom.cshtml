@@ -1,5 +1,7 @@
 ﻿@using BankDashboard.Common;
 @{
+    /**/
+
     ViewBag.Title = "View From";
     Layout = "~/Views/Shared/_CBLayout.cshtml";
     ViewModelClass.BOtStatModel botstatobj = (ViewModelClass.BOtStatModel)ViewBag.casestat;
@@ -11,6 +13,15 @@
 
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 <style>
+    #tblx1 th {
+        text-align: left
+    }
+
+    #tblx1 td {
+        text-align: center;
+        font-weight: bold
+    }
+
     .btn-light {
         border-radius: 5px;
         height: 36px;
@@ -93,60 +104,64 @@
     {
         filter = (ViewModelClass.CaseFilter)TempData["filter"];
     }
-    <div class="card-header" style="border-bottom: #f11a1a;border-bottom-style: solid;height: 56px">
-        <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterData" method="post">
-            <div class="row">
-                <div class="col-md-8">
-
-                    <input type="hidden" name="Flag" value="@botstatobj.flag" />
-                    <table style=" color: #5d5d55; font-size: 12px;">
-                        <tr>
-                            <th>From:</th>
-                            <td>
-                                <input type="text" class="form-control invoice" value="@filter.Fromdate" autocomplete="off" name="Fromdate" />
-                            </td>
-                            <th style="padding-left: 21px;">To:</th>
-                            <td>
-                                <input type="text" class="form-control invoice" value="@filter.Todate" autocomplete="off" name="Todate" />
-
-                            </td>
-                            <th style="padding-left: 21px;">Filter:</th>
-                            <td>
-                                <select class="form-control" name="Filter" style="padding: 0px;">
-                                    @if (filter.Filter != null)
-                                    {
-                                        <option value="@filter.Filter" selected hidden>@filter.Filter</option>
-                                    }
-                                    <option value="">Select</option>
-                                    <option value="Processed">Processed</option>
-                                    <option value="BusinessRuleException">BusinessRuleException</option>
-                                    <option value="ApplicationException">ApplicationException</option>
-                                    <option value="Unprocessed">Unprocessed</option>
-                                </select>
-                            </td>
-                            <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
-                            <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=1">Reset</a></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-1"></div>
-                <div class="col-md-3">
-                    <button class="btn btn-sm btn-light">
-                        Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
-                    </button>
-                    <button class="btn btn-sm btn-light" id="create_pdf">
-                        Export<img src="~/Images/pdf.png" />
-                    </button>
-                </div>
-
-            </div>
-        </form>
+    <div class="card-header" style="text-align:center">
+        <span class="pagetilte">Case Status</span>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-sm-12 p-3">
                 <div class="shadow card">
+                    <div class="card-header">
+                        <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterData" method="post">
+                            <div class="row">
+                                <div class="col-md-8">
+
+                                    <input type="hidden" name="Flag" value="@botstatobj.flag" />
+                                    <table style=" color: #5d5d55; font-size: 12px;">
+                                        <tr>
+                                            <th>From:</th>
+                                            <td>
+                                                <input type="text" class="form-control invoice" value="@filter.Fromdate" autocomplete="off" name="Fromdate" />
+                                            </td>
+                                            <th style="padding-left: 21px;">To:</th>
+                                            <td>
+                                                <input type="text" class="form-control invoice" value="@filter.Todate" autocomplete="off" name="Todate" />
+
+                                            </td>
+                                            <th style="padding-left: 21px;">Filter:</th>
+                                            <td>
+                                                <select class="form-control" name="Filter" style="padding: 0px;">
+                                                    @if (filter.Filter != null)
+                                                    {
+                                                        <option value="@filter.Filter" selected hidden>@filter.Filter</option>
+                                                    }
+                                                    <option value="">Select</option>
+                                                    <option value="Processed">Processed</option>
+                                                    <option value="BusinessRuleException">BusinessRuleException</option>
+                                                    <option value="ApplicationException">ApplicationException</option>
+                                                    <option value="Unprocessed">Unprocessed</option>
+                                                </select>
+                                            </td>
+                                            <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
+                                            <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=1">Reset</a></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-sm btn-light" value="Excel" name="Excel" type="submit">
+                                        Export<img style="background-color: #57b362;border-radius: 3px;margin-left: 3px;margin-top: -3px;" src="~/Images/exl.png" />
+                                    </button>
+                                    <a href="#" class="btn btn-sm btn-light" id="create_pdf">
+                                        Export<img src="~/Images/pdf.png" />
+                                    </a>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
                     <div class="card-body">
+
                         <div class="col-sm-11 row">
                             <div class="pbar1 progress" id="p1" data-toggle="tooltip" data-placement="top" title="Processed">
                                 <input type="hidden" value="@botstatobj.castStatFigures[4]" id="xp1" />
@@ -193,7 +208,7 @@
 
                     </div>
                     <div class="card-footer">
-                        <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                        <b style="color:#6d7979;font-size:12px">Showing data from @botstatobj.castStatFigures[8]</b>
                     </div>
                 </div>
 
@@ -201,7 +216,7 @@
 
             <div class="col-sm-12">
                 <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
-                    <thead style="background-color:#1d40b1;color:white;text-align: center;">
+                    <thead style="color:white;text-align: center;">
                         <tr>
                             <th>Feedback Id</th>
                             <th>Issue Type</th>
@@ -238,95 +253,102 @@ else if (botstatobj.RoutingPortalFigures != null)
     {
         filter = (ViewModelClass.CaseFilter)TempData["filter"];
     }
-    <div class="card-header" style="border-bottom: #f11a1a;border-bottom-style: solid;">
-
-        <div class="row">
-            <div class="col-md-8">
-                <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterData" method="post">
-                    <input type="hidden" name="Flag" value="@botstatobj.flag" />
-                    <table style=" color: #5d5d55; font-size: 12px;">
-                        <tr>
-                            <th>From:</th>
-                            <td> <input type="text" class="form-control invoice" value="@filter.Fromdate" autocomplete="off" name="Fromdate" /></td>
-                            <th style="padding-left: 21px;">To:</th>
-                            <td> <input type="text" class="form-control invoice" value="@filter.Todate" autocomplete="off" name="Todate" /></td>
-                            <th style="padding-left: 21px;">Filter:</th>
-                            <td>
-                                <select class="form-control" name="filter" style="padding: 0px;">
-                                    <option value="">Select</option>
-                                    @if (filter.Filter != null)
-                                    {
-                                        <option value="@filter.Filter" selected hidden>@filter.Filter</option>
-                                    }
-                                    <option value="MasterCard">MasterCard</option>
-                                    <option value="Visa">Visa</option>
-                                    <option value="Omanet">Omanet</option>
-                                    <option value="Onus">Onus</option>
-                                    <option value="POSECOM">POSECOM</option>
-                                </select>
-                            </td>
-                            <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
-                            <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=2">Reset</a></td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-            <div class="col-md-1"></div>
-            <div class="col-md-3">
-                <button class="btn btn-sm btn-light">
-                    Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
-                </button>
-             
-                <button class="btn btn-sm btn-light" id="create_pdf" >
-                    Export<img src="~/Images/pdf.png" />
-                </button>
-            </div>
-
-
-        </div>
+    <div class="card-header" style="text-align:center">
+        <span class="pagetilte">Routing Portal Statistics</span>
     </div>
 
     <div class="col-sm-12 p-3">
         <div class="shadow card">
+            <div class="card-header">
+                <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterData" method="post">
+
+                    <div class="row">
+
+                        <div class="col-md-8">
+
+                            <input type="hidden" name="Flag" value="@botstatobj.flag" />
+                            <table style=" color: #5d5d55; font-size: 12px;">
+                                <tr>
+                                    <th>From:</th>
+                                    <td> <input type="text" class="form-control invoice" value="@filter.Fromdate" autocomplete="off" name="Fromdate" /></td>
+                                    <th style="padding-left: 21px;">To:</th>
+                                    <td> <input type="text" class="form-control invoice" value="@filter.Todate" autocomplete="off" name="Todate" /></td>
+                                    <th style="padding-left: 21px;">Filter:</th>
+                                    <td>
+                                        <select class="form-control" name="filter" style="padding: 0px;">
+                                            <option value="">Select</option>
+                                            @if (!string.IsNullOrEmpty(filter.Filter))
+                                            {
+                                                <option value="@filter.Filter" selected hidden>@filter.Filter</option>
+                                            }
+                                            <option value="MasterCard">MasterCard</option>
+                                            <option value="Visa">Visa</option>
+                                            <option value="OmanNet">OmanNet</option>
+                                            <option value="Onus">Onus</option>
+                                            <option value="POSECOM">POSECOM</option>
+                                        </select>
+                                    </td>
+                                    <td style="padding-left: 21px;"> <input type="submit" value="Find" name="submit" class="btn btn-sm btn-info" /></td>
+                                    <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=2">Reset</a></td>
+                                </tr>
+                            </table>
+
+                        </div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3">
+
+                            <button class="btn btn-sm btn-light" value="Excel" name="Excel" type="submit">
+                                Export<img style="background-color: #57b362;border-radius: 3px;margin-left: 3px;margin-top: -3px;" src="~/Images/exl.png" />
+                            </button>
+                            <a href="#" class="btn btn-sm btn-light" id="create_pdf">
+                                Export<img src="~/Images/pdf.png" />
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
             <div class="row">
                 <div class="col-md-4">
                     <div>
-                        <table style=" font-size: 14px;position: relative; left:82%;top:41px;height:173px">
-                            <tr style="color:#0d274d">
-                                <th>MasterCard :@botstatobj.RoutingPortalFigures[0]</th>
+                        <table id="tblx1" style=" font-size: 14px;position: relative; left:82%;top:67px;height:173px;color: #546f6f;">
+                            <tr>
+                                <th>MasterCard </th>
+                                <td>@botstatobj.RoutingPortalFigures[0]</td>
                             </tr>
                             <tr>
-                                <th style="color:#c00000">Visa :@botstatobj.RoutingPortalFigures[1]</th>
+                                <th>Visa </th>
+                                <td>@botstatobj.RoutingPortalFigures[1]</td>
                             </tr>
                             <tr>
-                                <th style="color:#8a8f92">OmanNet :@botstatobj.RoutingPortalFigures[2]</th>
+                                <th>OmanNet </th>
+                                <td>@botstatobj.RoutingPortalFigures[2]</td>
                             </tr>
                             <tr>
-                                <th style="color:#92d028">Onus :@botstatobj.RoutingPortalFigures[3]</th>
+                                <th>Onus </th>
+                                <td>@botstatobj.RoutingPortalFigures[3]</td>
                             </tr>
                             <tr>
-                                <th style="color:#558fd5">POSECOM :@botstatobj.RoutingPortalFigures[4]</th>
+                                <th>POSECOM </th>
+                                <td>@botstatobj.RoutingPortalFigures[4]</td>
                             </tr>
                         </table>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <div class="card-body" style="width:510px;height:290px">
                         <canvas id="doughnutChart"></canvas>
                     </div>
                 </div>
-
             </div>
-
             <div class="card-footer">
-                <b style="color:#6d7979;font-size:12px">Showing data from 23-Mar -till date</b>
+                <b style="color:#6d7979;font-size:12px">Showing data from @botstatobj.RoutingPortalFigures[5] </b>
             </div>
         </div>
     </div>
 
     <div class="col-sm-12">
         <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
-            <thead style="background-color:#1d40b1;color:white;text-align: center;">
+            <thead style="color:white;text-align: center;">
                 <tr>
                     <th>Feedback Id</th>
                     <th>Auth Code</th>
@@ -360,25 +382,30 @@ else if (botstatobj.RoutingPortalFigures != null)
 }
 else if (botstatobj.CaseReadyForAction != null)
 {
-    <div class="card-header" style="border-bottom: #f11a1a;border-bottom-style: solid;">
+    <div class="card-header" style="text-align:center">
+        <span class="pagetilte">Case Ready For Action</span>
+    </div>
+    <br />
+    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterData" method="post">
+        <input type="hidden" name="Flag" value="@botstatobj.flag" />
         <div class="row">
             <div class="col-md-8">  </div>
             <div class="col-md-1"></div>
             <div class="col-md-3">
-                <button class="btn btn-sm btn-light">
-                    Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
+                <button class="btn btn-sm btn-light" value="Excel" name="Excel" type="submit">
+                    Export<img style="background-color: #57b362;border-radius: 3px;margin-left: 3px;margin-top: -3px;" src="~/Images/exl.png" />
                 </button>
-                <button class="btn btn-sm btn-light">
+                <a href="#" class="btn btn-sm btn-light" id="create_pdf">
                     Export<img src="~/Images/pdf.png" />
-                </button>
+                </a>
             </div>
 
         </div>
-    </div>
-    <br />
+    </form>
     <div class="col-sm-12">
+
         <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
-            <thead style="background-color:#1d40b1;color:white;text-align: center;">
+            <thead style="color:white;text-align: center;">
                 <tr>
                     <th>Feedback Id</th>
                     <th>CIF No.</th>
@@ -408,6 +435,7 @@ else if (botstatobj.CaseReadyForAction != null)
             </tbody>
         </table>
     </div>
+
 }
 @if (botstatobj.RoutingPortalFigures != null)
 {
@@ -417,7 +445,7 @@ else if (botstatobj.CaseReadyForAction != null)
     var myLineChart = new Chart(ctxD, {
         type: 'doughnut',
         data: {
-            //labels: ["MasterCard", "Visa", "OmanNet", "Onus","POSECOM"],
+            labels: ["MasterCard", "Visa", "OmanNet", "Onus","POSECOM"],
             datasets: [{
                 data: datafig,
                 //data: ["84","64","54","78","89"],
@@ -432,4 +460,3 @@ else if (botstatobj.CaseReadyForAction != null)
     </script>
 
 }
- 

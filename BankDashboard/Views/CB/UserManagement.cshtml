@@ -1,0 +1,212 @@
+﻿
+@{
+    ViewBag.Title = "User Management";
+    Layout = "~/Views/Shared/_CBLayout.cshtml";
+}
+<style>
+    .btn-sm img {
+        background-color: #404241;
+        border-radius: 4px;
+        height: 22px;        
+    }
+   
+    .col-md-5 b {
+        color: #414e4e;
+    }
+
+    .btn-sm img:hover {
+        background-color: #71706c;
+    }
+    #usertbl td a {
+        margin-left: 30%;
+    }
+    #usertbl td {
+        color: #6b7777;
+        font-weight: bold;
+    }
+
+    #usertb2 input[type=checkbox] {
+        margin-top: 6px
+    }
+
+    #usertb2 td {
+        color: #414e4e;
+        font-weight: bold;
+    }
+
+    .form-control {
+        color: #6b7777;
+        font-weight: bold;
+    }
+</style>
+<div class="card-header" style="text-align:center">
+    <span class="pagetilte">@ViewBag.Title </span>
+    
+</div>
+<div class="card-body">
+    <div class="row">
+        <div class="col-sm-3">
+            <table class="table-bordered table table-striped table-condensed" id="usertbl">
+                <thead style="background-color:#f12928;color:white">
+                    <tr>
+                        <th>Users</th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.userlist != null)
+                    {
+                        foreach (var item in (List<BankDashboard.CBModel.Tbl_User_Detail>)ViewBag.userlist)
+                        {
+                            <tr>
+                                <td>@item.UserName</td>
+                                <td>
+                                    <a class="btn btn-sm" href="#" onclick="SetPagesOnChecks(@Json.Encode(item))">
+                                        <img src="~/Images/edit.png" />
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-9">
+            <div class="shadow card">
+                <div class="card-header" style="height: 45px; background-color: #f12928;">
+
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <b>User Name:</b>
+                            <input type="text" class="form-control" readonly id="username" />
+                        </div>
+                        <div class="col-md-5">
+                            <b>AD Group Name:</b>
+                            <input type="text" class="form-control" readonly id="group" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                          
+                            <table class="table-bordered table table-striped table-condensed" id="usertb2">
+                                <thead style="background-color:#0a2960;color:white">
+                                    <tr>
+                                        <th>Permissions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <table class="table-bordered" style=" width: 100%;color:#414e4e">
+                                                <tr>
+                                                    <td><input class="form-check" onclick="AssignPage()" type="checkbox" value="CaseStat" /></td>
+                                                    <td>Case Statistics</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="form-check" type="checkbox" onclick="AssignPage()" value="WCStat" /></td>
+                                                    <td>Wecare Statisstics</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="form-check" type="checkbox" onclick="AssignPage()" value="SLA" /></td>
+                                                    <td>SLA</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="form-check" type="checkbox" onclick="AssignPage()" value="CaseHistory" /></td>
+                                                    <td>Case History</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="form-check" type="checkbox" onclick="AssignPage()" value="CaseClosure" /></td>
+                                                    <td>Accepted Case Closure</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="form-check" type="checkbox" onclick="AssignPage()" value="MtchedTran" /></td>
+                                                    <td>Matched Financial Transaction</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="form-check" type="checkbox" onclick="AssignPage()" value="UnmtchedTran" /></td>
+                                                    <td>Unmatched Financial Transaction</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="form-check" type="checkbox" onclick="AssignPage()" value="Recon" /></td>
+                                                    <td>Reconciliation</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-9"></div>
+                        <div class="col-md-2">
+                            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/UserManagement" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" id="userID" name="ID" />
+                                <input type="hidden" id="hiddenpages" name="pages" />
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <a href="/app/CB/UserManagement" class="btn btn-secondary">Cancel</a>
+                                        </td>
+                                        <td>
+                                            <button  type="submit" class="btn  btn-info">Save</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+   
+
+
+    function AssignPage() {
+
+        var selected = new Array();
+        var tbl_GroupRoleMappingMaster = document.getElementById("usertb2");
+        var chks = tbl_GroupRoleMappingMaster.getElementsByTagName("INPUT");
+        for (var i = 0; i < chks.length; i++) {
+            if (chks[i].checked) {
+                selected.push(chks[i].value);
+            }
+        }
+        if (selected.length > 0) {
+            // alert("Pages are: " + selected.join(","));
+            $("#hiddenpages").val(selected.join(" ,"))
+        } else {
+            $("#hiddenpages").val("")
+        }
+    }
+    function SetPagesOnChecks(user) {
+        debugger
+        var pages = user.GroupPages;
+        var tbl_GroupRoleMappingMaster = document.getElementById("usertb2");
+        var chks = tbl_GroupRoleMappingMaster.getElementsByTagName("INPUT");
+        for (var i = 0; i < chks.length; i++) {
+            if (pages != null && pages.includes(chks[i].value)) {
+                chks[i].setAttribute("checked", "checked")
+            } else {
+                chks[i].removeAttribute("checked")
+            }
+        }
+        $("#username").val(user.UserName)
+        $("#group").val(user.Usergroup)
+        $("#hiddenpages").val(pages)
+        $("#userID").val(user.ID)
+    }
+
+   
+</script>

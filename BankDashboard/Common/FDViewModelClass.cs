@@ -85,11 +85,9 @@ namespace BankDashboard.Common
 
         public static class UserGroups
         {
-            readonly public static string Admin = "RPA-IT Support Team";
-            readonly public static string Checker = "RPA-Recon Checker";
-            readonly public static string Maker = "RPA-Recon Maker";
-            readonly public static string ParameterManager = "Parameter Management Team";
-            readonly public static string ApplicationUserManagement = "Application User Management";
+            readonly public static string Admin = "RPA-Chargeback Admin";
+            readonly public static string User = "RPA-Chargeback User";
+            readonly public static string UserManager= "Application User Management Team";
         }
     }
 }

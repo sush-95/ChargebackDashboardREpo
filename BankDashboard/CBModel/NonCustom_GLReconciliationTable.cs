@@ -36,6 +36,13 @@ namespace BankDashboard.CBModel
 
         public DateTime? FileScheduleDate { get; set; }
 
+        [StringLength(4)]
+        public string Year { get; set; }
+
+        public string Comments { get; set; }
+
         public DateTime? BotEntryTime { get; set; }
+
+        public bool? IsActive { get; set; }
     }
 }

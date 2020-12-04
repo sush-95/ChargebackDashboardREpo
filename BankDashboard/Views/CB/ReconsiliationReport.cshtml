@@ -1,0 +1,291 @@
+﻿@using BankDashboard.Common;
+@{
+    ViewBag.Title = "Reconciliation";
+    Layout = "~/Views/Shared/_CBLayout.cshtml";
+    ViewModelClass.ReconciliationFilter filterobj = (ViewModelClass.ReconciliationFilter)ViewBag.filter;
+}
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<style>
+    .form-control {
+        height: calc(1.5em + -0.4rem + 10px);
+    }
+
+    #inputheader .form-control {
+        font-size: 12px;
+    }
+
+    #example {
+        text-align: center
+    }
+
+    .col-sm-2 span {
+        font-weight: bold;
+        font-size: 13px;
+        color: #61605d;
+    }
+
+    #inputheader {
+        font-size: 10px;
+        text-align: center;
+    }
+
+        #inputheader th {
+            width: 14.28%;
+        }
+
+    .col-sm-3 .invoice {
+        height: 27px;
+        width: 164px;
+    }
+
+    .btnImg {
+        height: 13px;
+        margin-bottom: 12px;
+        margin-left: -3px;
+    }
+
+    #example .tbn-sm {
+        height: 29px;
+        width: 29px;
+    }
+
+    #example th {
+        background-image: none;
+    }
+</style>
+@*<div class="row">
+    <div class="col-md-12">
+        @using (Html.BeginForm("ReconsiliationReport", "CB", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+        {
+            <div>
+                <div>
+                    &nbsp;&nbsp;&nbsp;<input class="custom-file custom-file-input" height:"20px;" width:"20px;" multiple="multiple" type="file" name="Imagefiles" />
+                </div>
+                <br />
+                <div>
+                    &nbsp;<input class="btn btn-info" style="height:20px; padding-top:0px" type="submit" name="submitt24" value="Submit" />
+                </div>
+
+                <div>
+                    <input type="hidden" name="ejid" value="EJID" />
+                </div>
+            </div>
+        }
+    </div>
+</div>*@
+
+<div class="card-header">
+    <div class="row">
+        <div class="col-sm-2">
+            <h4 style="color:#758484"></h4>
+        </div>
+        <div class="col-sm-6"></div>
+        <div class="col-sm-2">
+
+            @*<form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
+                    <button class="btn btn-success" type="submit">
+                        <img src="~/Images/exl.png" style="height: 19px;" />Import
+                    </button>
+                </form>*@
+        </div>
+        <div class="col-sm-2">
+            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel_ReconciliationReport" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
+                <button class="btn btn-success" type="submit">
+                    <img src="~/Images/exl.png" style="height: 19px;" />Export
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="card-body">
+    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/ReconsiliationReport" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-sm-2">
+                <span> Member Case:</span>
+                @if (filterobj == null)
+                {
+                    <input type="text" class="form-control" autocomplete="off" name="MemberCaseNumber" />
+                }
+                else
+                {
+                    <input type="text" class="form-control" value="@filterobj.MemberCaseNumber" autocomplete="off" name="MemberCaseNumber" />
+                }
+
+            </div>
+            <div class="col-sm-2">
+                <span> Card Number:</span>
+                @if (filterobj == null)
+                {
+                    <input type="text" class="form-control" autocomplete="off" name="CardNumber" />
+                }
+                else
+                {
+                    <input type="text" class="form-control" value="@filterobj.CardNumber" autocomplete="off" name="CardNumber" />
+                }
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;" name="find" value="find">Find</button>
+                &nbsp;&nbsp;
+                <a class="btn btn-sm btn-secondary" href="/app/CB/ReconsiliationReport" style="margin-top: 19px;">Reset/Refresh</a>
+                &nbsp;&nbsp;
+                <a class="btn btn-sm btn-success" href="/app/CB/AddRowReconsiliationTable" type="submit" style="margin-top: 19px;background-color: #92d050; border-color:#92d050;" name="find" value="find">Add Row</a>
+                &nbsp;&nbsp;
+                <button class="btn btn-sm btn-secondary" type="submit" style="margin-top: 19px;background-color: #ee3123; border-color:#ee3123;" name="removeAll" value="removeAll">Remove All</button>
+            </div>
+
+
+        </div>
+    </form>
+    <br />
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="font-weight: bold;color: #7b6b56;">
+                    <span>Feedback ID:</span><u id="flabel"></u>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <table id="authtable" class="table-bordered table table-striped table-condensed" style="font-size: 9px;">
+                        <thead style="background-color:#0d274d;color:white;text-align: center;">
+                            <tr>
+                                <th>Post Date</th>
+                                <th>Member Case</th>
+                                <th>Card Number</th>
+                                <th>Debit</th>
+                                <th>Credit</th>
+                                <th>Year</th>
+                                <th>Comments</th>
+                                <th>Action</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ModalEnd -->
+    <div class="row">
+        <div class="col-md-12">
+            <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 9px;">
+                <thead style="background-color:#0d274d;color:white;text-align: center;">
+                    <tr>
+                        <th>Post Date</th>
+                        <th style="    width:125px;">Member Case</th>
+                        <th>Card Number</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                        <th>Year</th>
+                        <th>Comments</th>
+                        <th>TestBrose</th>
+                        <th>Action</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.list != null)
+                    {
+                        foreach (var item in ViewBag.list)
+                        {
+                            <tr>
+                                <td>@item.PostDate</td>
+                                <td>@item.MemberCase</td>
+                                <td>@item.CardNumber</td>
+                                <td>@item.Debit</td>
+                                <td>@item.Credit</td>
+                                <td>@*@item.Year*@</td>
+                                <td>@*@item.Comments*@</td>
+                                <td><input class="custom-file custom-file-input border-dark" multiple="multiple" type="file" name="Imagefiles" /></td>
+                                <td>
+                                    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/ReconsiliationReport" method="post">
+                                        <input type="hidden" value="@item.Id" name="RecordId" />
+                                        <button class="btn btn-sm btn-secondary" type="submit" style="background-color: #ee3123; border-color:#ee3123;" name="remove" value="@item.Id">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getAuthcode(feedbackid) {
+        $.ajax({
+            type: "POST",
+            url: '/app/CB/AuthCode',
+            data: '{feedback: ' + feedbackid + '}',
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                // alert("Data has been added successfully.");
+                LoadData(data);
+            },
+            error: function () {
+                alert("Error while inserting data");
+            }
+        });
+        $("#flabel").text(feedbackid)
+
+    }
+</script>
+<script>
+    function LoadData(authdata) {
+        $("#authtable tbody tr").remove();
+        $.each(authdata, function (i, item) {
+            var rows = "<tr>"
+                + "<td>" + item.PostDate + "</td>"
+                + "<td>" + item.MemberCase + "</td>"
+                + "<td>" + item.CardNumber + "</td>"
+                + "<td>" + item.Debit + "</td>"
+                + "<td>" + item.Credit + "</td>"
+                + "<td>" + "-" + "</td>"
+                + "<td>" + "-" + "</td>"
+                + "<td>" + "-" + "</td>"
+                + "</tr>";
+            $('#authtable tbody').append(rows);
+        });
+        @*$.ajax({
+            type: 'POST',
+            url: '@Url.Action("getStudent")',
+            dataType: 'json',
+            data: { id: '' },
+            success: function (data) {
+                var items = '';
+                $.each(data, function (i, item) {
+                    var rows = "<tr>"
+                    + "<td class='prtoducttd'>" + item.studentID + "</td>"
+                    + "<td class='prtoducttd'>" + item.studentName + "</td>"
+                    + "<td class='prtoducttd'>" + item.studentAddress + "</td>"
+                    + "</tr>";
+                    $('#tblStudent tbody').append(rows);
+                });
+            },
+            error: function (ex) {
+                var r = jQuery.parseJSON(response.responseText);
+                alert("Message: " + r.Message);
+                alert("StackTrace: " + r.StackTrace);
+                alert("ExceptionType: " + r.ExceptionType);
+            }
+        });*@
+        return false;
+    }
+</script>

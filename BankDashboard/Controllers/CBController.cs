@@ -16,13 +16,25 @@ namespace BankDashboard.Controllers
         #region-------------------------Case Statistics----------------------------------------------
         public ActionResult Index()
         {
-            ViewBag.Dashboard = "show";
-            ViewBag.botstat = "active";
-            BOtStatModel obj = new BOtStatModel();
-            obj.castStatFigures = CBHelper.CaseForToday();
-            obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
-            obj.CaseReadyForAction = CBHelper.GetCaseReadyForAction();
-            ViewBag.casestat = obj;
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("CaseStat"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
+            try
+            {
+                ViewBag.Dashboard = "show";
+                ViewBag.botstat = "active";
+                BOtStatModel obj = new BOtStatModel();
+                obj.castStatFigures = CBHelper.CaseForToday();
+                obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
+                obj.CaseReadyForAction = CBHelper.GetCaseReadyForAction();
+                ViewBag.casestat = obj;
+            }
+            catch { }
             return View();
         }
 
@@ -63,49 +75,376 @@ namespace BankDashboard.Controllers
             return View();
         }
 
-        public ActionResult GetFilterData(string Flag, string Todate, string Fromdate, string Filter)
+        public ActionResult GetFilterData(string Flag, string Todate, string Fromdate, string Filter, string Excel)
         {
             BOtStatModel obj = new BOtStatModel();
             obj.flag = Flag;
             if (Flag == "1")
             {
                 obj.castStatFigures = CBHelper.CaseDataOnFilter(Fromdate, Todate);
-                TempData["list"] = CBHelper.CaseDataTableOnFilter(Fromdate, Todate, Filter);
+                List<tbl_UnassignedTickets> tabList = CBHelper.CaseDataTableOnFilter(Fromdate, Todate, Filter);
+                TempData["list"] = tabList;
                 TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
+                if (Excel != null)
+                {
+                    FormattoExcelForcasestat(tabList, "Casestatusreport_" + DateTime.Now.ToString("ddMMyyyyhhmmss"));
+                }
             }
             else if (Flag == "2")
             {
                 obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
-                TempData["list"] = CBHelper.getRoutingPortalTable(Fromdate, Todate, Filter);
+                List<tbl_AuthCode> tblauth = CBHelper.getRoutingPortalTable(Fromdate, Todate, Filter);
+                TempData["list"] = tblauth;
                 TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
+                if (Excel != null)
+                {
+                    FormattoExcelForRoutingPortal(tblauth, "RoutingportalReport_" + DateTime.Now.ToString("ddMMyyyyhhmmss"));
+                }
             }
             else if (Flag == "3")
             {
                 obj.CaseReadyForAction = new List<string>() { "24", "35", "56", "21", "76" };
+                List<tbl_UnassignedTickets> tabList = CBHelper.GetCaseReadyTable();
                 TempData["list"] = CBHelper.GetCaseReadyTable();
+                if (Excel != null)
+                {
+                    FormattoExcelFaorcaseReadyForAction(tabList, "Casereadyforactionreport_" + DateTime.Now.ToString("ddMMyyyyhhmmss"));
+                }
             }
             TempData["caseObj"] = obj;
             return RedirectToAction("CaseViewFrom", new { getval = Flag });
         }
-        public List<string> getpercentagefigure(List<string> casestatfigure)
+
+        void FormattoExcelForcasestat(List<tbl_UnassignedTickets> p, string sname)
         {
-            List<string> list = new List<string>();
-            long sum = 0;
-            foreach (string item in casestatfigure)
+            System.Web.HttpContext.Current.Response.Clear();
+            System.Web.HttpContext.Current.Response.ClearContent();
+            System.Web.HttpContext.Current.Response.ClearHeaders();
+            System.Web.HttpContext.Current.Response.Buffer = true;
+            System.Web.HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
+            System.Web.HttpContext.Current.Response.Write(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">");
+            System.Web.HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + sname + ".xls"); /*" + sname + "*/
+
+            System.Web.HttpContext.Current.Response.Charset = "utf-8";
+            System.Web.HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("windows-1250");
+            //sets font
+            System.Web.HttpContext.Current.Response.Write("<font style='font-size:10.0pt; font-family:Calibri;'>");
+            System.Web.HttpContext.Current.Response.Write("<BR><BR><BR>");
+            System.Web.HttpContext.Current.Response.Write("<Table border='1' bgColor='#ffffff' " + "borderColor='#000000' cellSpacing='0' cellPadding='0' " +
+              "style='font-size:10.0pt; font-family:Calibri; background:white;'> <TR>");
+
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Feedback Id");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Issue Type");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Status");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Reason");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Bot Entry Time");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+            System.Web.HttpContext.Current.Response.Write("</Tr>");
+
+
+
+            foreach (var pdata in p)
             {
-                sum += long.Parse(item);
+                System.Web.HttpContext.Current.Response.Write("<TR>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.FeedbackId);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Issue);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Status);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.BotRemarks);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.BotDataEntryTime);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("</TR>");
+
             }
-            foreach (string item in casestatfigure)
+            System.Web.HttpContext.Current.Response.Write("</Table>");
+            System.Web.HttpContext.Current.Response.Write("</font>");
+            System.Web.HttpContext.Current.Response.Flush();
+            System.Web.HttpContext.Current.Response.End();
+            System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
+        }
+        void FormattoExcelForRoutingPortal(List<tbl_AuthCode> p, string sname)
+        {
+            System.Web.HttpContext.Current.Response.Clear();
+            System.Web.HttpContext.Current.Response.ClearContent();
+            System.Web.HttpContext.Current.Response.ClearHeaders();
+            System.Web.HttpContext.Current.Response.Buffer = true;
+            System.Web.HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
+            System.Web.HttpContext.Current.Response.Write(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">");
+            System.Web.HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + sname + ".xls"); /*" + sname + "*/
+
+            System.Web.HttpContext.Current.Response.Charset = "utf-8";
+            System.Web.HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("windows-1250");
+            //sets font
+            System.Web.HttpContext.Current.Response.Write("<font style='font-size:10.0pt; font-family:Calibri;'>");
+            System.Web.HttpContext.Current.Response.Write("<BR><BR><BR>");
+            System.Web.HttpContext.Current.Response.Write("<Table border='1' bgColor='#ffffff' " + "borderColor='#000000' cellSpacing='0' cellPadding='0' " +
+              "style='font-size:10.0pt; font-family:Calibri; background:white;'> <TR>");
+
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Feedback Id");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Auth Code");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Amount");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Routing Portal");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Card Number");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Status");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("</Tr>");
+
+
+
+            foreach (var pdata in p)
             {
-                list.Add(((long.Parse(item) * 100 / sum)).ToString());
+                System.Web.HttpContext.Current.Response.Write("<TR>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.FeedbackId);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.AuthCode);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Status);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Amount);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Routing_Channel);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.CardNumber);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Status);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("</TR>");
+
             }
-            casestatfigure.AddRange(list);
-            return casestatfigure;
+            System.Web.HttpContext.Current.Response.Write("</Table>");
+            System.Web.HttpContext.Current.Response.Write("</font>");
+            System.Web.HttpContext.Current.Response.Flush();
+            System.Web.HttpContext.Current.Response.End();
+            System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
+        }
+        void FormattoExcelFaorcaseReadyForAction(List<tbl_UnassignedTickets> p, string sname)
+        {
+            System.Web.HttpContext.Current.Response.Clear();
+            System.Web.HttpContext.Current.Response.ClearContent();
+            System.Web.HttpContext.Current.Response.ClearHeaders();
+            System.Web.HttpContext.Current.Response.Buffer = true;
+            System.Web.HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
+            System.Web.HttpContext.Current.Response.Write(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">");
+            System.Web.HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + sname + ".xls"); /*" + sname + "*/
+
+            System.Web.HttpContext.Current.Response.Charset = "utf-8";
+            System.Web.HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("windows-1250");
+            //sets font
+            System.Web.HttpContext.Current.Response.Write("<font style='font-size:10.0pt; font-family:Calibri;'>");
+            System.Web.HttpContext.Current.Response.Write("<BR><BR><BR>");
+            System.Web.HttpContext.Current.Response.Write("<Table border='1' bgColor='#ffffff' " + "borderColor='#000000' cellSpacing='0' cellPadding='0' " +
+              "style='font-size:10.0pt; font-family:Calibri; background:white;'> <TR>");
+
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Feedback Id");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("CIF No.");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Customer Name");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Registration Date");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Card Number");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Status");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("</Tr>");
+
+
+
+            foreach (var pdata in p)
+            {
+                System.Web.HttpContext.Current.Response.Write("<TR>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.FeedbackId);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.CIFNo);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.CustomerName);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.IncidentDate);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.CardNumber);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Status);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("</TR>");
+
+            }
+            System.Web.HttpContext.Current.Response.Write("</Table>");
+            System.Web.HttpContext.Current.Response.Write("</font>");
+            System.Web.HttpContext.Current.Response.Flush();
+            System.Web.HttpContext.Current.Response.End();
+            System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
         }
         #endregion-----------------------------------------------------------------------------------------
+
         #region-------------------------WeCare----------------------------------------------
         public ActionResult WC()
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("WCStat"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.Dashboard = "show";
             ViewBag.wcarestat = "active";
             try
@@ -156,7 +495,8 @@ namespace BankDashboard.Controllers
             catch (Exception ex) { }
             return View();
         }
-        public ActionResult GetFilterDataWC(string Flag, string Todate, string Fromdate, string Filter)
+
+        public ActionResult GetFilterDataWC(string Flag, string Todate, string Fromdate, string Filter, string Excel)
         {
             try
             {
@@ -165,44 +505,156 @@ namespace BankDashboard.Controllers
                 if (Flag == "1")
                 {
                     List<tbl_WeCareReactive> tblWC = new List<tbl_WeCareReactive>();
-                    obj.WCCaseStatus = CBHelper.WCScaseStatusFigure(ref tblWC, Fromdate, Todate,Filter);
+                    obj.WCCaseStatus = CBHelper.WCScaseStatusFigure(ref tblWC, Fromdate, Todate, Filter);
                     TempData["list"] = tblWC;
                     TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
+                    if (Excel != null)
+                    {
+                        FormattoExcelForWCCaseStat(tblWC, "WecareCaseStat_" + DateTime.Now.ToString("ddMMyyyyhhmmss"));
+                    }
                 }
                 else if (Flag == "2")
                 {
-                    
-                    obj.Itypes = CBHelper.GetListOfIssueTypes(Fromdate, Todate, Filter, 1);                   
+                    obj.Itypes = CBHelper.GetListOfIssueTypes(Fromdate, Todate, Filter, 1);
                     TempData["list"] = CBHelper.getRoutingPortalTable(Fromdate, Todate, Filter);
                     TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
                     CBDB db = new CBDB();
                     TempData["issuelist"] = db.tbl_WeCareReactive.Select(x => x.Issue).Distinct().ToList();
-                }               
+                }
                 TempData["WCObj"] = obj;
-               
+
             }
             catch { }
             return RedirectToAction("WCViewFrom", new { getval = Flag });
         }
+        void FormattoExcelForWCCaseStat(List<tbl_WeCareReactive> p, string sname)
+        {
+            System.Web.HttpContext.Current.Response.Clear();
+            System.Web.HttpContext.Current.Response.ClearContent();
+            System.Web.HttpContext.Current.Response.ClearHeaders();
+            System.Web.HttpContext.Current.Response.Buffer = true;
+            System.Web.HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
+            System.Web.HttpContext.Current.Response.Write(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">");
+            System.Web.HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + sname + ".xls"); /*" + sname + "*/
+
+            System.Web.HttpContext.Current.Response.Charset = "utf-8";
+            System.Web.HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("windows-1250");
+            //sets font
+            System.Web.HttpContext.Current.Response.Write("<font style='font-size:10.0pt; font-family:Calibri;'>");
+            System.Web.HttpContext.Current.Response.Write("<BR><BR><BR>");
+            System.Web.HttpContext.Current.Response.Write("<Table border='1' bgColor='#ffffff' " + "borderColor='#000000' cellSpacing='0' cellPadding='0' " +
+              "style='font-size:10.0pt; font-family:Calibri; background:white;'> <TR>");
+
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Feedback Id");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Assigned UserID");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Registration Date");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Resolution Date");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Stage");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+            System.Web.HttpContext.Current.Response.Write("</Tr>");
+
+
+
+            foreach (var pdata in p)
+            {
+                System.Web.HttpContext.Current.Response.Write("<TR>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.FeedbackID);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.AssignedUserID);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.RegistrationDate);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.ResolutionDate);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Stage);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("</TR>");
+
+            }
+            System.Web.HttpContext.Current.Response.Write("</Table>");
+            System.Web.HttpContext.Current.Response.Write("</font>");
+            System.Web.HttpContext.Current.Response.Flush();
+            System.Web.HttpContext.Current.Response.End();
+            System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
+        }
         #endregion------------------------------------------------------------------------------
 
         #region---------------------------SLA-------------------------------------------
-        public ActionResult SLA(SLAFilter obj, string find)
+        public ActionResult SLA(SLAFilter obj, string find, string Excel)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("SLA"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.Dashboard = "show";
             ViewBag.SLAStat = "active";
             CBDB db = new CBDB();
             try
-            {               
+            {
                 if (find != null)
                 {
                     ViewBag.list = CBHelper.GetSla(obj);
                 }
+                else if (Excel != null)
+                {
+                    List<tbl_WeCareReactive> wcList = CBHelper.GetSla(obj);
+                    ViewBag.list = wcList;
+                    FormattoExcelForSLA(wcList, "SLAReport_" + DateTime.Now.ToString("ddMMyyyyhhmmss"), obj);
+                }
                 else
-                {                  
+                {
                     ViewBag.list = db.tbl_WeCareReactive.ToList();
                     obj = new SLAFilter() { SLADays = "75", CloseToSla = "10", SlACount = "", Filter = "" };
-                 
+
                 }
                 ViewBag.filterobj = obj;
                 ViewBag.userlist = db.tbl_WeCareReactive.Select(x => x.AssignedUserID).Distinct().ToList();
@@ -210,11 +662,149 @@ namespace BankDashboard.Controllers
             catch { }
             return View();
         }
+        void FormattoExcelForSLA(List<tbl_WeCareReactive> p, string sname, SLAFilter obj)
+        {
+            long sladays = 0, closetosla = 0,datediff=0; DateTime today = DateTime.Today,datex=new DateTime();int flag = 0;
+            System.Web.HttpContext.Current.Response.Clear();
+            System.Web.HttpContext.Current.Response.ClearContent();
+            System.Web.HttpContext.Current.Response.ClearHeaders();
+            System.Web.HttpContext.Current.Response.Buffer = true;
+            System.Web.HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
+            System.Web.HttpContext.Current.Response.Write(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">");
+            System.Web.HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + sname + ".xls"); /*" + sname + "*/
+
+            System.Web.HttpContext.Current.Response.Charset = "utf-8";
+            System.Web.HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("windows-1250");
+            //sets font
+            System.Web.HttpContext.Current.Response.Write("<font style='font-size:10.0pt; font-family:Calibri;'>");
+            System.Web.HttpContext.Current.Response.Write("<BR><BR><BR>");
+            System.Web.HttpContext.Current.Response.Write("<Table border='1' bgColor='#ffffff' " + "borderColor='#000000' cellSpacing='0' cellPadding='0' " +
+              "style='font-size:10.0pt; font-family:Calibri; background:white;'> <TR>");
+
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Feedback Id");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Registration Date");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Assigned UserId");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("SLA Date");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Incident Date");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Days Left");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("</Tr>");
+
+            sladays = string.IsNullOrEmpty(obj.SLADays.Trim()) ? 0 : long.Parse(obj.SLADays.Trim());
+            closetosla = string.IsNullOrEmpty(obj.CloseToSla.Trim()) ? 0 : long.Parse(obj.CloseToSla.Trim());
+            foreach (var pdata in p)
+            {
+                flag = 0;
+                datex = Convert.ToDateTime(pdata.RegistrationDate).AddDays(sladays);
+                if (datex < today && pdata.Stage.Equals("In Progress") || pdata.Stage.ToLower().Equals("InProgress".ToLower()))
+                {
+                    flag = 1;
+                    datediff = (datex - today).Days;
+                }
+                else if (datex >= today && datex <= today.AddDays(closetosla) &&
+                               pdata.Stage.Equals("In Progress") || pdata.Stage.ToLower().Equals("InProgress".ToLower()))
+                {
+                    flag = 2;
+                    datediff = (datex - today).Days;
+                }
+                if (flag != 0)
+                {
+                    System.Web.HttpContext.Current.Response.Write("<TR>");
+
+                    System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                    System.Web.HttpContext.Current.Response.Write(pdata.FeedbackID);
+
+                    System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                    System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                    System.Web.HttpContext.Current.Response.Write(pdata.RegistrationDate);
+
+                    System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                    System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                    System.Web.HttpContext.Current.Response.Write(pdata.AssignedUserID);
+
+                    System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                    System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                    System.Web.HttpContext.Current.Response.Write(Convert.ToDateTime(pdata.RegistrationDate).AddDays(sladays));
+
+                    System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                    System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                    System.Web.HttpContext.Current.Response.Write(pdata.IncidentDate);
+
+                    System.Web.HttpContext.Current.Response.Write("</Td>");
+                    if (flag == 1)
+                    {
+                        System.Web.HttpContext.Current.Response.Write("<Td style='color: red'>");
+                    }
+                    else
+                    {
+                        System.Web.HttpContext.Current.Response.Write("<Td style='color: green'>");
+                    }
+
+                    System.Web.HttpContext.Current.Response.Write(datediff);
+
+                    System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                    System.Web.HttpContext.Current.Response.Write("</TR>");
+                }
+            }
+            System.Web.HttpContext.Current.Response.Write("</Table>");
+            System.Web.HttpContext.Current.Response.Write("</font>");
+            System.Web.HttpContext.Current.Response.Flush();
+            System.Web.HttpContext.Current.Response.End();
+            System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
+        }
         #endregion-----------------------------------------------------------------------
 
         #region-------------------------Case History----------------------------------------------
         public ActionResult CaseHistory(FilterClass filter, string find)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("CaseHistory"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.Report = "show";
             ViewBag.casehistrory = "active";
             try
@@ -479,13 +1069,19 @@ namespace BankDashboard.Controllers
             System.Web.HttpContext.Current.Response.End();
             System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
         }
-
-
         #endregion-------------------------------------------------------------------------------------------------
 
         #region-------------------------Matched Financial Transaction----------------------------------------------
         public ActionResult MatchedFinTransaction(FilterClass filter, string find)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("MtchedTran"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.Report = "show";
             ViewBag.matchedTran = "active";
             try
@@ -513,6 +1109,14 @@ namespace BankDashboard.Controllers
         #region-------------------------Unmatched Financial Transaction----------------------------------------------
         public ActionResult UnmatchedFinTransaction(FilterClass filter, string find)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("UnmtchedTran"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.UnmatchedTran = "active";
             ViewBag.Report = "show";
             try
@@ -537,5 +1141,424 @@ namespace BankDashboard.Controllers
         }
 
         #endregion------------------------------------------------------------------------------
+
+        #region---------------------------------------Reconciliation----------------------------------------------
+
+
+        public ActionResult AddRowReconsiliationTable(NonCustom_GLReconciliationTable obj, string submit)
+        {
+            ViewBag.Report = "show";
+            ViewBag.Reconsiliation = "active";
+            if (submit != null && obj != null)
+            {
+                CBHelper.AddRow_NonCustom_GLReconciliationTable(obj);
+                return RedirectToAction("ReconsiliationReport");
+            }
+            return View();
+
+        }
+        public ActionResult ReconsiliationReport(ReconciliationFilter filter, string find, string removeAll, string remove)
+        {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("Recon"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
+            ViewBag.Report = "show";
+            ViewBag.Reconsiliation = "active";
+            try
+            {
+                CBDB db = new CBDB();
+                if (find != null)
+                {
+                    ViewBag.list = CBHelper.GetReconsiledReportFilterd(filter);
+                    ViewBag.filter = filter;
+                }
+                else if (removeAll != null)
+                {
+
+                    CBHelper.MarkAllRecordsAsInActive();
+                    ViewBag.list = CBHelper.GetReconsiledReportFilterd(new ReconciliationFilter { CardNumber = "", MemberCaseNumber = "" });
+                }
+                else if (remove != null)
+                {
+                    CBHelper.MarkRecordsAsInActive(remove);
+                    ViewBag.list = CBHelper.GetReconsiledReportFilterd(new ReconciliationFilter { CardNumber = "", MemberCaseNumber = "" });
+                }
+                else
+                {
+                    CBHelper.ReconsiledReport();
+                    ViewBag.list = CBHelper.GetReconsiledReportFilterd(new ReconciliationFilter { CardNumber = "", MemberCaseNumber = "" });
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Somthing went wrong.." + ex.Message;
+            }
+            return View();
+
+        }
+        public ActionResult GetExcel_ReconciliationReport(string hfilter)
+        {
+            ViewModelClass.ReconciliationFilter filterobj = new ViewModelClass.ReconciliationFilter();
+            try
+            {
+                List<NonCustom_GLReconciliationTable> list = new List<NonCustom_GLReconciliationTable>();
+                if (!hfilter.Equals("null"))
+                {
+                    filterobj = JsonConvert.DeserializeObject<ViewModelClass.ReconciliationFilter>(hfilter);
+                    list = CBHelper.GetReconsiledReportFilterd(filterobj).ToList();
+                }
+                else
+                {
+
+                    list = CBHelper.GetReconsiledReportFilterd(new ReconciliationFilter { CardNumber = "", MemberCaseNumber = "" }).ToList();
+                }
+                FormattoExcel_ReconsiliationReport(list, "ReconsiliationReport_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
+            }
+            catch
+            {
+                TempData["Error"] = "Something went wrong..!";
+            }
+            return RedirectToAction("ReconsiliationReport", new { filter = filterobj });
+            //return RedirectToAction("Report", new { filter = filterobj, Apply = "" });
+        }
+        void FormattoExcel_ReconsiliationReport(List<NonCustom_GLReconciliationTable> p, string sname)
+        {
+
+
+            System.Web.HttpContext.Current.Response.Clear();
+            System.Web.HttpContext.Current.Response.ClearContent();
+            System.Web.HttpContext.Current.Response.ClearHeaders();
+            System.Web.HttpContext.Current.Response.Buffer = true;
+            System.Web.HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
+            System.Web.HttpContext.Current.Response.Write(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">");
+            System.Web.HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + sname + ".xls"); /*" + sname + "*/
+
+            System.Web.HttpContext.Current.Response.Charset = "utf-8";
+            System.Web.HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("windows-1250");
+            //sets font
+            System.Web.HttpContext.Current.Response.Write("<font style='font-size:10.0pt; font-family:Calibri;'>");
+            System.Web.HttpContext.Current.Response.Write("<BR><BR><BR>");
+            System.Web.HttpContext.Current.Response.Write("<Table border='1' bgColor='#ffffff' " + "borderColor='#000000' cellSpacing='0' cellPadding='0' " +
+              "style='font-size:10.0pt; font-family:Calibri; background:white;'> <TR>");
+
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Post Date");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Member Case");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Card Number");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Debit");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Credit");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Year");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Comments");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+
+
+            System.Web.HttpContext.Current.Response.Write("</Tr>");
+
+
+
+            foreach (NonCustom_GLReconciliationTable pdata in p)
+            {
+                System.Web.HttpContext.Current.Response.Write("<TR>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.PostDate);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.MemberCase);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.CardNumber);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Debit);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Credit);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Year);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.Comments);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+
+                System.Web.HttpContext.Current.Response.Write("</TR>");
+
+            }
+            System.Web.HttpContext.Current.Response.Write("</Table>");
+            System.Web.HttpContext.Current.Response.Write("</font>");
+            System.Web.HttpContext.Current.Response.Flush();
+            System.Web.HttpContext.Current.Response.End();
+            System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
+        }
+
+
+        #endregion--------------------------------------------------------------------------------------------------
+
+        #region-------------------------------------Closure Report----------------------------------------
+        public ActionResult ClosureReport(ClosureReportFilter filter, string find)
+        {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("CaseClosure"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
+            ViewBag.Report = "show";
+            ViewBag.ClosureReport = "active";
+            try
+            {
+                CBDB db = new CBDB();
+                if (find != null && filter != null)
+                {
+                    ViewBag.list = CBHelper.AcceptedCaseClosureReportFilter(filter);
+                    ViewBag.filter = filter;
+                }
+                else
+                {
+                    ViewBag.list = CBHelper.AcceptedCaseClosureReportDefaultData();
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Somthing went wrong.." + ex.Message;
+            }
+
+
+            return View();
+        }
+        public ActionResult GetExcel_AcceptedCaseClosureReport(string hfilter)
+        {
+            ViewModelClass.ClosureReportFilter filterobj = new ViewModelClass.ClosureReportFilter();
+            try
+            {
+                List<tbl_IssuingIncomingVISA> list = new List<tbl_IssuingIncomingVISA>();
+                if (!hfilter.Equals("null"))
+                {
+                    filterobj = JsonConvert.DeserializeObject<ViewModelClass.ClosureReportFilter>(hfilter);
+                    list = CBHelper.AcceptedCaseClosureReportFilter(filterobj).ToList();
+                }
+                else
+                {
+
+                    list = CBHelper.AcceptedCaseClosureReportDefaultData().ToList();
+                }
+                FormattoExcel_AcceptedCaseClosureReport(list, "AcceptedCaseClosureReport_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
+            }
+            catch
+            {
+                TempData["Error"] = "Something went wrong..!";
+            }
+            return RedirectToAction("ReconsiliationReport", new { filter = filterobj });
+            //return RedirectToAction("Report", new { filter = filterobj, Apply = "" });
+        }
+        void FormattoExcel_AcceptedCaseClosureReport(List<tbl_IssuingIncomingVISA> p, string sname)
+        {
+
+
+            System.Web.HttpContext.Current.Response.Clear();
+            System.Web.HttpContext.Current.Response.ClearContent();
+            System.Web.HttpContext.Current.Response.ClearHeaders();
+            System.Web.HttpContext.Current.Response.Buffer = true;
+            System.Web.HttpContext.Current.Response.ContentType = "application/vnd.ms-excel";
+            System.Web.HttpContext.Current.Response.Write(@"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">");
+            System.Web.HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + sname + ".xls"); /*" + sname + "*/
+
+            System.Web.HttpContext.Current.Response.Charset = "utf-8";
+            System.Web.HttpContext.Current.Response.ContentEncoding = System.Text.Encoding.GetEncoding("windows-1250");
+            //sets font
+            System.Web.HttpContext.Current.Response.Write("<font style='font-size:10.0pt; font-family:Calibri;'>");
+            System.Web.HttpContext.Current.Response.Write("<BR><BR><BR>");
+            System.Web.HttpContext.Current.Response.Write("<Table border='1' bgColor='#ffffff' " + "borderColor='#000000' cellSpacing='0' cellPadding='0' " +
+              "style='font-size:10.0pt; font-family:Calibri; background:white;'> <TR>");
+
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Feedback Id");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("ROL Case No.");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Financial CPD");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("ARN Number");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Message Type");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+            System.Web.HttpContext.Current.Response.Write("<Td>");
+            System.Web.HttpContext.Current.Response.Write("<B>");
+            System.Web.HttpContext.Current.Response.Write("Case Closure Report");
+            System.Web.HttpContext.Current.Response.Write("</B>");
+            System.Web.HttpContext.Current.Response.Write("</Td>");
+
+
+
+
+
+            System.Web.HttpContext.Current.Response.Write("</Tr>");
+
+
+
+            foreach (tbl_IssuingIncomingVISA pdata in p)
+            {
+                System.Web.HttpContext.Current.Response.Write("<TR>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write("");
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.ROLCaseNo);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.FinancialCPD);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write("");
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.MessageType);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("<Td>");
+
+                System.Web.HttpContext.Current.Response.Write(pdata.CaseClosureStatus);
+
+                System.Web.HttpContext.Current.Response.Write("</Td>");
+
+                System.Web.HttpContext.Current.Response.Write("</TR>");
+
+            }
+            System.Web.HttpContext.Current.Response.Write("</Table>");
+            System.Web.HttpContext.Current.Response.Write("</font>");
+            System.Web.HttpContext.Current.Response.Flush();
+            System.Web.HttpContext.Current.Response.End();
+            System.Web.HttpContext.Current.ApplicationInstance.CompleteRequest();
+        }
+        #endregion----------------------------------------------------------------------------------------
+
+        #region-----------------------------------User Management--------------------------------------
+        public ActionResult UserManagement()
+        {
+            ViewBag.Dashboard = "show";
+            ViewBag.userManagement = "active";
+            try
+            {
+                ViewBag.userlist = CBHelper.GetUsersForProfile();
+            }
+            catch { }
+            return View();
+        }
+        [HttpPost]
+        public ActionResult UserManagement(string ID, string pages)
+        {
+            try
+            {
+                CBHelper.SaveUserPages(int.Parse(ID), pages);
+                TempData["Success"] = "Data saved successfully.";
+            }
+            catch { TempData["Error"] = "Something went wrong."; }
+            return RedirectToAction("UserManagement");
+        }
+        #endregion---------------------------------------------------------------------------------------
+
+        public ActionResult Errorpage()
+        {
+            return View();
+        }
+
     }
 }

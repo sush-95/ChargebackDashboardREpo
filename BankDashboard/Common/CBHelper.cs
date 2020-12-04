@@ -15,7 +15,9 @@ namespace BankDashboard.Common
         {
             CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
             List<string> cList = objdata.GetCaseStatusData(DateTime.Today, DateTime.Today);
-            return getpercentagefigure(cList);
+            cList = getpercentagefigure(cList);
+            cList.Add(DateTime.Today.ToString("dd-MMM-yyyy") + " till date.");
+            return cList;
         }
         public static List<tbl_UnassignedTickets> CaseTableDataForToday()
         {
@@ -25,6 +27,7 @@ namespace BankDashboard.Common
         }
         public static List<string> getpercentagefigure(List<string> casestatfigure)
         {
+            decimal res = 0;
             List<string> list = new List<string>();
             long sum = 0;
             foreach (string item in casestatfigure)
@@ -36,7 +39,8 @@ namespace BankDashboard.Common
                 if (sum == 0) { list.Add("0"); }
                 else
                 {
-                    list.Add(((long.Parse(item) * 100 / sum)).ToString());
+                    res = (decimal.Parse(item) * 100 / sum);
+                    list.Add(res == 0 ? "0" : res.ToString(".##"));
                 }
             }
             casestatfigure.AddRange(list);
@@ -52,7 +56,16 @@ namespace BankDashboard.Common
             }
             CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
             List<string> cList = objdata.GetCaseStatusData(Strtday, EndDt);
-            return getpercentagefigure(cList);
+            cList = getpercentagefigure(cList);
+            if (string.IsNullOrEmpty(startdate) || string.IsNullOrEmpty(enddate))
+            {
+                cList.Add(DateTime.Today.ToString("dd-MMM-yyyy") + " till date.");
+            }
+            else
+            {
+                cList.Add(startdate + " to " + enddate);
+            }
+            return cList;
         }
         public static List<tbl_UnassignedTickets> CaseDataTableOnFilter(string startdate, string enddate, string filter)
         {
@@ -64,12 +77,14 @@ namespace BankDashboard.Common
             }
             CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
             List<tbl_UnassignedTickets> list = objdata.GetCaseStatusDataWithFilter(Strtday, EndDt, filter);
+
             return list;
         }
         public static List<string> GetRoutingPortalForToday()
         {
             CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
             List<string> cList = objdata.GetRoutingPortalGraph(DateTime.Today, DateTime.Today);
+            cList.Add(DateTime.Today.ToString("dd-MMM-yyyy") + " till date.");
             return cList;
         }
         public static List<string> RoutingPortaOnFilter(string startdate, string enddate)
@@ -82,6 +97,7 @@ namespace BankDashboard.Common
             }
             CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
             List<string> cList = objdata.GetRoutingPortalGraph(Strtday, EndDt);
+            cList.Add(startdate + " to " + enddate + ".");
             return cList;
         }
 
@@ -148,12 +164,11 @@ namespace BankDashboard.Common
                     {
                         daterange = Convert.ToDateTime(wc.BotEntryTime).ToString("dd-MMM-yyyy");
                     }
-
                     daterange = "from " + daterange + " till date.";
                 }
                 wccount.Add(wclist.Where(x => x.Stage.Contains("Closed") || x.Stage.Contains("Resolved")).ToList().Count.ToString());
-                wccount.Add(wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID != null).ToList().Count.ToString());
-                wccount.Add(wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID == null).ToList().Count.ToString());
+                wccount.Add(wclist.Where(x => x.Stage.ToLower().Replace(" ", "").Contains("InProgress".ToLower()) && x.AssignedUserID != null).ToList().Count.ToString());
+                wccount.Add(wclist.Where(x => x.Stage.ToLower().Replace(" ", "").Contains("InProgress".ToLower()) && x.AssignedUserID == null).ToList().Count.ToString());
                 wccount = getpercentagefigure(wccount);
                 wccount.Add(daterange);
                 //-----------------------------------------------Table----------------------------------------------------------------
@@ -161,16 +176,22 @@ namespace BankDashboard.Common
                 {
                     if (Filter.Equals("Closed"))
                     {
-                        wclist = wclist.Where(x => x.Stage.Contains("Closed") || x.Stage.Contains("Resolved")).ToList();
+                        wclist = wclist.Where(x => x.Stage.Contains("Closed") || x.Stage.Contains("Resolved")).ToList();//Closed
                     }
                     else if (Filter.Equals("In Progress"))
                     {
-                        wclist = wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID != null).ToList();
+                        wclist = wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID != null).ToList();//Inprogress
                     }
                     else
                     {
-                        wclist = wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID == null).ToList();
+                        wclist = wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID == null).ToList();//Unactioned
                     }
+                }
+                else
+                {//by default table must show Inprogress and unactioned
+                    wclist = wclist.Where(x => (x.Stage.ToLower().Replace(" ", "").Contains("InProgress".ToLower()) && x.AssignedUserID != null) ||
+                     (x.Stage.ToLower().Replace(" ", "").Contains("InProgress".ToLower()) && x.AssignedUserID == null)).ToList();
+
                 }
                 tblWC = wclist;
             }
@@ -192,7 +213,7 @@ namespace BankDashboard.Common
                 }
                 else
                 {
-                    wclist = db.tbl_WeCareReactive.ToList();
+                    wclist = db.tbl_WeCareReactive.Where(x => x.BotEntryTime >= DateTime.Today.AddDays(-1) && x.BotEntryTime <= DateTime.Today).ToList();
                     objI.datelbl = "for " + DateTime.Today.AddDays(-1).ToString("dd-MMM-yyyy");
                 }
                 if (!string.IsNullOrEmpty(Filter))
@@ -241,6 +262,7 @@ namespace BankDashboard.Common
             return obj;
         }
         #endregion---------------------------------------------------------------------------------------
+
         #region----------------------------SLA------------------------------------------------------------
         public static List<tbl_WeCareReactive> GetSla(SLAFilter obj)
         {
@@ -250,17 +272,18 @@ namespace BankDashboard.Common
             {
                 if (!string.IsNullOrEmpty(obj.Filter))
                 {
-                    list = db.tbl_WeCareReactive.Where(x=>x.AssignedUserID.Equals(obj.Filter)).ToList();
+                    list = db.tbl_WeCareReactive.Where(x => x.AssignedUserID.Equals(obj.Filter)).ToList();
                 }
                 else
                 {
                     list = db.tbl_WeCareReactive.ToList();
-                }               
-            
+                }
+
             }
             catch { }
             return list;
         }
+
         #endregion-------------------------------------------------------------------------------------------
 
         #region-------------------------------Case History--------------------------------------------------------------------
@@ -350,5 +373,180 @@ namespace BankDashboard.Common
             return list;
         }
         #endregion------------------------------------------------------------------------------------------------------
+
+        #region ---------------------------------Reconciliation Report-----------------------------------------------
+        public static List<NonCustom_GLReconciliationTable> GetReconsiledReportFilterd(ViewModelClass.ReconciliationFilter filter)
+        {
+            List<NonCustom_GLReconciliationTable> list = new List<NonCustom_GLReconciliationTable>();
+            try
+            {
+                CBDB db = new CBDB();
+                list = db.NonCustom_GLReconciliationTable.SqlQuery(GetQueryForReconciliedData(filter)).ToList();
+            }
+            catch (Exception ex) { throw ex; }
+            return list;
+        }
+
+        public static string GetQueryForReconciliedData(ViewModelClass.ReconciliationFilter filter)
+        {
+
+            string query = "Select * from NonCustom_GLReconciliationTable where ";
+            int qrylength = query.Length;
+            if (!string.IsNullOrEmpty(filter.CardNumber) && !string.IsNullOrEmpty(filter.MemberCaseNumber))
+            {
+                query = query + "MemberCase='" + filter.MemberCaseNumber.Trim() + "' and CardNumber ='" + filter.CardNumber.Trim() + "' and";
+            }
+            else if (!string.IsNullOrEmpty(filter.MemberCaseNumber))
+            {
+                query = query + "MemberCase='" + filter.MemberCaseNumber.Trim() + "' and";
+            }
+            else if (!string.IsNullOrEmpty(filter.CardNumber))
+            {
+                query = query + "CardNumber='" + filter.CardNumber.Trim() + "' and";
+            }
+            query += " IsActive='1';";
+
+
+            return query;
+        }
+        public static void ReconsiledReport()
+        {
+            try
+            {
+                CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+                List<string> Ids = objdata.GetRecordIdForReconsiliation();
+
+                string Ids_Str = string.Join(",", Ids);
+
+                objdata.MarkReconciliationRecordsInActive_IdsList(Ids_Str);
+
+            }
+            catch (Exception ex) { throw ex; }
+
+        }
+        public static void AddRow_NonCustom_GLReconciliationTable(NonCustom_GLReconciliationTable obj)
+        {
+            NonCustom_GLReconciliationTable addObj = new NonCustom_GLReconciliationTable();
+            if (obj != null)
+            {
+                CBDB db = new CBDB();
+                CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+
+                addObj.ValueDate = obj.ValueDate;
+                addObj.PostDate = obj.PostDate;
+                addObj.MemberCase = obj.MemberCase;
+                addObj.Name = obj.Name;
+                addObj.Reference = obj.CardNumber;
+                addObj.Credit = obj.Credit;
+                addObj.Debit = obj.Debit;
+
+                addObj.IsActive = true;
+
+
+                db.NonCustom_GLReconciliationTable.Add(addObj);
+                db.SaveChanges();
+            }
+
+        }
+        public static void MarkAllRecordsAsInActive()
+        {
+            try
+            {
+                CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+                objdata.MarkAllReconciliationDataInActive();
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        public static void MarkRecordsAsInActive(string Id)
+        {
+            try
+            {
+                CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+                objdata.MarkReconciliationRecordInActive(Id);
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
+        #endregion
+
+        #region------------------------------------------AcceptedCaseClosureReportFilter------------------------------
+        public static List<tbl_IssuingIncomingVISA> AcceptedCaseClosureReportFilter(ViewModelClass.ClosureReportFilter filter)
+        {
+            List<tbl_IssuingIncomingVISA> list = new List<tbl_IssuingIncomingVISA>();
+            try
+            {
+                CBDB db = new CBDB();
+                list = db.tbl_IssuingIncomingVISA.SqlQuery(GetQueryForAcceptedClosureReport(filter)).ToList();
+            }
+            catch (Exception ex) { throw ex; }
+            return list;
+        }
+        public static List<tbl_IssuingIncomingVISA> AcceptedCaseClosureReportDefaultData()
+        {
+            List<tbl_IssuingIncomingVISA> list = new List<tbl_IssuingIncomingVISA>();
+            try
+            {
+                CBDB db = new CBDB();
+                list = db.tbl_IssuingIncomingVISA.SqlQuery("select * from tbl_IssuingIncomingVISA where CaseClosureStatus In ('open','close')").ToList();
+            }
+            catch (Exception ex) { throw ex; }
+            return list;
+        }
+
+
+        public static string GetQueryForAcceptedClosureReport(ViewModelClass.ClosureReportFilter filter)
+        {
+
+            string query = "Select * from tbl_IssuingIncomingVISA where ";
+            int qrylength = query.Length;
+            if (filter.ROLCaseNumber != null && !string.IsNullOrEmpty(filter.ROLCaseNumber.Trim()))
+            {
+                query = query + "ROLCaseNumber='" + filter.ROLCaseNumber.Trim() + "'";
+            }
+            if (filter.FinancialCPD != null && !string.IsNullOrEmpty(filter.FinancialCPD.Trim()))
+            {
+                query = query + ((query.Length > qrylength + 3) ? " and FinancialCPD='" + filter.FinancialCPD.Trim() + "'" : " CIFNo='" + filter.FinancialCPD.Trim() + "'");
+            }
+            if (filter.Status != null && !string.IsNullOrEmpty(filter.Status.Trim()) && !filter.Status.Trim().Equals("0"))
+            {
+                query = query + ((query.Length > qrylength + 3) ? " and CaseClosureStatus='" + filter.Status.Trim() + "'" : " CaseClosureStatus='" + filter.Status.Trim() + "'");
+            }
+            if (filter.FromDate != null && (filter.FromDate != new DateTime(0001, 01, 01)))
+            {
+
+                query = query + ((query.Length > qrylength + 3) ? " and BotEntryTime >= '" + filter.FromDate.ToString("MM-dd-yyyy") + "'" : " BotEntryTime >= '" + filter.FromDate.ToString("MM-dd-yyyy") + "'");
+
+            }
+            if (filter.ToDate != null && (filter.ToDate != new DateTime(0001, 01, 01)))
+            {
+
+                query = query + ((query.Length > qrylength + 3) ? " and BotEntryTime >= '" + filter.ToDate.ToString("MM-dd-yyyy") + "'" : " BotEntryTime >= '" + filter.ToDate.ToString("MM-dd-yyyy") + "'");
+
+            }
+            if (qrylength == query.Length)
+            {
+                query = "select * from tbl_IssuingIncomingVISA where CaseClosureStatus In ('open','close')";
+            }
+            return query + ";";
+        }
+        #endregion
+
+        #region----------------------------------User Management-------------------------------------
+        public static List<Tbl_User_Detail> GetUsersForProfile()
+        {
+            List<Tbl_User_Detail> list = new List<Tbl_User_Detail>();
+            CBDB db = new CBDB();
+            list = db.Tbl_User_Detail.Where(x => !x.Usergroup.Equals(Constants.UserGroups.UserManager)).ToList();
+            return list;
+        }
+        public static void SaveUserPages(int userid, string pages)
+        {
+            CBDB db = new CBDB();
+            var user = db.Tbl_User_Detail.Where(x => x.ID == userid).FirstOrDefault();
+            user.GroupPages = pages;
+            db.SaveChanges();
+        }
+        #endregion------------------------------------------------------------------------------------
+
     }
 }
