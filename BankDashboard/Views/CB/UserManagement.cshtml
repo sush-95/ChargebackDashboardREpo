@@ -7,9 +7,9 @@
     .btn-sm img {
         background-color: #404241;
         border-radius: 4px;
-        height: 22px;
+        height: 22px;        
     }
-
+   
     .col-md-5 b {
         color: #414e4e;
     }
@@ -17,7 +17,9 @@
     .btn-sm img:hover {
         background-color: #71706c;
     }
-
+    #usertbl td a {
+        margin-left: 30%;
+    }
     #usertbl td {
         color: #6b7777;
         font-weight: bold;
@@ -39,6 +41,7 @@
 </style>
 <div class="card-header" style="text-align:center">
     <span class="pagetilte">@ViewBag.Title </span>
+    
 </div>
 <div class="card-body">
     <div class="row">
@@ -167,6 +170,9 @@
     </div>
 </div>
 <script>
+   
+
+
     function AssignPage() {
 
         var selected = new Array();
@@ -201,4 +207,6 @@
         $("#hiddenpages").val(pages)
         $("#userID").val(user.ID)
     }
+
+   
 </script>

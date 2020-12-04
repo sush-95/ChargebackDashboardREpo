@@ -40,7 +40,7 @@ namespace BankDashboard.Common
                 else
                 {
                     res = (decimal.Parse(item) * 100 / sum);
-                    list.Add(res==0?"0":res.ToString(".##"));
+                    list.Add(res == 0 ? "0" : res.ToString(".##"));
                 }
             }
             casestatfigure.AddRange(list);
@@ -63,7 +63,7 @@ namespace BankDashboard.Common
             }
             else
             {
-                cList.Add(startdate+" to "+enddate);
+                cList.Add(startdate + " to " + enddate);
             }
             return cList;
         }
@@ -77,7 +77,7 @@ namespace BankDashboard.Common
             }
             CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
             List<tbl_UnassignedTickets> list = objdata.GetCaseStatusDataWithFilter(Strtday, EndDt, filter);
-           
+
             return list;
         }
         public static List<string> GetRoutingPortalForToday()
@@ -97,7 +97,7 @@ namespace BankDashboard.Common
             }
             CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
             List<string> cList = objdata.GetRoutingPortalGraph(Strtday, EndDt);
-            cList.Add(startdate + " to "+enddate+".");
+            cList.Add(startdate + " to " + enddate + ".");
             return cList;
         }
 
@@ -164,12 +164,11 @@ namespace BankDashboard.Common
                     {
                         daterange = Convert.ToDateTime(wc.BotEntryTime).ToString("dd-MMM-yyyy");
                     }
-
                     daterange = "from " + daterange + " till date.";
                 }
                 wccount.Add(wclist.Where(x => x.Stage.Contains("Closed") || x.Stage.Contains("Resolved")).ToList().Count.ToString());
-                wccount.Add(wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID != null).ToList().Count.ToString());
-                wccount.Add(wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID == null).ToList().Count.ToString());
+                wccount.Add(wclist.Where(x => x.Stage.ToLower().Replace(" ", "").Contains("InProgress".ToLower()) && x.AssignedUserID != null).ToList().Count.ToString());
+                wccount.Add(wclist.Where(x => x.Stage.ToLower().Replace(" ", "").Contains("InProgress".ToLower()) && x.AssignedUserID == null).ToList().Count.ToString());
                 wccount = getpercentagefigure(wccount);
                 wccount.Add(daterange);
                 //-----------------------------------------------Table----------------------------------------------------------------
@@ -177,16 +176,22 @@ namespace BankDashboard.Common
                 {
                     if (Filter.Equals("Closed"))
                     {
-                        wclist = wclist.Where(x => x.Stage.Contains("Closed") || x.Stage.Contains("Resolved")).ToList();
+                        wclist = wclist.Where(x => x.Stage.Contains("Closed") || x.Stage.Contains("Resolved")).ToList();//Closed
                     }
                     else if (Filter.Equals("In Progress"))
                     {
-                        wclist = wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID != null).ToList();
+                        wclist = wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID != null).ToList();//Inprogress
                     }
                     else
                     {
-                        wclist = wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID == null).ToList();
+                        wclist = wclist.Where(x => x.Stage.Contains("In Progress") && x.AssignedUserID == null).ToList();//Unactioned
                     }
+                }
+                else
+                {//by default table must show Inprogress and unactioned
+                    wclist = wclist.Where(x => (x.Stage.ToLower().Replace(" ", "").Contains("InProgress".ToLower()) && x.AssignedUserID != null) ||
+                     (x.Stage.ToLower().Replace(" ", "").Contains("InProgress".ToLower()) && x.AssignedUserID == null)).ToList();
+
                 }
                 tblWC = wclist;
             }
@@ -208,7 +213,7 @@ namespace BankDashboard.Common
                 }
                 else
                 {
-                    wclist = db.tbl_WeCareReactive.Where(x=>x.BotEntryTime>=DateTime.Today.AddDays(-1)&&x.BotEntryTime<=DateTime.Today).ToList();
+                    wclist = db.tbl_WeCareReactive.Where(x => x.BotEntryTime >= DateTime.Today.AddDays(-1) && x.BotEntryTime <= DateTime.Today).ToList();
                     objI.datelbl = "for " + DateTime.Today.AddDays(-1).ToString("dd-MMM-yyyy");
                 }
                 if (!string.IsNullOrEmpty(Filter))
@@ -257,6 +262,7 @@ namespace BankDashboard.Common
             return obj;
         }
         #endregion---------------------------------------------------------------------------------------
+
         #region----------------------------SLA------------------------------------------------------------
         public static List<tbl_WeCareReactive> GetSla(SLAFilter obj)
         {
@@ -266,17 +272,18 @@ namespace BankDashboard.Common
             {
                 if (!string.IsNullOrEmpty(obj.Filter))
                 {
-                    list = db.tbl_WeCareReactive.Where(x=>x.AssignedUserID.Equals(obj.Filter)).ToList();
+                    list = db.tbl_WeCareReactive.Where(x => x.AssignedUserID.Equals(obj.Filter)).ToList();
                 }
                 else
                 {
                     list = db.tbl_WeCareReactive.ToList();
-                }               
-            
+                }
+
             }
             catch { }
             return list;
         }
+
         #endregion-------------------------------------------------------------------------------------------
 
         #region-------------------------------Case History--------------------------------------------------------------------
@@ -532,8 +539,8 @@ namespace BankDashboard.Common
             list = db.Tbl_User_Detail.Where(x => !x.Usergroup.Equals(Constants.UserGroups.UserManager)).ToList();
             return list;
         }
-        public static void SaveUserPages(int userid,string pages)
-        {          
+        public static void SaveUserPages(int userid, string pages)
+        {
             CBDB db = new CBDB();
             var user = db.Tbl_User_Detail.Where(x => x.ID == userid).FirstOrDefault();
             user.GroupPages = pages;

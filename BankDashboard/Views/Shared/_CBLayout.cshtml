@@ -25,7 +25,13 @@
         #example thead {
             background-color: #0d274d;
         }
-
+        #clock {
+            font-family: ui-sans-serif;
+            font-weight: bold;
+            color: #646c73;
+            position: relative;
+            top: -7px;
+        }
         .submenu li a:hover {
             background-color: #f12928;
             font-size: 13px;
@@ -55,13 +61,9 @@
             list-style: none;
         }
 
-
-
         .submenu {
             display: none;
         }
-
-
 
         .show {
             display: block;
@@ -73,13 +75,15 @@
         <div class="col-md-2">
             <img src="~/Images/logo-bank.jpg" class="card-img" style="width: 169px;height: 108px;margin-top: -11px; margin-left: -14px;" />
         </div>
-        <div class="col-md-1">
+        <div class="col-md-5">
             <a class="navbar-brand" href="#" id="toggleMenu" style="margin-left: -26px;">
                 <img src="~/Images/ham.png" height="35" style="margin-top: -18px;" />
             </a>
+            <span id="clock"></span>
         </div>
-        <div class="col-md-4">
-        </div>
+        @*<div class="col-md-4">
+
+            </div>*@
         <div class="col-md-4" style="text-align: center;">
             <img src="~/Images/user1.png" style="height: 33px; margin-top: -9px;" />
             @if (Session["User"] != null)
@@ -95,7 +99,9 @@
             <a href="/app/LogIn/Logout">
                 @*<img src="~/Images/Logout.png"  />*@
                 <img src="~/Images/Logout1.png" height="37" alt="Logout" style="margin-bottom: 3px;" />
+
             </a>
+
         </div>
     </nav>
     <nav class="nav2">
@@ -152,62 +158,62 @@
                                         </a>
                                     }
                                 </li>
-                                </ul>
-                            </li>
+                            </ul>
+                        </li>
 
-                            <li>
-                                <a href="#" id="rep" style="background-color: #6f5d5d;">
-                                    <img src="~/Images/report1.png" />Report
-                                </a>
-                                <ul class="submenu @ViewBag.Report" id="rep1">
-                                    <li>
-                                        @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("CaseHistory"))
-                                        {
-                                            <a href="/app/CB/CaseHistory" class="@ViewBag.casehistrory">
-                                                <img src="~/Images/casedetail.png" />Case History
-                                            </a>
-                                        }
-                                        </li>
-                                    <li>
-                                        @if(!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("CaseClosure"))
-                                        {
-                                            <a href="/app/CB/ClosureReport" class="@ViewBag.ClosureReport">
-                                                <img src="~/Images/closure.png" />Accepted Case &nbsp;Closure
-                                            </a>
-                                        }
-                                        </li>
-                                    <li>
-                                        @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("MtchedTran"))
-                                        {
-                                            <a href="/app/CB/MatchedFinTransaction" class="@ViewBag.matchedTran">
-                                                <img src="~/Images/mtran.png" height="26" />Matched Tran
-                                            </a>
-                                        }
-                                        </li>
-                                    <li>
-                                        @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("UnmtchedTran"))
-                                        {
-                                            <a href="/app/CB/UnmatchedFinTransaction" class="@ViewBag.UnmatchedTran">
-                                                <img src="~/Images/umtran.png" height="26" />Unmatched Tran
-                                            </a>
-                                        }
-                                        </li>
-                                    <li>
-                                        @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("Recon"))
-                                        {
-                                            <a href="/app/CB/ReconsiliationReport" class="@ViewBag.Reconsiliation">
-                                                <img src="~/Images/recon.png" height="26" />Reconciliation
-                                            </a>
-                                        }
-                                        </li>
-                                    @*<li>
-                                            <a href="#home">
-                                                <img src="~/Images/bot.png" height="26" />BOT Config
-                                            </a>
-                                        </li>*@
-                                </ul>
-                            </li>
-                        }
+                        <li>
+                            <a href="#" id="rep" style="background-color: #6f5d5d;">
+                                <img src="~/Images/report1.png" />Report
+                            </a>
+                            <ul class="submenu @ViewBag.Report" id="rep1">
+                                <li>
+                                    @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("CaseHistory"))
+                                    {
+                                        <a href="/app/CB/CaseHistory" class="@ViewBag.casehistrory">
+                                            <img src="~/Images/casedetail.png" />Case History
+                                        </a>
+                                    }
+                                </li>
+                                <li>
+                                    @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("CaseClosure"))
+                                    {
+                                        <a href="/app/CB/ClosureReport" class="@ViewBag.ClosureReport">
+                                            <img src="~/Images/closure.png" />Accepted Case &nbsp;Closure
+                                        </a>
+                                    }
+                                </li>
+                                <li>
+                                    @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("MtchedTran"))
+                                    {
+                                        <a href="/app/CB/MatchedFinTransaction" class="@ViewBag.matchedTran">
+                                            <img src="~/Images/mtran.png" height="26" />Matched Tran
+                                        </a>
+                                    }
+                                </li>
+                                <li>
+                                    @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("UnmtchedTran"))
+                                    {
+                                        <a href="/app/CB/UnmatchedFinTransaction" class="@ViewBag.UnmatchedTran">
+                                            <img src="~/Images/umtran.png" height="26" />Unmatched Tran
+                                        </a>
+                                    }
+                                </li>
+                                <li>
+                                    @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("Recon"))
+                                    {
+                                        <a href="/app/CB/ReconsiliationReport" class="@ViewBag.Reconsiliation">
+                                            <img src="~/Images/recon.png" height="26" />Reconciliation
+                                        </a>
+                                    }
+                                </li>
+                                @*<li>
+                                        <a href="#home">
+                                            <img src="~/Images/bot.png" height="26" />BOT Config
+                                        </a>
+                                    </li>*@
+                            </ul>
+                        </li>
+                    }
 
 
                 </ul>
@@ -351,6 +357,41 @@
 
         }());
 
+    </script>
+    <script>
+        setInterval(showTime, 1000);
+        function showTime() {
+
+            let time = new Date();
+            let date = time.getDate();
+            let month =@Html.Raw(DateTime.Today.Month );
+            let year = time.getFullYear();
+            let hour = time.getHours();
+            let min = time.getMinutes();
+            let sec = time.getSeconds();
+            am_pm = "AM";
+
+            if (hour > 12) {
+                hour -= 12;
+                am_pm = "PM";
+            }
+            if (hour == 0) {
+                hr = 12;
+                am_pm = "AM";
+            }
+
+            hour = hour < 10 ? "0" + hour : hour;
+            min = min < 10 ? "0" + min : min;
+            sec = sec < 10 ? "0" + sec : sec;
+
+            let currentTime ="Date:" +month + "/" + date + "/" + year + " " + hour + ":"
+                + min + ":" + sec + am_pm;
+
+            document.getElementById("clock")
+                .innerHTML = currentTime;
+        }
+
+        showTime();
     </script>
 </body>
 </html>

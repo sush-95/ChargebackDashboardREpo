@@ -1,5 +1,7 @@
 ﻿@using BankDashboard.Common;
 @{
+    /**/
+
     ViewBag.Title = "View From";
     Layout = "~/Views/Shared/_CBLayout.cshtml";
     ViewModelClass.BOtStatModel botstatobj = (ViewModelClass.BOtStatModel)ViewBag.casestat;
@@ -11,13 +13,15 @@
 
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 <style>
-    #tblx1 th{
-        text-align:left
+    #tblx1 th {
+        text-align: left
     }
+
     #tblx1 td {
         text-align: center;
-        font-weight:bold
+        font-weight: bold
     }
+
     .btn-light {
         border-radius: 5px;
         height: 36px;
@@ -100,9 +104,9 @@
     {
         filter = (ViewModelClass.CaseFilter)TempData["filter"];
     }
-<div class="card-header" style="text-align:center">
-    <span class="pagetilte">Case Status</span>
-</div>
+    <div class="card-header" style="text-align:center">
+        <span class="pagetilte">Case Status</span>
+    </div>
     <div class="card-body">
         <div class="row">
             <div class="col-sm-12 p-3">
@@ -145,19 +149,19 @@
                                 </div>
                                 <div class="col-md-1"></div>
                                 <div class="col-md-3">
-                                    <button class="btn btn-sm btn-light">
+                                    <button class="btn btn-sm btn-light" value="Excel" name="Excel" type="submit">
                                         Export<img style="background-color: #57b362;border-radius: 3px;margin-left: 3px;margin-top: -3px;" src="~/Images/exl.png" />
                                     </button>
-                                    <button class="btn btn-sm btn-light" id="create_pdf">
-                                        Export<img src="~/Images/pdf.png"  style="margin-left: 3px;margin-top: -3px;"/>
-                                    </button>
+                                    <a href="#" class="btn btn-sm btn-light" id="create_pdf">
+                                        Export<img src="~/Images/pdf.png" />
+                                    </a>
                                 </div>
 
                             </div>
                         </form>
                     </div>
                     <div class="card-body">
-                        
+
                         <div class="col-sm-11 row">
                             <div class="pbar1 progress" id="p1" data-toggle="tooltip" data-placement="top" title="Processed">
                                 <input type="hidden" value="@botstatobj.castStatFigures[4]" id="xp1" />
@@ -256,9 +260,12 @@ else if (botstatobj.RoutingPortalFigures != null)
     <div class="col-sm-12 p-3">
         <div class="shadow card">
             <div class="card-header">
-                <div class="row">
-                    <div class="col-md-8">
-                        <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterData" method="post">
+                <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterData" method="post">
+
+                    <div class="row">
+
+                        <div class="col-md-8">
+
                             <input type="hidden" name="Flag" value="@botstatobj.flag" />
                             <table style=" color: #5d5d55; font-size: 12px;">
                                 <tr>
@@ -285,39 +292,44 @@ else if (botstatobj.RoutingPortalFigures != null)
                                     <td>    <a class="btn btn-sm btn-secondary" href="/app/CB/CaseViewFrom?getval=2">Reset</a></td>
                                 </tr>
                             </table>
-                        </form>
-                    </div>
-                    <div class="col-md-1"></div>
-                    <div class="col-md-3">
-                        <button class="btn btn-sm btn-light">
-                     Export<img style="background-color: #57b362;border-radius: 3px;margin-left: 3px;margin-top: -3px;" src="~/Images/exl.png" />
-                        </button>
-                        <button class="btn btn-sm btn-light" id="create_pdf">
-                            Export<img src="~/Images/pdf.png" style="margin-left: 3px;margin-top: -3px;" />
-                        </button>
-                    </div>
 
+                        </div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3">
 
-                </div>
+                            <button class="btn btn-sm btn-light" value="Excel" name="Excel" type="submit">
+                                Export<img style="background-color: #57b362;border-radius: 3px;margin-left: 3px;margin-top: -3px;" src="~/Images/exl.png" />
+                            </button>
+                            <a href="#" class="btn btn-sm btn-light" id="create_pdf">
+                                Export<img src="~/Images/pdf.png" />
+                            </a>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="row">
                 <div class="col-md-4">
                     <div>
-                        <table id="tblx1"  style=" font-size: 14px;position: relative; left:82%;top:67px;height:173px;color: #546f6f;">
+                        <table id="tblx1" style=" font-size: 14px;position: relative; left:82%;top:67px;height:173px;color: #546f6f;">
                             <tr>
-                                <th>MasterCard </th><td>@botstatobj.RoutingPortalFigures[0]</td>
+                                <th>MasterCard </th>
+                                <td>@botstatobj.RoutingPortalFigures[0]</td>
                             </tr>
                             <tr>
-                                <th>Visa </th><td>@botstatobj.RoutingPortalFigures[1]</td>
+                                <th>Visa </th>
+                                <td>@botstatobj.RoutingPortalFigures[1]</td>
                             </tr>
                             <tr>
-                                <th>OmanNet </th><td>@botstatobj.RoutingPortalFigures[2]</td>
+                                <th>OmanNet </th>
+                                <td>@botstatobj.RoutingPortalFigures[2]</td>
                             </tr>
                             <tr>
-                                <th>Onus </th><td>@botstatobj.RoutingPortalFigures[3]</td>
+                                <th>Onus </th>
+                                <td>@botstatobj.RoutingPortalFigures[3]</td>
                             </tr>
                             <tr>
-                                <th>POSECOM </th><td>@botstatobj.RoutingPortalFigures[4]</td>
+                                <th>POSECOM </th>
+                                <td>@botstatobj.RoutingPortalFigures[4]</td>
                             </tr>
                         </table>
                     </div>
@@ -370,23 +382,28 @@ else if (botstatobj.RoutingPortalFigures != null)
 }
 else if (botstatobj.CaseReadyForAction != null)
 {
-    <div class="card-header" style="border-bottom: #f11a1a;border-bottom-style: solid;">
+    <div class="card-header" style="text-align:center">
+        <span class="pagetilte">Case Ready For Action</span>
+    </div>
+    <br />
+    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetFilterData" method="post">
+        <input type="hidden" name="Flag" value="@botstatobj.flag" />
         <div class="row">
             <div class="col-md-8">  </div>
             <div class="col-md-1"></div>
             <div class="col-md-3">
-                <button class="btn btn-sm btn-light">
-                    Export<img style="background-color: #57b362;border-radius: 3px;" src="~/Images/exl.png" />
+                <button class="btn btn-sm btn-light" value="Excel" name="Excel" type="submit">
+                    Export<img style="background-color: #57b362;border-radius: 3px;margin-left: 3px;margin-top: -3px;" src="~/Images/exl.png" />
                 </button>
-                <button class="btn btn-sm btn-light">
+                <a href="#" class="btn btn-sm btn-light" id="create_pdf">
                     Export<img src="~/Images/pdf.png" />
-                </button>
+                </a>
             </div>
 
         </div>
-    </div>
-    <br />
+    </form>
     <div class="col-sm-12">
+
         <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
             <thead style="color:white;text-align: center;">
                 <tr>
@@ -418,6 +435,7 @@ else if (botstatobj.CaseReadyForAction != null)
             </tbody>
         </table>
     </div>
+
 }
 @if (botstatobj.RoutingPortalFigures != null)
 {
@@ -442,4 +460,3 @@ else if (botstatobj.CaseReadyForAction != null)
     </script>
 
 }
- 
