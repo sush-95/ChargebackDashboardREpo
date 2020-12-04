@@ -13,7 +13,7 @@ namespace BankDashboard.Common
 {
     public class FDHelper
     {
-      
+
         #region----------------------------------------machine check------------------------------
 
         public static bool CheckMachine(string Machine)
@@ -86,7 +86,7 @@ namespace BankDashboard.Common
             catch (Exception Ex)
             {
                 //throw Ex;
-               // WriteToLogFile.writeMessage("Exception Occured While processing this method exception msg = " + Ex.Message.ToString());
+                // WriteToLogFile.writeMessage("Exception Occured While processing this method exception msg = " + Ex.Message.ToString());
             }
             //WriteToLogFile.writeMessage("Returned Check Value "+Check.ToString());
             return Check;
@@ -100,20 +100,77 @@ namespace BankDashboard.Common
             }
 
         }
-        public static void SaveUser(Tbl_User_Detail obj)
+        public static Tbl_User_Detail SaveUser(Tbl_User_Detail obj)
         {
-            //string DashboardURL = Convert.ToString(ConfigurationManager.AppSettings["DashboardURL"]);
-
+            Tbl_User_Detail tbl = new Tbl_User_Detail();
             using (CBDB db = new CBDB())
             {
-                var Check = db.Tbl_User_Detail.Where(x => x.UserName.Equals(obj.UserName)).FirstOrDefault();
-                if (Check == null)
+                tbl = db.Tbl_User_Detail.Where(x => x.UserName.Equals(obj.UserName)).FirstOrDefault();
+                if (tbl == null)
                 {
                     db.Tbl_User_Detail.Add(obj);
                     db.SaveChanges();
+                    tbl = obj;
                 }
             }
+            return tbl;
         }
+        public static string GetPageName(string pages)
+        {
+            string pagename = "Index";
+            try
+            {
+                if (!string.IsNullOrEmpty(pages))
+                {
+                    if (pages.Contains("CaseStat"))
+                    {
+                        pagename = "Index";
+                    }
+                    else
+                    {
+                        string[] arr = pages.Split(',');
+                        arr = arr.Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                        switch (arr[0].Trim())
+                        {
+                            case "CaseStat":
+                                pagename = "Index";
+                                break;
+                            case "WCStat":
+                                pagename = "WC";
+                                break;
+                            case "SLA":
+                                pagename = "SLA";
+                                break;
+                            case "CaseHistory":
+                                pagename = "CaseHistory";
+                                break;
+                            case "CaseClosure":
+                                pagename = "ClosureReports";
+                                break;
+                            case "MtchedTran":
+                                pagename = "MatchedFinTransaction";
+                                break;
+                            case "UnmtchedTran":
+                                pagename = "UnmatchedFinTransaction";
+                                break;
+                            case "tlconfig":
+                                pagename = "TLConfig";
+                                break;
+                            case "Recon":
+                                pagename = "ReconsiliationReport";
+                                break;
+                            default:
+                                pagename = "Index";
+                                break;
+                        }
+                    }
+                }
+            }
+            catch { pagename = "Index"; }
+            return pagename;
+
+        }
+
         public static void MachineLogout(string MName)
         {
             try

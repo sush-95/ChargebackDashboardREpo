@@ -529,7 +529,7 @@ namespace BankDashboard.Common
         {
             List<Tbl_User_Detail> list = new List<Tbl_User_Detail>();
             CBDB db = new CBDB();
-            list = db.Tbl_User_Detail.Where(x => !x.Usergroup.Equals("Parameter Management Team")).ToList();
+            list = db.Tbl_User_Detail.Where(x => !x.Usergroup.Equals(Constants.UserGroups.UserManager)).ToList();
             return list;
         }
         public static void SaveUserPages(int userid,string pages)

@@ -11,14 +11,13 @@ namespace BankDashboard.Common
 {
     public class ADManager
     {
-        string Admin = string.Empty, Checker = string.Empty, Maker = string.Empty, ParameterManager = string.Empty,ApplicationUser=string.Empty;
+        string Admin = string.Empty, User = string.Empty, UserManagement = string.Empty;
         public ADManager()
         {
             Admin = ConfigurationManager.AppSettings["Admin"].ToString();
-            Checker = ConfigurationManager.AppSettings["Checker"].ToString();
-            Maker = ConfigurationManager.AppSettings["Maker"].ToString();
-            ParameterManager = ConfigurationManager.AppSettings["Parameter"].ToString();
-            ApplicationUser = ConfigurationManager.AppSettings["ApplicationUser"].ToString();
+            User = ConfigurationManager.AppSettings["User"].ToString();
+            UserManagement = ConfigurationManager.AppSettings["UserManager"].ToString();
+          
         }
         public bool ChcekLogin(string username, string pwd, ref string Groupname)
         {
@@ -52,22 +51,14 @@ namespace BankDashboard.Common
             {
                 Resultgroup = Constants.UserGroups.Admin;
             }
-            else if (groups.Contains(Checker.Trim()))
+            else if (groups.Contains(User.Trim()))
             {
-                Resultgroup = Constants.UserGroups.Checker;
+                Resultgroup = Constants.UserGroups.User;
             }
-            else if (groups.Contains(Maker.Trim()))
+            else if (groups.Contains(UserManagement.Trim()))
             {
-                Resultgroup = Constants.UserGroups.Maker;
-            }
-            else if (groups.Contains(ParameterManager.Trim()))
-            {
-                Resultgroup = Constants.UserGroups.ParameterManager;
-            }
-            else if (groups.Contains(ApplicationUser.Trim()))
-            {
-                Resultgroup = Constants.UserGroups.ApplicationUserManagement;
-            }
+                Resultgroup = Constants.UserGroups.UserManager;
+            }           
             else
             {
                 Resultgroup = string.Empty;

@@ -16,13 +16,25 @@ namespace BankDashboard.Controllers
         #region-------------------------Case Statistics----------------------------------------------
         public ActionResult Index()
         {
-            ViewBag.Dashboard = "show";
-            ViewBag.botstat = "active";
-            BOtStatModel obj = new BOtStatModel();
-            obj.castStatFigures = CBHelper.CaseForToday();
-            obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
-            obj.CaseReadyForAction = CBHelper.GetCaseReadyForAction();
-            ViewBag.casestat = obj;
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("CaseStat"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
+            try
+            {
+                ViewBag.Dashboard = "show";
+                ViewBag.botstat = "active";
+                BOtStatModel obj = new BOtStatModel();
+                obj.castStatFigures = CBHelper.CaseForToday();
+                obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
+                obj.CaseReadyForAction = CBHelper.GetCaseReadyForAction();
+                ViewBag.casestat = obj;
+            }
+            catch { }            
             return View();
         }
 
@@ -103,9 +115,18 @@ namespace BankDashboard.Controllers
             return casestatfigure;
         }
         #endregion-----------------------------------------------------------------------------------------
+
         #region-------------------------WeCare----------------------------------------------
         public ActionResult WC()
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("WCStat"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.Dashboard = "show";
             ViewBag.wcarestat = "active";
             try
@@ -189,6 +210,14 @@ namespace BankDashboard.Controllers
         #region---------------------------SLA-------------------------------------------
         public ActionResult SLA(SLAFilter obj, string find)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("SLA"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.Dashboard = "show";
             ViewBag.SLAStat = "active";
             CBDB db = new CBDB();
@@ -215,6 +244,14 @@ namespace BankDashboard.Controllers
         #region-------------------------Case History----------------------------------------------
         public ActionResult CaseHistory(FilterClass filter, string find)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("CaseHistory"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.Report = "show";
             ViewBag.casehistrory = "active";
             try
@@ -486,6 +523,14 @@ namespace BankDashboard.Controllers
         #region-------------------------Matched Financial Transaction----------------------------------------------
         public ActionResult MatchedFinTransaction(FilterClass filter, string find)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("MtchedTran"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.Report = "show";
             ViewBag.matchedTran = "active";
             try
@@ -513,6 +558,14 @@ namespace BankDashboard.Controllers
         #region-------------------------Unmatched Financial Transaction----------------------------------------------
         public ActionResult UnmatchedFinTransaction(FilterClass filter, string find)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("UnmtchedTran"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.UnmatchedTran = "active";
             ViewBag.Report = "show";
             try
@@ -555,6 +608,14 @@ namespace BankDashboard.Controllers
         }
         public ActionResult ReconsiliationReport(ReconciliationFilter filter, string find, string removeAll, string remove)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("Recon"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.Report = "show";
             ViewBag.Reconsiliation = "active";
             try
@@ -746,9 +807,16 @@ namespace BankDashboard.Controllers
         #region-------------------------------------Closure Report----------------------------------------
         public ActionResult ClosureReport(ClosureReportFilter filter, string find)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
+            if (string.IsNullOrEmpty(((Tbl_User_Detail)Session["User"]).GroupPages) || !((Tbl_User_Detail)Session["User"]).GroupPages.Contains("CaseClosure"))
+            {
+                return RedirectToAction("Errorpage", "CB");
+            }
             ViewBag.Report = "show";
             ViewBag.ClosureReport = "active";
-
             try
             {
                 CBDB db = new CBDB();
@@ -914,6 +982,8 @@ namespace BankDashboard.Controllers
         #region-----------------------------------User Management--------------------------------------
         public ActionResult UserManagement()
         {
+            ViewBag.Dashboard = "show";
+            ViewBag.userManagement = "active";
             try
             {
                 ViewBag.userlist = CBHelper.GetUsersForProfile();
@@ -933,6 +1003,11 @@ namespace BankDashboard.Controllers
             return RedirectToAction("UserManagement");
         }
         #endregion---------------------------------------------------------------------------------------
+
+        public ActionResult Errorpage()
+        {
+            return View();
+        }
 
     }
 }

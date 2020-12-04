@@ -38,25 +38,16 @@ namespace BankDashboard.Controllers
         {
             if (string.IsNullOrEmpty(pwd))
                 return RedirectToAction("LogIn", "LogIn");
-            if (Session["LoginKey"] == null)
-            {
-
-            }
 
             pwd = pwd.Trim();
             bool logincheck = false;
             string key = Session["LoginKey"].ToString();
 
             pwd = MvcHelper.DecryptToBytesUsingCBC(Convert.FromBase64String(pwd), key);
-
-
             pwd = pwd.Trim();
-
-
             string ErrorMsg = string.Empty; string Action = string.Empty; string cntrlr = string.Empty, groupname = string.Empty;
-
             Tbl_User_Detail user = new Tbl_User_Detail();
-
+            string allpage = "CaseStat ,WCStat ,SLA ,CaseHistory ,CaseClosure ,MtchedTran ,UnmtchedTran ,Recon";
             //ADManager AdObj = new ADManager();
             //logincheck = AdObj.ChcekLogin(uname, pwd, ref groupname);
 
@@ -79,16 +70,21 @@ namespace BankDashboard.Controllers
                         Usergroup = groupname,
                     };
                     // user.GroupPages = MvcHelper.GetGroupPages(groupname);
-
-
                     bool check = FDHelper.CheckMachine(user.UserName.Trim().ToString());
-
-
                     if (check)
                     {
                         Session["USerName"] = user.UserName.Trim().ToString();
-                        FDHelper.SaveUser(user);
-                        Action = "Index"; cntrlr = "CB";
+                        var table = FDHelper.SaveUser(user);
+                        user.GroupPages = string.IsNullOrEmpty(table.GroupPages)?allpage:table.GroupPages;
+                        if (user.Usergroup.Equals(Constants.UserGroups.UserManager))
+                        {
+                            Action = "UserManagement"; cntrlr = "CB";
+                        }
+                        else
+                        {
+                            Action = FDHelper.GetPageName(user.GroupPages);
+                            cntrlr = "CB";
+                        }
                         //WriteToLogFile.writeMessage("Machine is available User will be Redirected to -- Action = index cntrlr = Dashboard");
                     }
                     else
@@ -100,7 +96,6 @@ namespace BankDashboard.Controllers
                 else
                 {
                     //WriteToLogFile.writeMessage("User type is not authorized for the dashboard...!");
-
                     ErrorMsg = "User type is not authorized for the dashboard...!";
                 }
             }
@@ -122,27 +117,18 @@ namespace BankDashboard.Controllers
                 Session["User"] = user;
                 //WriteToLogFile.writeMessage("[HttpPost]Login  Ended");
                 //WriteToLogFile.writeMessage("Redirecting to -- Action = +"+Action.ToString() +" cntrlr = " + cntrlr.ToString());
-
-
                 return RedirectToAction(Action, cntrlr);
             }
         }
 
         public JsonResult EncryptPassword(string pwd)
         {
-
             //WriteToLogFile.writeMessage("EncryptedPassword [Started]");
-
             string EncryptKey = Convert.ToString(ConfigurationManager.AppSettings["DecryptKey"]);
-
             //WriteToLogFile.writeMessage("EncryptKey = "+ EncryptKey.ToString() );
-
             string encrypteddata = FDHelper.CodeEncrypt(pwd.Trim(), EncryptKey.Trim());
-
             //WriteToLogFile.writeMessage("encrypteddata = " + encrypteddata.ToString());
-
             //WriteToLogFile.writeMessage("EncryptedPassword [Ended]");
-
             return Json(encrypteddata, JsonRequestBehavior.AllowGet);
 
         }

@@ -1,6 +1,8 @@
 ﻿@using BankDashboard.CBModel;
+@using BankDashboard.Common;
 @{
     Layout = null;
+    Tbl_User_Detail user = new Tbl_User_Detail();
 }
 
 <!DOCTYPE html>
@@ -23,15 +25,18 @@
         #example thead {
             background-color: #0d274d;
         }
+
         .submenu li a:hover {
             background-color: #f12928;
             font-size: 13px;
         }
+
         .pagetilte {
             font-family: sans-serif;
             color: #f12928;
-            font-weight:bold;
+            font-weight: bold;
         }
+
         .submenu a.active {
             background-color: #f12928;
             color: white;
@@ -56,7 +61,7 @@
             display: none;
         }
 
-          
+
 
         .show {
             display: block;
@@ -64,7 +69,7 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark  fixed-top" style="background-color:#f8fff5;height: 67px">
+    <nav class="navbar navbar-expand-lg navbar-dark  fixed-top" style="background-color: #fff;height: 67px">
         <div class="col-md-2">
             <img src="~/Images/logo-bank.jpg" class="card-img" style="width: 169px;height: 108px;margin-top: -11px; margin-left: -14px;" />
         </div>
@@ -79,11 +84,11 @@
             <img src="~/Images/user1.png" style="height: 33px; margin-top: -9px;" />
             @if (Session["User"] != null)
             {
-                Tbl_User_Detail user = (Tbl_User_Detail)Session["User"];
+                user = (Tbl_User_Detail)Session["User"];
                 <b style="color:#6d7979;font-size:21px">@Session["USerName"]</b>
                 <b style="color:#6d7979;font-size:12px">(@user.Usergroup)</b>
             }
-          
+
 
         </div>
         <div class="col-md-1">
@@ -94,74 +99,117 @@
         </div>
     </nav>
     <nav class="nav2">
-    
+
     </nav>
 
     <div class="container-fluid" style=" margin-top:33px">
         <div class="row">
             <div class="col-md-2" style="margin-left: -14px;" id="sideDiv">
                 <ul class="sidebar">
-                    <li>
-                        <a href="#" id="dash1" style="background-color: #6f5d5d;">
-                            <img src="~/Images/dashboard.png" />Dashboard
+                    @if (Session["User"] != null && ((Tbl_User_Detail)Session["User"]).Usergroup.Trim().Equals(Constants.UserGroups.UserManager))
+                    {
+                        <li>
+                            <a href="#" id="dash1" style="background-color: #6f5d5d;">
+                                <img src="~/Images/dashboard.png" />Dashboard
+                            </a>
+                            <ul class="submenu @ViewBag.Dashboard" id="dash">
+                                <li>
+                                    <a href="/app/CB/UserManagement" class="@ViewBag.userManagement">
+                                        <img src="~/Images/UserSetting.png" />User Management
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a href="#" id="dash1" style="background-color: #6f5d5d;">
+                                <img src="~/Images/dashboard.png" />Dashboard
+                            </a>
+                            <ul class="submenu @ViewBag.Dashboard" id="dash">
+                                <li>
+                                    @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("CaseStat"))
+                                    {
+                                        <a href="/app/CB/Index" class="@ViewBag.botstat">
+                                            <img src="~/Images/bot.png" /> Case Statistics
+                                        </a>
+                                    }
+                                </li>
+                                <li>
+                                    @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("WCStat"))
+                                    {
+                                        <a href="/app/CB/WC" class="@ViewBag.wcarestat">
+                                            <img src="~/Images/wc.png" height="26" /> WC Statistics
+                                        </a>
+                                    }
+                                </li>
+                                <li>
+                                    @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("SLA"))
+                                    {
+                                        <a href="/app/CB/SLA" class="@ViewBag.SLAStat">
+                                            <img src="~/Images/stat.png" height="26" /> SLA Status
+                                        </a>
+                                    }
+                                </li>
+                                </ul>
+                            </li>
 
-                        </a>
-                        <ul class="submenu @ViewBag.Dashboard" id="dash">
                             <li>
-                                <a href="/app/CB/Index" class="@ViewBag.botstat">
-                                    <img src="~/Images/bot.png" /> Case Statistics
+                                <a href="#" id="rep" style="background-color: #6f5d5d;">
+                                    <img src="~/Images/report1.png" />Report
                                 </a>
+                                <ul class="submenu @ViewBag.Report" id="rep1">
+                                    <li>
+                                        @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("CaseHistory"))
+                                        {
+                                            <a href="/app/CB/CaseHistory" class="@ViewBag.casehistrory">
+                                                <img src="~/Images/casedetail.png" />Case History
+                                            </a>
+                                        }
+                                        </li>
+                                    <li>
+                                        @if(!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("CaseClosure"))
+                                        {
+                                            <a href="/app/CB/ClosureReport" class="@ViewBag.ClosureReport">
+                                                <img src="~/Images/closure.png" />Accepted Case &nbsp;Closure
+                                            </a>
+                                        }
+                                        </li>
+                                    <li>
+                                        @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("MtchedTran"))
+                                        {
+                                            <a href="/app/CB/MatchedFinTransaction" class="@ViewBag.matchedTran">
+                                                <img src="~/Images/mtran.png" height="26" />Matched Tran
+                                            </a>
+                                        }
+                                        </li>
+                                    <li>
+                                        @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("UnmtchedTran"))
+                                        {
+                                            <a href="/app/CB/UnmatchedFinTransaction" class="@ViewBag.UnmatchedTran">
+                                                <img src="~/Images/umtran.png" height="26" />Unmatched Tran
+                                            </a>
+                                        }
+                                        </li>
+                                    <li>
+                                        @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("Recon"))
+                                        {
+                                            <a href="/app/CB/ReconsiliationReport" class="@ViewBag.Reconsiliation">
+                                                <img src="~/Images/recon.png" height="26" />Reconciliation
+                                            </a>
+                                        }
+                                        </li>
+                                    @*<li>
+                                            <a href="#home">
+                                                <img src="~/Images/bot.png" height="26" />BOT Config
+                                            </a>
+                                        </li>*@
+                                </ul>
                             </li>
-                            <li>
-                                <a href="/app/CB/WC" class="@ViewBag.wcarestat">
-                                    <img src="~/Images/wc.png" height="26" /> WC Statistics
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/app/CB/SLA" class="@ViewBag.SLAStat">
-                                    <img src="~/Images/stat.png" height="26" /> SLA Status
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                        }
 
-                    <li>
-                        <a href="#" id="rep" style="background-color: #6f5d5d;">
-                            <img src="~/Images/report1.png" />Report
-                        </a>
-                        <ul class="submenu @ViewBag.Report" id="rep1">
-                            <li>
-                                <a href="/app/CB/CaseHistory" class="@ViewBag.casehistrory">
-                                    <img src="~/Images/casedetail.png" />Case History
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/app/CB/ClosureReport" class="@ViewBag.ClosureReport">
-                                    <img src="~/Images/closure.png" />Accepted Case &nbsp;Closure
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/app/CB/MatchedFinTransaction" class="@ViewBag.matchedTran">
-                                    <img src="~/Images/mtran.png" height="26" />Matched Tran
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/app/CB/UnmatchedFinTransaction" class="@ViewBag.UnmatchedTran">
-                                    <img src="~/Images/umtran.png" height="26" />Unmatched Tran
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/app/CB/ReconsiliationReport" class="@ViewBag.Reconsiliation">
-                                    <img src="~/Images/recon.png" height="26" />Reconciliation
-                                </a>
-                            </li>
-                            @*<li>
-                                <a href="#home">
-                                    <img src="~/Images/bot.png" height="26" />BOT Config
-                                </a>
-                            </li>*@
-                        </ul>
-                    </li>
+
                 </ul>
 
 
