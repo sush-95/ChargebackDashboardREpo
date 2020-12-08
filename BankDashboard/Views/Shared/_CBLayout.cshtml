@@ -25,6 +25,7 @@
         #example thead {
             background-color: #0d274d;
         }
+
         #clock {
             font-family: ui-sans-serif;
             font-weight: bold;
@@ -32,6 +33,7 @@
             position: relative;
             top: -7px;
         }
+
         .submenu li a:hover {
             background-color: #f12928;
             font-size: 13px;
@@ -53,7 +55,7 @@
         }
 
         .submenu li a {
-            padding-left: 38px;
+            padding-left: 30px;
             font-size: 12px;
         }
 
@@ -79,7 +81,7 @@
             <a class="navbar-brand" href="#" id="toggleMenu" style="margin-left: -26px;">
                 <img src="~/Images/ham.png" height="35" style="margin-top: -18px;" />
             </a>
-            <span id="clock"></span>
+            <span id="clock"></span><span style="position: relative;top: -7px;font-size: 11px;font-weight: bold;color: #677373;"> (mm/dd/yyyy)</span>
         </div>
         @*<div class="col-md-4">
 
@@ -185,16 +187,16 @@
                                 <li>
                                     @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("MtchedTran"))
                                     {
-                                        <a href="/app/CB/MatchedFinTransaction" class="@ViewBag.matchedTran">
-                                            <img src="~/Images/mtran.png" height="26" />Matched Tran
-                                        </a>
+                                    <a href="/app/CB/MatchedFinTransaction" class="@ViewBag.matchedTran">
+                                        <img src="~/Images/mtran.png" height="26" />Matched Transaction
+                                    </a>
                                     }
                                 </li>
                                 <li>
                                     @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("UnmtchedTran"))
                                     {
                                         <a href="/app/CB/UnmatchedFinTransaction" class="@ViewBag.UnmatchedTran">
-                                            <img src="~/Images/umtran.png" height="26" />Unmatched Tran
+                                            <img src="~/Images/umtran.png" height="26" />Unmatched Transaction
                                         </a>
                                     }
                                 </li>
@@ -206,11 +208,14 @@
                                         </a>
                                     }
                                 </li>
-                                @*<li>
-                                        <a href="#home">
-                                            <img src="~/Images/bot.png" height="26" />BOT Config
+                                <li>
+                                    @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("RobotConfig"))
+                                    {
+                                        <a href="/app/CB/BotConfig" class="@ViewBag.botconfig">
+                                            <img src="~/Images/bot.png" height="26" />BOT Configuration
                                         </a>
-                                    </li>*@
+                                    }
+                                    </li>
                             </ul>
                         </li>
                     }
@@ -237,6 +242,7 @@
                             <b style="color:white">@TempData["Error"]</b>
                         </div>
                     }
+                   
                 </div>
             </div>
         </div>
@@ -361,14 +367,15 @@
     <script>
         setInterval(showTime, 1000);
         function showTime() {
-
+         
             let time = new Date();
             let date = time.getDate();
-            let month =@Html.Raw(DateTime.Today.Month );
+            let month =@Html.Raw(DateTime.Today.Month);
             let year = time.getFullYear();
             let hour = time.getHours();
             let min = time.getMinutes();
             let sec = time.getSeconds();
+            let day = getDayName(time.getDay())
             am_pm = "AM";
 
             if (hour > 12) {
@@ -384,7 +391,7 @@
             min = min < 10 ? "0" + min : min;
             sec = sec < 10 ? "0" + sec : sec;
 
-            let currentTime ="Date:" +month + "/" + date + "/" + year + " " + hour + ":"
+            let currentTime = "Date: " + day+" " + month + "/" + date + "/" + year + " " + hour + ":"
                 + min + ":" + sec + am_pm;
 
             document.getElementById("clock")
@@ -392,6 +399,33 @@
         }
 
         showTime();
+
+        function getDayName(day) {
+            switch (day) {
+                case 1:
+                    return "Monday"
+                    break;
+                case 2:
+                    return "Tuesday"
+                    break;
+                case 3:
+                    return "Wednesday"
+                    break;
+                case 4:
+                    return "Thursday"
+                    break;
+                case 5:
+                    return "Friday"
+                    break;
+                case 6:
+                    return "Saturday"
+                    break;
+                case 7:
+                    return "Sunday"
+                    break;
+
+            }
+        }
     </script>
 </body>
 </html>

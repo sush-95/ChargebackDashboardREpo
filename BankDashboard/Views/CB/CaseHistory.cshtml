@@ -102,7 +102,7 @@
                 }
             </div>
             <div class="col-sm-2">
-                <span> Feedback ID:</span>
+                <span> Feedback Id:</span>
                 @if (filterobj == null)
                 {
                     <input type="text" class="form-control" autocomplete="off" name="FeedbackID" />
@@ -178,7 +178,7 @@
                         <th>Banking With</th>
                         <th>Incident Date</th>
                         <th>Amount</th>
-                        <th>Associated By Bot</th>
+                        <th>Status</th>
                         <th>Remarks</th>
                         <th>Detail</th>
                         <th>View</th>
@@ -197,7 +197,7 @@
                                 <td>@item.BankingWith</td>
                                 <td>@item.IncidentDate</td>
                                 <td>@item.Amount</td>
-                                <td></td>
+                                <td>@item.Status</td>
                                 <td>@item.BotRemarks</td>
                                 <td>
                                     <button class="btn tbn-sm btn-success" data-toggle="modal" onclick="getAuthcode('@item.FeedbackId')" data-target="#myModal" style="background-color: #5bc142;border-color: #a8d6a8;">
