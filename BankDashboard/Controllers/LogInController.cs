@@ -48,6 +48,7 @@ namespace BankDashboard.Controllers
             string ErrorMsg = string.Empty; string Action = string.Empty; string cntrlr = string.Empty, groupname = string.Empty;
             Tbl_User_Detail user = new Tbl_User_Detail();
             string allpage = "CaseStat ,WCStat ,SLA ,CaseHistory ,CaseClosure ,MtchedTran ,UnmtchedTran ,Recon";
+
             //ADManager AdObj = new ADManager();
             //logincheck = AdObj.ChcekLogin(uname, pwd, ref groupname);
 

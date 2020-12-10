@@ -685,6 +685,7 @@
     <Content Include="Views\CB\ReconsiliationReport.cshtml" />
     <Content Include="Views\CB\UserManagement.cshtml" />
     <Content Include="Views\CB\Errorpage.cshtml" />
+    <Content Include="Views\CB\BotConfig.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

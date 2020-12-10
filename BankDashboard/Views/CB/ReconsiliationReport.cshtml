@@ -54,26 +54,7 @@
         background-image: none;
     }
 </style>
-@*<div class="row">
-    <div class="col-md-12">
-        @using (Html.BeginForm("ReconsiliationReport", "CB", FormMethod.Post, new { @enctype = "multipart/form-data" }))
-        {
-            <div>
-                <div>
-                    &nbsp;&nbsp;&nbsp;<input class="custom-file custom-file-input" height:"20px;" width:"20px;" multiple="multiple" type="file" name="Imagefiles" />
-                </div>
-                <br />
-                <div>
-                    &nbsp;<input class="btn btn-info" style="height:20px; padding-top:0px" type="submit" name="submitt24" value="Submit" />
-                </div>
 
-                <div>
-                    <input type="hidden" name="ejid" value="EJID" />
-                </div>
-            </div>
-        }
-    </div>
-</div>*@
 
 <div class="card-header">
     <div class="row">
@@ -83,13 +64,6 @@
         <div class="col-sm-6"></div>
         <div class="col-sm-2">
 
-            @*<form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
-                    <button class="btn btn-success" type="submit">
-                        <img src="~/Images/exl.png" style="height: 19px;" />Import
-                    </button>
-                </form>*@
         </div>
         <div class="col-sm-2">
             <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel_ReconciliationReport" method="post">
@@ -193,7 +167,6 @@
                         <th>Comments</th>
                         <th>TestBrose</th>
                         <th>Action</th>
-
                     </tr>
                 </thead>
                 <tbody>
@@ -220,8 +193,20 @@
 
                         }
                     }
-
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                        <th>=</th>
+                        <th>344</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>

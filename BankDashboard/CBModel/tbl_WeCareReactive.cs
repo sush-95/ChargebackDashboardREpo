@@ -233,9 +233,8 @@ namespace BankDashboard.CBModel
 
         [StringLength(50)]
         public string IncidentBranchRegion { get; set; }
-
-        [StringLength(50)]
-        public string IncidentDate { get; set; }
+        
+        public DateTime? IncidentDate { get; set; }
 
         [StringLength(50)]
         public string InternationalGuaranteeReferenceNo { get; set; }

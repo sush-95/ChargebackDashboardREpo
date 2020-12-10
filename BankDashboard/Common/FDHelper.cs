@@ -85,6 +85,7 @@ namespace BankDashboard.Common
             }
             catch (Exception Ex)
             {
+
                 //throw Ex;
                 // WriteToLogFile.writeMessage("Exception Occured While processing this method exception msg = " + Ex.Message.ToString());
             }
@@ -108,6 +109,14 @@ namespace BankDashboard.Common
                 tbl = db.Tbl_User_Detail.Where(x => x.UserName.Equals(obj.UserName)).FirstOrDefault();
                 if (tbl == null)
                 {
+                    if (obj.Usergroup.ToLower().Contains("admin"))
+                    {
+                        obj.GroupPages = "CaseStat ,WCStat ,SLA ,CaseHistory ,CaseClosure ,MtchedTran ,UnmtchedTran ,Recon,RobotConfig";
+                    }
+                    else
+                    {
+                        obj.GroupPages = "CaseStat ,WCStat ,SLA ,CaseHistory ,CaseClosure ,MtchedTran ,UnmtchedTran ,Recon";
+                    }
                     db.Tbl_User_Detail.Add(obj);
                     db.SaveChanges();
                     tbl = obj;

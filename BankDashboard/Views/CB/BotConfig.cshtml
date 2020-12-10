@@ -1,0 +1,124 @@
+﻿
+@{
+    ViewBag.Title = "BotConfig";
+    Layout = "~/Views/Shared/_CBLayout.cshtml";
+}
+
+<div class="card-header" style="text-align:center">
+    <span class="pagetilte">@ViewBag.Title </span>
+</div>
+
+@*<------------------Modall start-------------->*@
+<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 style="color: #639292;font-family:inherit;">Robot Configuration</h5>
+                <a class="close" style="cursor:pointer" data-dismiss="modal"><span>x</span></a>
+            </div>
+            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/BotConfig" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <input type="hidden" id="robotId" value="0" name="Id" />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Name:</b>
+                            <input type="text" class="form-control" id="name" name="Name" placeholder="Name" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Value:</b>
+                            <input type="text" class="form-control" id="val" name="Value" placeholder="Value" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <b>Description:</b>
+                            <textarea class="form-control" style="height: 174px;" name="Description" id="desc"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*<------------------Modall End-------------->*@
+
+<div class="card-body">
+    <div class="row">
+        <div class="col-sm-2">
+            <button class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#modalContactForm" onclick="OnSaveClick()">Add Row</button>
+        </div>
+        <div class="col-sm-8"></div>
+        <div class="col-sm-2">
+            <a class="btn btn-sm btn-success" href="/app/CB/GetExcelForRobtConfig" style=" margin-left: 39%;" value="Excel" name="Excel" >
+                Export<img style="border-radius: 3px;margin-left: 3px;margin-top: -3px;" src="~/Images/exl.png" />
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table id="example" class="table-bordered table table-striped table-condensed" style="text-align: center;">
+                <thead style="color:white;">
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                        <th>Edit</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.list != null)
+                    {
+                        foreach (var item in (List<BankDashboard.CBModel.Robot_Config>)ViewBag.list)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.Value </td>
+                                <td>@item.Description</td>
+                                <td><button class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalContactForm" onclick="OnEditClick(@Json.Encode(item))">Edit</button></td>
+
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+</div>
+    <script>
+        function OnEditClick(dataty) {
+            debugger;
+            FormReset()
+            document.getElementById('name').value = dataty.Name;
+            document.getElementById('val').value = dataty.Value;
+            document.getElementById('desc').value = dataty.Description;
+            document.getElementById('robotId').value = dataty.Id;
+            document.getElementById('name').setAttribute("readonly","readonly") 
+        }
+        function FormReset() {
+            document.getElementById('name').value = "";
+            document.getElementById('val').value = ""
+            document.getElementById('desc').value =""
+            document.getElementById('robotId').value = "0";
+        }
+        function OnSaveClick() {
+            FormReset();
+            document.getElementById('name').removeAttribute("readonly")
+        }
+    </script>

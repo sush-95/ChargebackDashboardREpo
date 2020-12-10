@@ -54,25 +54,8 @@
         background-image: none;
     }
 </style>
-<div class="card-header">
-    <div class="row">
-        <div class="col-sm-2">
-            <h4 style="color:#758484"></h4>
-        </div>
-        <div class="col-sm-6"></div>
-        <div class="col-sm-2">
-            
-        </div>
-        <div class="col-sm-2">
-            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel_AcceptedCaseClosureReport" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
-                <button class="btn btn-success" type="submit">
-                    <img src="~/Images/exl.png" style="height: 19px;" />Export
-                </button>
-            </form>
-        </div>
-    </div>
+<div class="card-header" style="text-align:center">
+    <span class="pagetilte">Accepted Case Closure</span>
 </div>
 
 
@@ -82,25 +65,24 @@
         <div class="row">
             <div class="col-sm-2">
                 <span> Closed From:</span>
-                @if (filterobj==null || filterobj.FromDate == new DateTime(0001, 01, 01))
+                @if (filterobj == null || filterobj.FromDate == new DateTime(0001, 01, 01))
                 {
                     <input type="text" class="form-control invoice" autocomplete="off" name="FromDate" />
                 }
                 else
                 {
-                    <input type="text" class="form-control" value="@filterobj.FromDate" autocomplete="off" name="FromDate" />
+                    <input type="text" class="form-control" value="@filterobj.FromDate.ToString("dd-MMM-yyyy")" autocomplete="off" name="FromDate" />
                 }
-
             </div>
             <div class="col-sm-2">
                 <span> To:</span>
-                @if (filterobj == null ||  filterobj.ToDate == new DateTime(0001, 01, 01))
+                @if (filterobj == null || filterobj.ToDate == new DateTime(0001, 01, 01))
                 {
                     <input type="text" class="form-control invoice" autocomplete="off" name="ToDate" />
                 }
                 else
                 {
-                    <input type="text" class="form-control" value="@filterobj.ToDate" autocomplete="off" name="ToDate" />
+                    <input type="text" class="form-control" value="@filterobj.ToDate.ToString("dd-MMM-yyyy")" autocomplete="off" name="ToDate" />
                 }
             </div>
             <div class="col-sm-2">
@@ -115,21 +97,18 @@
                 }
             </div>
             <div class="col-sm-6">
-
             </div>
-            
 
 
         </div>
         <div class="row">
             <div class="col-sm-2">
-                <span> Case Closure Status:</span>               
-                <select class="form-control" style="padding: 0px 0px 0px 5px;" id="Status"  name="Status">                   
-                    <option value="0" selected>Select</option>                  
+                <span> Case Closure Status:</span>
+                <select class="form-control" style="padding: 0px 0px 0px 5px;" id="Status" name="Status">
+                    <option value="0" selected>Select</option>
                     <option value="Open">Open</option>
-                    <option value="Close">Close</option>                    
+                    <option value="Close">Close</option>
                 </select>
-
             </div>
             <div class="col-sm-2">
                 <span> Financial CPD Date:</span>
@@ -146,14 +125,26 @@
                 <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;" name="find" value="find">Find</button>
                 &nbsp;&nbsp;
                 <a class="btn btn-sm btn-secondary" href="/app/CB/ClosureReport" style="margin-top: 19px;">Reset/Refresh</a>
-                
+
             </div>
         </div>
     </form>
+   
     <br />
     <!-- Modal -->
-    
     <!-- ModalEnd -->
+    <div class="row">
+        <div class="col-md-10"></div>
+        <div class="col-md-2">
+            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel_AcceptedCaseClosureReport" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
+                <button class="btn btn-success" type="submit"style="margin-left:51%; ">
+                    <img src="~/Images/exl.png" style="height: 19px;" />Export
+                </button>
+            </form>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
@@ -165,9 +156,8 @@
                         <th>ARN Number</th>
                         <th>Message Type</th>
                         <th>Case Closue Status</th>
-                        
-                        <th>Action</th>
 
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -182,7 +172,7 @@
                                 <td>-</td>
                                 <td>@item.MessageType</td>
                                 <td>@item.CaseClosureStatus</td>
-                                
+
                                 <td>
                                     <button class="btn tbn-sm btn-info" data-toggle="tooltip" data-placement="bottom" title="View">
                                         <img class="btnImg" src="~/Images/view.png" />
@@ -192,7 +182,6 @@
 
                         }
                     }
-
                 </tbody>
             </table>
         </div>
