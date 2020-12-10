@@ -148,7 +148,7 @@
                                     @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("WCStat"))
                                     {
                                         <a href="/app/CB/WC" class="@ViewBag.wcarestat">
-                                            <img src="~/Images/wc.png" height="26" /> WC Statistics
+                                            <img src="~/Images/wc.png" height="26" /> WeCare Statistics
                                         </a>
                                     }
                                 </li>
@@ -180,7 +180,7 @@
                                     @if (!string.IsNullOrEmpty(user.GroupPages) && user.GroupPages.Contains("CaseClosure"))
                                     {
                                         <a href="/app/CB/ClosureReport" class="@ViewBag.ClosureReport">
-                                            <img src="~/Images/closure.png" />Accepted Case &nbsp;Closure
+                                            <img src="~/Images/closure.png" />Accepted Case Closure
                                         </a>
                                     }
                                 </li>
@@ -267,6 +267,7 @@
         $(document).ready(function () {
             $("#success").fadeOut(4000);
             $("#error").fadeOut(4000);
+
             //----------------------------------------------------------------------------------------------
             $("#p1").attr("style", "width:" + $("#xp1").val() + "%")
             $("#p2").attr("style", "width:" + $("#xp2").val() + "%")
@@ -362,7 +363,7 @@
             }
 
         }());
-
+      
     </script>
     <script>
         setInterval(showTime, 1000);
@@ -391,7 +392,7 @@
             min = min < 10 ? "0" + min : min;
             sec = sec < 10 ? "0" + sec : sec;
 
-            let currentTime = "Date: " + day+" " + month + "/" + date + "/" + year + " " + hour + ":"
+            let currentTime = day+" " + month + "/" + date + "/" + year + " " + hour + ":"
                 + min + ":" + sec + am_pm;
 
             document.getElementById("clock")

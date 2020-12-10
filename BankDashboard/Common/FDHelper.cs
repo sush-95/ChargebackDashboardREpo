@@ -85,6 +85,7 @@ namespace BankDashboard.Common
             }
             catch (Exception Ex)
             {
+
                 //throw Ex;
                 // WriteToLogFile.writeMessage("Exception Occured While processing this method exception msg = " + Ex.Message.ToString());
             }

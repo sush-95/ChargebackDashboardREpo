@@ -2,6 +2,7 @@
 using BankDashboard.DataAccessLayer;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using static BankDashboard.Common.ViewModelClass;
@@ -323,6 +324,21 @@ namespace BankDashboard.Common
             }
             return query + ";";
         }
+
+        public static List<string> getImagesOnfeedbackId(string feedbackID)
+        {
+            List<string> list = new List<string>();
+            byte[] filebyte = null;
+            string base64 = "";
+            string[] filelist = Directory.GetFiles(@"C:\Users\Sushil\Desktop\imgescreen\");
+            foreach (string item in filelist)
+            {
+                filebyte = File.ReadAllBytes(item);
+                base64 = Convert.ToBase64String(filebyte);
+                list.Add(string.Format("data:image/jpg;base64,{0}", base64));
+            }
+            return list;
+        }
         #endregion-----------------------------------------------------------------------------------------------------
 
         #region------------------------------------------Matched Transaction--------------------------------------------
@@ -487,7 +503,7 @@ namespace BankDashboard.Common
             try
             {
                 CBDB db = new CBDB();
-                list = db.tbl_IssuingIncomingVISA.SqlQuery("select * from tbl_IssuingIncomingVISA where CaseClosureStatus In ('open','close')").ToList();
+                list = db.tbl_IssuingIncomingVISA.SqlQuery("select * from tbl_IssuingIncomingVISA where CaseSubmissionStatus In ('open','close')").ToList();
             }
             catch (Exception ex) { throw ex; }
             return list;
@@ -509,7 +525,7 @@ namespace BankDashboard.Common
             }
             if (filter.Status != null && !string.IsNullOrEmpty(filter.Status.Trim()) && !filter.Status.Trim().Equals("0"))
             {
-                query = query + ((query.Length > qrylength + 3) ? " and CaseClosureStatus='" + filter.Status.Trim() + "'" : " CaseClosureStatus='" + filter.Status.Trim() + "'");
+                query = query + ((query.Length > qrylength + 3) ? " and CaseSubmissionStatus='" + filter.Status.Trim() + "'" : " CaseSubmissionStatus='" + filter.Status.Trim() + "'");
             }
             if (filter.FromDate != null && (filter.FromDate != new DateTime(0001, 01, 01)))
             {
@@ -525,7 +541,7 @@ namespace BankDashboard.Common
             }
             if (qrylength == query.Length)
             {
-                query = "select * from tbl_IssuingIncomingVISA where CaseClosureStatus In ('open','close')";
+                query = "select * from tbl_IssuingIncomingVISA where CaseSubmissionStatus In ('open','close')";
             }
             return query + ";";
         }

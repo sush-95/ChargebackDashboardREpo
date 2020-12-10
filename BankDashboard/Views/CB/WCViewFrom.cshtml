@@ -55,10 +55,12 @@
     }
 
         .progress b {
-            padding-left: 50%;
+            /*padding-left: 50%;
             padding-right: 50%;
-            padding-top: 10px;
+            padding-top: 10px;*/      
+            margin-top: 13px;
             color: white;
+            margin-left: 50%;
         }
 
     .pbar1 {
@@ -203,13 +205,16 @@
                     <tbody>
                         @if (ViewBag.list != null)
                         {
-                            foreach (var item in ViewBag.list)
+                            string regdate = "", resolutiondate = "";
+                            foreach (var item in (List<BankDashboard.CBModel.tbl_WeCareReactive>)ViewBag.list)
                             {
+                                regdate = item.RegistrationDate != null ? Convert.ToDateTime(item.RegistrationDate).ToString("MM/dd/yyyy") : "--";
+                                resolutiondate= item.ResolutionDate != null ? Convert.ToDateTime(item.ResolutionDate).ToString("MM/dd/yyyy") : "--";
                                 <tr>
                                     <td>@item.FeedbackID</td>
                                     <td>@item.AssignedUserID</td>
-                                    <td>@item.RegistrationDate</td>
-                                    <td>@item.ResolutionDate</td>
+                                    <td>@regdate</td>
+                                    <td>@resolutiondate</td>
                                     <td>@item.Stage</td>
                                 </tr>
 

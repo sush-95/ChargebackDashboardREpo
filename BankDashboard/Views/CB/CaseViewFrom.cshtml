@@ -228,16 +228,17 @@
                     <tbody>
                         @if (ViewBag.list != null)
                         {
-                            foreach (var item in ViewBag.list)
+                            string date = "";
+                            foreach (var item in (List<BankDashboard.CBModel.tbl_UnassignedTickets>)ViewBag.list)
                             {
+                                date = item.BotDataEntryTime != null ? Convert.ToDateTime(item.BotDataEntryTime).ToString("MM/dd/yyyy"):"--";
                                 <tr>
                                     <td>@item.FeedbackId</td>
                                     <td>@item.Issue</td>
                                     <td>@item.Status</td>
                                     <td>@item.BotRemarks</td>
-                                    <td>@item.BotDataEntryTime</td>
+                                    <td>@date</td>
                                 </tr>
-
                             }
                         }
 
@@ -335,7 +336,7 @@ else if (botstatobj.RoutingPortalFigures != null)
                     </div>
                 </div>
                 <div class="col-md-8">
-                    <div class="card-body">
+                    <div class="card-body" style="width:666px;height: 367px;">
                         <canvas id="doughnutChart"></canvas>
                     </div>
                 </div>

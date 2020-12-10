@@ -15,8 +15,8 @@
 
         <div class="modal-content">
             <div class="modal-header">
-                <h5 style="color: #639292;font-family:inherit;">Edit SMS Config</h5>
-                <a class="close" data-dismiss="modal"><span>x</span></a>
+                <h5 style="color: #639292;font-family:inherit;">Robot Configuration</h5>
+                <a class="close" style="cursor:pointer" data-dismiss="modal"><span>x</span></a>
             </div>
             <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/BotConfig" method="post">
                 @Html.AntiForgeryToken()
@@ -73,7 +73,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Value</th>
-                        <th>Action</th>
+                        <th>Description</th>
                         <th>Edit</th>
 
                     </tr>
@@ -90,9 +90,6 @@
                                 <td><button class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalContactForm" onclick="OnEditClick(@Json.Encode(item))">Edit</button></td>
 
                             </tr>
-
-
-
                         }
                     }
 

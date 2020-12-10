@@ -40,27 +40,12 @@
         height: 13px
     }
 </style>
-<div class="card-header">
-    <div class="row">
-        <div class="col-sm-2">
-            <h4 style="color:#758484"></h4>
-        </div>
-        <div class="col-sm-8"></div>
-        <div class="col-sm-2">
-            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
-                <button class="btn btn-success" type="submit">
-                    <img src="~/Images/exl.png" style="height: 19px;" />Export
-                </button>
-            </form>
-        </div>
-    </div>
+<div class="card-header" style="text-align:center">
+    <span class="pagetilte">Matched Financial Transaction</span>
 </div>
 <div class="card-body">
     <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/MatchedFinTransaction" method="post">
-        @Html.AntiForgeryToken()
-        <div class="row">
+           <div class="row">
             <div class="col-sm-2">
                 <span> From Date:</span>
                 @if (filterobj == null)
@@ -87,6 +72,9 @@
             <div class="col-sm-3">
                 <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;" name="find" value="find">Find</button>
                 <a class="btn btn-sm btn-secondary" href="/app/CB/MatchedFinTransaction" style="margin-top: 19px;">Reset</a>
+                <button class="btn btn-sm btn-success" style="margin-top: 19px;" name="excel" value="excel" type="submit" >
+                    <img src="~/Images/exl.png" style="height: 19px;" />Export
+                </button>
             </div>
         </div>
     </form>
