@@ -1,7 +1,9 @@
 ﻿using BankDashboard.CBModel;
 using BankDashboard.DataAccessLayer;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -325,19 +327,22 @@ namespace BankDashboard.Common
             return query + ";";
         }
 
-        public static List<string> getImagesOnfeedbackId(string feedbackID)
+        public static string getImagesOnfeedbackId(string feedbackID)
         {
             List<string> list = new List<string>();
             byte[] filebyte = null;
             string base64 = "";
-            string[] filelist = Directory.GetFiles(@"C:\Users\Sushil\Desktop\imgescreen\");
+           
+            string folderpath = ConfigurationManager.AppSettings["CBImageScreen"].ToString();
+            string[] filelist = Directory.GetFiles(folderpath, "*wc_feedbackid" + feedbackID+"_*",SearchOption.AllDirectories);          
+         
             foreach (string item in filelist)
             {
                 filebyte = File.ReadAllBytes(item);
                 base64 = Convert.ToBase64String(filebyte);
                 list.Add(string.Format("data:image/jpg;base64,{0}", base64));
             }
-            return list;
+            return JsonConvert.SerializeObject(list);
         }
         #endregion-----------------------------------------------------------------------------------------------------
 
@@ -564,5 +569,109 @@ namespace BankDashboard.Common
         }
         #endregion------------------------------------------------------------------------------------
 
+        #region----------------------------------Machine Info----------------------------------------- 
+        public static bool CheckMachine(string Machine)
+        {
+           // if ((String.IsNullOrEmpty(Machine)))
+               // WriteToLogFile.writeMessage("Machine Name Received null");
+
+
+            bool Check = false;
+            try
+            {
+                //WriteToLogFile.writeMessage("Check Machine [Started]");
+
+                using (CBDB db = new CBDB())
+                {
+                    //WriteToLogFile.writeMessage("Connection With DB Created");
+                    var mobj = db.tbl_MachineInfo.Where(x => x.MachineName.Equals(Machine)).FirstOrDefault();
+
+                    if (mobj == null)
+                    {
+                        //WriteToLogFile.writeMessage("No machine is present with this name");
+                        //WriteToLogFile.writeMessage("Creating New Machine Entry in DB");
+                        tbl_MachineInfo obj = new tbl_MachineInfo();
+                        obj.MachineName = Machine;
+                        obj.CreatedTs = DateTime.Now;
+                        obj.IsActive = true;
+                        ///WriteToLogFile.writeMessage("Adding Entry in Table");
+                        db.tbl_MachineInfo.Add(obj);
+                        // WriteToLogFile.writeMessage("Entry Added Successfully in Table");
+                        db.SaveChanges();
+                        //WriteToLogFile.writeMessage("Changes Saved Successfully");
+                        Check = true;
+                    }
+                    else if (mobj.IsActive == false)
+                    {
+                        // WriteToLogFile.writeMessage("Machine Already present but with is asctive as false");
+                        mobj.IsActive = true;
+                        mobj.CreatedTs = DateTime.Now;
+                        //WriteToLogFile.writeMessage("Saving Changes to DB");
+                        db.SaveChanges();
+                        //WriteToLogFile.writeMessage("Changes Saved Successfully");
+                        Check = true;
+                    }
+                    else
+                    {
+                        //WriteToLogFile.writeMessage("Machine Already present and with is asctive as True");
+                        //WriteToLogFile.writeMessage("Checking Time Difference");
+                        int TimeDiff = Convert.ToInt32(ConfigurationManager.AppSettings["TimeDiff"].ToString());
+                        //WriteToLogFile.writeMessage("Time Diff = "+TimeDiff.ToString());
+                        int diff = (DateTime.Now - Convert.ToDateTime(mobj.CreatedTs)).Minutes;
+                        ///WriteToLogFile.writeMessage("diff in minutes "+diff.ToString());
+                        if (diff >= TimeDiff)
+                        {
+                            // WriteToLogFile.writeMessage("Machine Time out reached to maximun updating is active to true");
+                            mobj.IsActive = true;
+                            mobj.CreatedTs = DateTime.Now;
+                            //WriteToLogFile.writeMessage("Saving Changes to DB");
+                            db.SaveChanges();
+                            //WriteToLogFile.writeMessage("Changes Saved Successfully");
+                            Check = true;
+                        }
+                        else
+                        {
+                            // WriteToLogFile.writeMessage("Cannot activate machine because time out not reached");
+                        }
+                    }
+                }
+
+            }
+            catch (Exception Ex)
+            {
+
+                //throw Ex;
+                // WriteToLogFile.writeMessage("Exception Occured While processing this method exception msg = " + Ex.Message.ToString());
+            }
+            //WriteToLogFile.writeMessage("Returned Check Value "+Check.ToString());
+            return Check;
+        }
+        public static void MachineLogout(string MName)
+        {
+            try
+            {
+                // WriteToLogFile.writeMessage("MachineLogout Method [Started]");
+                using (CBDB db = new CBDB())
+                {
+                    var obj = db.tbl_MachineInfo.Where(x => x.MachineName.Equals(MName)).FirstOrDefault();
+
+                    obj.IsActive = false;
+                    db.SaveChanges();
+                }
+                // WriteToLogFile.writeMessage("MachineLogout Method [Ended] successfully");
+            }
+            catch (Exception Ex)
+            {
+                //WriteToLogFile.writeMessage("MachineLogout Method [Ended] UNsuccessfully Error = " +Ex.Message.ToString());
+                throw Ex;
+            }
+        }
+        public static void UpdateMachine(string machine)
+        {
+            CaseStatisticsDataLayer obj = new CaseStatisticsDataLayer();
+            obj.UpdateMachineTime(machine);
+        } 
+
+        #endregion----------------------------------------------------------------------------------------
     }
 }

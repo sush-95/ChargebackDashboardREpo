@@ -404,37 +404,39 @@ else if (botstatobj.CaseReadyForAction != null)
         </div>
     </form>
     <div class="col-sm-12">
-
-        <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
-            <thead style="color:white;text-align: center;">
-                <tr>
-                    <th>Feedback Id</th>
-                    <th>CIF No.</th>
-                    <th>Customer Name</th>
-                    <th>Ragistration Date</th>
-                    <th>Card Number</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (ViewBag.list != null)
-                {
-                    foreach (var item in ViewBag.list)
+        <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GotoCaseHistoryOnFeedBackID" method="post">
+            @Html.AntiForgeryToken()
+            <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
+                <thead style="color:white;text-align: center;">
+                    <tr>
+                        <th>Feedback Id</th>
+                        <th>CIF No.</th>
+                        <th>Customer Name</th>
+                        <th>Ragistration Date</th>
+                        <th>Card Number</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.list != null)
                     {
-                        <tr>
-                            <td>@item.FeedbackId</td>
-                            <td>@item.CIFNo</td>
-                            <td>@item.CustomerName</td>
-                            <td>@item.IncidentDate</td>
-                            <td>@item.CardNumber</td>
-                            <td>@item.Status</td>
-                        </tr>
+                        foreach (var item in ViewBag.list)
+                        {
+                            <tr>
+                                <td><input type="submit" name="feedbackid" value="@item.FeedbackId" class="btn btn-block" /></td>
+                                <td>@item.CIFNo</td>
+                                <td>@item.CustomerName</td>
+                                <td>@item.IncidentDate</td>
+                                <td>@item.CardNumber</td>
+                                <td>@item.Status</td>
+                            </tr>
 
+                        }
                     }
-                }
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </form>
     </div>
 
 }

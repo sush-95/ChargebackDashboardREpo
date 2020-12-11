@@ -60,7 +60,7 @@
 
 
 <div class="card-body">
-    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/CaseHistory" method="post">
+    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/CaseHistory" method="post" id="form1">
         @Html.AntiForgeryToken()
         <div class="row">
             <div class="col-sm-2">
@@ -111,6 +111,11 @@
             <div class="col-sm-3">
                 <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;" name="find" value="find">Find</button>
                 <a class="btn btn-sm btn-secondary" href="/app/CB/CaseHistory" style="margin-top: 19px;">Reset</a>
+                @if (TempData["fobj"] != null)
+                {
+                    <button class="btn btn-sm btn-danger" type="submit" style="margin-top: 19px;" onclick="GetBackToMainPage()" name="getval" value="3">Back</button>
+                }
+
             </div>
         </div>
     </form>
@@ -149,7 +154,6 @@
         </div>
     </div>
     <!-- ModalEnd -->
-
     <!-- Modal -->
     <div class="modal fade" id="myModal1" role="dialog">
         <div class="modal-dialog modal-lg">
@@ -161,9 +165,9 @@
                     <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
                         <div class="carousel-inner" id="imgContainer">
                             @*<div class="carousel-item active">
-                                <img class="d-block w-100" src="~/Images/building.jpg" alt="First slide">
-                            </div>*@
-                           
+                                    <img class="d-block w-100" src="~/Images/building.jpg" alt="First slide">
+                                </div>*@
+
                         </div>
                         <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -238,7 +242,7 @@
                                     </button>
                                 </td>
                                 <td>
-                                    <button class="btn tbn-sm btn-info" data-toggle="modal" data-target="#myModal1" onclick="getImages(@Json.Encode(CBHelper.getImagesOnfeedbackId(item.FeedbackId.ToString())))" data-placement="bottom" title="View">
+                                    <button class="btn tbn-sm btn-info" data-toggle="modal" data-target="#myModal1" onclick="getImages('@CBHelper.getImagesOnfeedbackId(item.FeedbackId.ToString())')" data-placement="bottom" title="View">
                                         <img class="btnImg" src="~/Images/view.png" />
                                     </button>
                                 </td>
@@ -316,19 +320,28 @@
         });*@
         return false;
     }
+
     function getImages(images) {
         debugger
+        var imgarr=JSON.parse(images)
         var Container = document.getElementById("imgContainer");
         Container.innerHTML = "";
         var htmlbody = "";
-        for (i = 0; i < images.length; i++) {
+        for (i = 0; i < imgarr.length; i++) {
             if (i == 0) {
-                htmlbody += '<div class="carousel-item active"> <img class="d-block w-100" src="' + images[i] + '" alt="First slide"> </div>';
+                htmlbody += '<div class="carousel-item active"> <img class="d-block w-100" src="' + imgarr[i] + '" alt="First slide"> </div>';
             }
             else {
-                htmlbody += '<div class="carousel-item"> <img class="d-block w-100" src="' + images[i] + '" alt="First slide"> </div>';
+                htmlbody += '<div class="carousel-item"> <img class="d-block w-100" src="' + imgarr[i] + '" alt="First slide"> </div>';
             }
         }
         Container.innerHTML = htmlbody;
     }
+    var app = '@Html.Raw(System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim())';
+          function GetBackToMainPage() {
+              debugger
+              var frm = document.getElementById("form1");
+              let path = app + "/CB/CaseViewFrom";
+              frm.setAttribute("action",path)
+          }
 </script>

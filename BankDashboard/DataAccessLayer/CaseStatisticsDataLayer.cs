@@ -285,5 +285,23 @@ namespace BankDashboard.DataAccessLayer
             catch (Exception e) { throw e; }
 
         }
+
+        public void UpdateMachineTime(string machine)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataSet ds = new DataSet();
+                    SqlCommand cmd = new SqlCommand("UDSP_DASHBOARD_Update_MachineInfo", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Param_MachineName", machine);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(ds);                   
+                }
+            }
+            catch { }
+        }
+
     }
 }

@@ -24,7 +24,7 @@ namespace BankDashboard.Controllers
             {
                 var userSession = ((Tbl_User_Detail)Session["User"]);
 
-                return RedirectToAction("OverView", "FD");
+                return RedirectToAction(FDHelper.GetPageName(userSession.GroupPages), "FD");
             }
             else
             {
@@ -47,8 +47,7 @@ namespace BankDashboard.Controllers
             pwd = pwd.Trim();
             string ErrorMsg = string.Empty; string Action = string.Empty; string cntrlr = string.Empty, groupname = string.Empty;
             Tbl_User_Detail user = new Tbl_User_Detail();
-            string allpage = "CaseStat ,WCStat ,SLA ,CaseHistory ,CaseClosure ,MtchedTran ,UnmtchedTran ,Recon";
-
+            
             //ADManager AdObj = new ADManager();
             //logincheck = AdObj.ChcekLogin(uname, pwd, ref groupname);
 
@@ -71,12 +70,11 @@ namespace BankDashboard.Controllers
                         Usergroup = groupname,
                     };
                     // user.GroupPages = MvcHelper.GetGroupPages(groupname);
-                    bool check = FDHelper.CheckMachine(user.UserName.Trim().ToString());
+                    bool check = CBHelper.CheckMachine(System.Security.Principal.WindowsIdentity.GetCurrent().Name);
                     if (check)
                     {
                         Session["USerName"] = user.UserName.Trim().ToString();
-                        var table = FDHelper.SaveUser(user);
-                        user.GroupPages = string.IsNullOrEmpty(table.GroupPages)?allpage:table.GroupPages;
+                         FDHelper.SaveUser(ref user);                      
                         if (user.Usergroup.Equals(Constants.UserGroups.UserManager))
                         {
                             Action = "UserManagement"; cntrlr = "CB";
@@ -144,7 +142,7 @@ namespace BankDashboard.Controllers
             ////if (Session["Machine"] != null)
             if (Session["USerName"] != null)
             {
-                FDHelper.MachineLogout(Session["USerName"].ToString());
+                CBHelper.MachineLogout(System.Security.Principal.WindowsIdentity.GetCurrent().Name);
             }
             Session.Abandon();
             try

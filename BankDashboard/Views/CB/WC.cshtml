@@ -115,10 +115,13 @@
                             <b>Cases Status (Historical)</b>
                         </div>
                         <div class="col-sm-4">
-                            <a class="btn btn-sm btn-lh" href="/app/CB/WCViewFrom?getval=1">
-                                View From
-                                <img src="~/Images/calender.png" height="22" />
-                            </a>
+                            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/WCViewFrom" method="post">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-sm btn-lh" type="submit" name="getval" value="1">
+                                    View From
+                                    <img src="~/Images/calender.png" height="22" />
+                                </button>
+                            </form>                           
                         </div>                   
                     </div>
                 </div>
@@ -175,10 +178,13 @@
                             <b>Issue Type (Yesterday)</b>
                         </div>
                         <div class="col-sm-4">
-                            <a class="btn btn-sm btn-lh" href="/app/CB/WCViewFrom?getval=2">
-                                View From
-                                <img src="~/Images/calender.png" height="22" />
-                            </a>
+                            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/WCViewFrom" method="post">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-sm btn-lh" type="submit" name="getval" value="2">
+                                    View From
+                                    <img src="~/Images/calender.png" height="22" />
+                                </button>
+                            </form>                        
                         </div>
                     </div>
                 </div>

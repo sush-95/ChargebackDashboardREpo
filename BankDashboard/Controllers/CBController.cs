@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Web;
 using System.Web.Mvc;
 using static BankDashboard.Common.ViewModelClass;
@@ -26,6 +27,7 @@ namespace BankDashboard.Controllers
             }
             try
             {
+                CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
                 ViewBag.Dashboard = "show";
                 ViewBag.botstat = "active";
                 BOtStatModel obj = new BOtStatModel();
@@ -40,10 +42,15 @@ namespace BankDashboard.Controllers
 
         public ActionResult CaseViewFrom(string getval)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             ViewBag.Dashboard = "show";
             ViewBag.botstat = "active";
             try
             {
+                CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
                 BOtStatModel obj = new BOtStatModel();
                 obj.flag = getval;
                 if (TempData["caseObj"] != null)
@@ -77,6 +84,10 @@ namespace BankDashboard.Controllers
 
         public ActionResult GetFilterData(string Flag, string Todate, string Fromdate, string Filter, string Excel)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             BOtStatModel obj = new BOtStatModel();
             obj.flag = Flag;
             if (Flag == "1")
@@ -113,6 +124,14 @@ namespace BankDashboard.Controllers
             }
             TempData["caseObj"] = obj;
             return RedirectToAction("CaseViewFrom", new { getval = Flag });
+        }
+
+        public ActionResult GotoCaseHistoryOnFeedBackID(string feedbackid)
+        {
+            FilterClass filterobj = new FilterClass();
+            filterobj.FeedbackID = feedbackid;
+            TempData["fobj"]=filterobj;
+            return RedirectToAction("CaseHistory");
         }
 
         void FormattoExcelForcasestat(List<tbl_UnassignedTickets> p, string sname)
@@ -445,6 +464,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
+            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
             ViewBag.Dashboard = "show";
             ViewBag.wcarestat = "active";
             try
@@ -464,10 +484,15 @@ namespace BankDashboard.Controllers
 
         public ActionResult WCViewFrom(string getval)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             ViewBag.Dashboard = "show";
             ViewBag.wcarestat = "active";
             try
             {
+                CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
                 WCStatModel obj = new WCStatModel();
                 obj.flag = getval;
                 if (TempData["WCObj"] != null)
@@ -498,6 +523,10 @@ namespace BankDashboard.Controllers
 
         public ActionResult GetFilterDataWC(string Flag, string Todate, string Fromdate, string Filter, string Excel)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             try
             {
                 WCStatModel obj = new WCStatModel();
@@ -635,6 +664,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
+            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
             ViewBag.Dashboard = "show";
             ViewBag.SLAStat = "active";
             CBDB db = new CBDB();
@@ -805,11 +835,17 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
+            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
             ViewBag.Report = "show";
             ViewBag.casehistrory = "active";
             try
             {
                 CBDB db = new CBDB();
+                if (TempData["fobj"] != null)
+                {
+                    find = "find";
+                    filter = (FilterClass)TempData["fobj"];
+                }
                 if (find != null)
                 {
                     ViewBag.list = CBHelper.GetCaseHistoryFilterd(filter);
@@ -829,6 +865,7 @@ namespace BankDashboard.Controllers
         [HttpPost]
         public JsonResult AuthCode(string feedback)
         {
+           
             List<tbl_AuthCode> list = new List<tbl_AuthCode>();
             try
             {
@@ -840,6 +877,10 @@ namespace BankDashboard.Controllers
         }
         public ActionResult GetExcel(string hfilter)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             ViewModelClass.FilterClass filterobj = new ViewModelClass.FilterClass();
             try
             {
@@ -854,13 +895,13 @@ namespace BankDashboard.Controllers
                     CBDB db = new CBDB();
                     list = db.tbl_UnassignedTickets.ToList();
                 }
-                FormattoExcel(list, "Report_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
+                FormattoExcel(list, "CaseHostory_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
             }
             catch
             {
                 TempData["Error"] = "Something went wrong..!";
             }
-            return RedirectToAction("Report", new { filter = filterobj, Apply = "" });
+            return RedirectToAction("CaseHistory", new { filter = filterobj, find = "" });
         }
         void FormattoExcel(List<tbl_UnassignedTickets> p, string sname)
         {
@@ -1082,6 +1123,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
+            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
             ViewBag.Report = "show";
             ViewBag.matchedTran = "active";
             try
@@ -1252,6 +1294,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
+            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
             ViewBag.UnmatchedTran = "active";
             ViewBag.Report = "show";
             try
@@ -1370,6 +1413,10 @@ namespace BankDashboard.Controllers
 
         public ActionResult AddRowReconsiliationTable(NonCustom_GLReconciliationTable obj, string submit)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             ViewBag.Report = "show";
             ViewBag.Reconsiliation = "active";
             if (submit != null && obj != null)
@@ -1390,6 +1437,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
+            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
             ViewBag.Report = "show";
             ViewBag.Reconsiliation = "active";
             try
@@ -1426,6 +1474,10 @@ namespace BankDashboard.Controllers
         }
         public ActionResult GetExcel_ReconciliationReport(string hfilter)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             ViewModelClass.ReconciliationFilter filterobj = new ViewModelClass.ReconciliationFilter();
             try
             {
@@ -1589,6 +1641,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
+            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
             ViewBag.Report = "show";
             ViewBag.ClosureReport = "active";
             try
@@ -1614,9 +1667,14 @@ namespace BankDashboard.Controllers
         }
         public ActionResult GetExcel_AcceptedCaseClosureReport(string hfilter)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             ViewModelClass.ClosureReportFilter filterobj = new ViewModelClass.ClosureReportFilter();
             try
             {
+                CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
                 List<tbl_IssuingIncomingVISA> list = new List<tbl_IssuingIncomingVISA>();
                 if (!hfilter.Equals("null"))
                 {
@@ -1756,8 +1814,13 @@ namespace BankDashboard.Controllers
         #region-----------------------------------User Management--------------------------------------
         public ActionResult UserManagement()
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             ViewBag.Dashboard = "show";
             ViewBag.userManagement = "active";
+            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
             try
             {
                 ViewBag.userlist = CBHelper.GetUsersForProfile();
@@ -1768,6 +1831,10 @@ namespace BankDashboard.Controllers
         [HttpPost]
         public ActionResult UserManagement(string ID, string pages)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             try
             {
                 CBHelper.SaveUserPages(int.Parse(ID), pages);
@@ -1794,6 +1861,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
+            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
             ViewBag.Report = "show";
             ViewBag.botconfig = "active";
             try
@@ -1840,6 +1908,7 @@ namespace BankDashboard.Controllers
         {
             try
             {
+                CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
                 CBDB db = new CBDB();
                 FormattoExcelForRobotConfiig(db.Robot_Config.ToList(), "RobotConfig_" + DateTime.Now.ToString("ddMMyyyyhhmmss"));
             }

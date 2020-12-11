@@ -128,10 +128,13 @@
                         <div class="col-sm-2">
                         </div>
                         <div class="col-sm-4">
-                            <a class="btn btn-sm btn-lh" href="/app/CB/CaseViewFrom?getval=1">
-                                View From
-                                <img src="~/Images/calender.png" height="22" />
-                            </a>
+                            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/CaseViewFrom" method="post">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-sm btn-lh" type="submit" name="getval" value="1">
+                                    View From
+                                    <img src="~/Images/calender.png" height="22" />
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -147,11 +150,11 @@
                         </div>
                         <div class="pbar3 progress" id="p3" data-toggle="tooltip" data-placement="top" title="Application Exception">
                             <input type="hidden" value="@botstatobj.castStatFigures[6]" id="xp3" />
-                            <b >@botstatobj.castStatFigures[2]</b>
+                            <b>@botstatobj.castStatFigures[2]</b>
                         </div>
                         <div class="pbar4 progress" id="p4" data-toggle="tooltip" data-placement="top" title="Unprocessed">
                             <input type="hidden" value="@botstatobj.castStatFigures[7]" id="xp4" />
-                            <b >@botstatobj.castStatFigures[3]</b>
+                            <b>@botstatobj.castStatFigures[3]</b>
                         </div>
                     </div>
                     <br />
@@ -196,10 +199,13 @@
                         </div>
 
                         <div class="col-sm-4">
-                            <a class="btn btn-sm btn-lh" href="/app/CB/CaseViewFrom?getval=2">
-                                View From
-                                <img src="~/Images/calender.png" height="22" />
-                            </a>
+                            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/CaseViewFrom" method="post">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-sm btn-lh" type="submit" name="getval" value="2">
+                                    View From
+                                    <img src="~/Images/calender.png" height="22" />
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -241,29 +247,17 @@
                         <div class="col-sm-2">
                         </div>
                         <div class="col-sm-4">
-
                         </div>
                     </div>
                 </div>
                 <div class="card-image-wrapper" style="text-align:center;height: 178px;">
-                    <b style="color: #565451;font-family: emoji;"></b>
-                    <a style="text-decoration:none" href="/app/CB/CaseViewFrom?getval=3">
-                        <h1 class="Count" style="  font-size: 6.4rem;color: #4e907a">@botstatobj.CaseReadyForAction[0]</h1>
-                    </a>
-                    @*<table id="tbl1" style="position: relative;left: 17%;font-size: 13px;color:#628881">
-                            <tr >
-                                <th>Master Card:</th>
-                                <td>@botstatobj.CaseReadyForAction[1]</td>
-                                <th>Visa:</th>
-                                <td>@botstatobj.CaseReadyForAction[2]</td>
-                                <th>OmanNet:</th>
-                                <td>@botstatobj.CaseReadyForAction[3]</td>
-                                <th>Onus:</th>
-                                <td>@botstatobj.CaseReadyForAction[4]</td>
-                                <th>POSECOM:</th>
-                                <td>@botstatobj.CaseReadyForAction[5]</td>
-                            </tr>
-                        </table>*@
+                    <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/CaseViewFrom" method="post">
+                        @Html.AntiForgeryToken()
+                        <b style="color: #565451;font-family: emoji;"></b>
+                        <button class="btn btn-block" type="submit" name="getval" value="3">
+                            <h1 class="Count" style="  font-size: 6.4rem;color: #4e907a">@botstatobj.CaseReadyForAction[0]</h1>
+                        </button>                      
+                    </form>
                 </div>
                 <div class="card-footer">
                     <b style="color:#6d7979;font-size:12px;">Showing data from @DateTime.Today.ToString("dd-MMM-yyyy") -till date</b>
@@ -296,5 +290,4 @@
 
 </script>
 <style>
-    
 </style>
