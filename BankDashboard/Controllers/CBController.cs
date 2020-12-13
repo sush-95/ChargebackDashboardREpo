@@ -1422,6 +1422,16 @@ namespace BankDashboard.Controllers
                     CBHelper.ReconsiledReport();
                     ViewBag.list = CBHelper.GetReconsiledReportFilterd(new ReconciliationFilter { CardNumber = "", MemberCaseNumber = "" });
                 }
+
+                Dictionary<string,string> ReconciliationDifference = CBHelper.GetDebitCreditAmountAfterReconciliation_CBHelper();
+                if(ReconciliationDifference!=null)
+                {
+                    ViewBag.ReconDifference = ReconciliationDifference["DifferenceDebitCredit"].ToString();
+                    ViewBag.ReconDebit      = ReconciliationDifference["Debit"].ToString();
+                    ViewBag.ReconCredit     = ReconciliationDifference["Credit"].ToString();
+
+                }
+
             }
             catch (Exception ex)
             {
