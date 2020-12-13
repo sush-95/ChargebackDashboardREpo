@@ -330,7 +330,7 @@ namespace BankDashboard.Common
             List<string> list = new List<string>();
             byte[] filebyte = null;
             string base64 = "";
-            string[] filelist = Directory.GetFiles(@"C:\Users\Sushil\Desktop\imgescreen\");
+            string[] filelist = Directory.GetFiles(@"C:\Users\Madhur_Tyagi_RPA\Pictures\Screenshots\");
             foreach (string item in filelist)
             {
                 filebyte = File.ReadAllBytes(item);
@@ -482,7 +482,6 @@ namespace BankDashboard.Common
             }
             catch (Exception ex) { throw ex; }
         }
-
         #endregion
 
         #region------------------------------------------AcceptedCaseClosureReportFilter------------------------------
