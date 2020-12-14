@@ -56,14 +56,31 @@
 </style>
 
 
+@if (TempData["SuccessMessage"] != null)
+{
+<div class="alert alert-success alert-dismissible fade-in">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong>Success!&nbsp;&nbsp;</strong>"File Upload Successfully"
+</div>
+}
+@if (TempData["ErrorMessage"] !=null)
+{
+<div class="alert alert-danger" id="success-alert">
+    <button type="button" class="close" data-dismiss="alert">x</button>
+    <strong>Failed!&nbsp;&nbsp;</strong><span>@TempData["ErrorMessage"]</span>
+</div>
+}
 <div class="card-header">
     <div class="row">
-        <div class="col-sm-2">
+        <div class="col-sm-5">
             <h4 style="color:#758484"></h4>
-        </div>
-        <div class="col-sm-6"></div>
-        <div class="col-sm-2">
-
+        </div>        
+        <div class="col-sm-5">
+            @using (Html.BeginForm("UploadExcelFile", "CB", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            {
+                <input background-color:black; border-color:black; color:black;" type="file" name="UploadedFiles" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                <button class="btn btn-success" type="submit"><img src="~/Images/exl.png" style="height: 19px;" />Import</button>
+            }
         </div>
         <div class="col-sm-2">
             <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel_ReconciliationReport" method="post">
@@ -165,7 +182,6 @@
                         <th>Credit</th>
                         <th>Year</th>
                         <th>Comments</th>
-                        <th>TestBrose</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -181,8 +197,7 @@
                                 <td>@item.Debit</td>
                                 <td>@item.Credit</td>
                                 <td>@*@item.Year*@</td>
-                                <td>@*@item.Comments*@</td>
-                                <td><input class="custom-file custom-file-input border-dark" multiple="multiple" type="file" name="Imagefiles" /></td>
+                                <td>@*@item.Comments*@</td>                                
                                 <td>
                                     <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/ReconsiliationReport" method="post">
                                         <input type="hidden" value="@item.Id" name="RecordId" />
@@ -203,8 +218,7 @@
                         <th>Credit</th>
                         <th>=</th>
                         <th>344</th>
-                        <th></th>
-                        <th></th>
+                        <th></th>                        
                     </tr>
                 </tfoot>
             </table>
@@ -213,6 +227,19 @@
 </div>
 
 <script>
+    function checkfile(sender) {
+        var validExts = new Array(".xlsx", ".xls");
+        var fileExt = sender.value;
+        fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+        if (validExts.indexOf(fileExt) < 0) {
+            alert("Invalid file selected, valid files are of " +
+                validExts.toString() + " types.");
+            return false;
+        }
+        else return true;
+    }
+
+
     function getAuthcode(feedbackid) {
         $.ajax({
             type: "POST",
