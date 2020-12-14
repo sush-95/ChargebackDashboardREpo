@@ -302,6 +302,36 @@ namespace BankDashboard.DataAccessLayer
             }
             catch { }
         }
+        public Dictionary<string, string> GetDebitCreditAmountAfterReconciliation()
+        {
+            Dictionary<string, string> DebitCreditInfo = new Dictionary<string, string>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    DataSet ds = new DataSet();
+                    SqlCommand cmd = new SqlCommand("UDSP_DASHBOARD_Get_ReconciliationDifference", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.Fill(ds);
+                    if (ds != null)
+                    {
+                        if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                        {
+                            foreach (DataRow dr in ds.Tables[0].Rows)
+                            {
+                                DebitCreditInfo.Add("DifferenceDebitCredit", dr["DifferenceDebitCredit"].ToString());
+                                DebitCreditInfo.Add("Debit", dr["Debit"].ToString());
+                                DebitCreditInfo.Add("Credit", dr["Credit"].ToString());
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+            return DebitCreditInfo;
+        }
 
     }
 }
