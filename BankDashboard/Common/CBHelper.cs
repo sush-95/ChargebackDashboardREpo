@@ -482,6 +482,13 @@ namespace BankDashboard.Common
             }
             catch (Exception ex) { throw ex; }
         }
+        
+        public static Dictionary<string,string> GetDebitCreditAmountAfterReconciliation_CBHelper()
+        {
+            CaseStatisticsDataLayer CSD = new CaseStatisticsDataLayer();
+            return CSD.GetDebitCreditAmountAfterReconciliation();
+        }
+
         #endregion
 
         #region------------------------------------------AcceptedCaseClosureReportFilter------------------------------
