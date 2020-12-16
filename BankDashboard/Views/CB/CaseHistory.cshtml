@@ -119,41 +119,7 @@
             </div>
         </div>
     </form>
-    <br />
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" role="dialog">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="width: 116%;">
-                <div class="modal-header" style="font-weight: bold;color: #7b6b56;">
-                    <span>Feedback ID:</span><u id="flabel"></u>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <table id="authtable" class="table-bordered table table-striped table-condensed" style="font-size: 9px;">
-                        <thead style="background-color:#1d40b1;color:white;text-align: center;">
-                            <tr>
-                                <th>Auth Code</th>
-                                <th>Amount</th>
-                                <th>Routing Portal</th>
-                                <th>Card No.</th>
-                                <th>ARN No.</th>
-                                <th>RRN No.</th>
-                                <th>Issuer</th>
-                                <th>Acquirer</th>
-                                <th>VROL Case No.</th>
-                                <th>Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ModalEnd -->
+    <br />   
     <!-- Modal -->
     <div class="modal fade" id="myModal1" role="dialog">
         <div class="modal-dialog modal-lg">
@@ -201,59 +167,62 @@
         </div>
     </div>
     <div class="row">
-
-        <div class="col-md-12">
-            <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
-                <thead style="color:white;text-align: center;">
-                    <tr>
-                        <th>Feedback Id</th>
-                        <th style="    width:125px;">Issue Type</th>
-                        <th>Category</th>
-                        <th>CIF No</th>
-                        <th>Banking With</th>
-                        <th>Incident Date</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Remarks</th>
-                        <th>Detail</th>
-                        <th>View</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (ViewBag.list != null)
-                    {
-                        string date = "";
-                        foreach (var item in ViewBag.list)
+        <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/CaseHistoryDetail" method="post" style="width: 100%;">
+            @Html.AntiForgeryToken()
+            <div class="col-md-12">
+                <input type="hidden" name="hfilter" value="@Json.Encode(filterobj)" />
+                <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
+                    <thead style="color:white;text-align: center;">
+                        <tr>
+                            <th>Feedback Id</th>
+                            <th style="width:125px;">Issue Type</th>
+                            <th>Category</th>
+                            <th>CIF No</th>
+                            <th>Banking With</th>
+                            <th>Incident Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Remarks</th>
+                            <th>Detail</th>
+                            <th>View</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.list != null)
                         {
-                            date = item.IncidentDate != null ? Convert.ToDateTime(item.IncidentDate).ToString("MM/dd/yyyy") : "--";
-                            <tr>
-                                <td>@item.FeedbackId</td>
-                                <td>@item.Issue</td>
-                                <td>@item.Category</td>
-                                <td>@item.CIFNo</td>
-                                <td>@item.BankingWith</td>
-                                <td>@date</td>
-                                <td>@item.Amount</td>
-                                <td>@item.Status</td>
-                                <td>@item.BotRemarks</td>
-                                <td>
-                                    <button class="btn tbn-sm btn-success" data-toggle="modal" onclick="getAuthcode('@item.FeedbackId')" data-target="#myModal" style="background-color: #5bc142;border-color: #a8d6a8;">
-                                        <img class="btnImg" src="~/Images/detail.png" />
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="btn tbn-sm btn-info" data-toggle="modal" data-target="#myModal1" onclick="getImages('@CBHelper.getImagesOnfeedbackId(item.FeedbackId.ToString())')" data-placement="bottom" title="View">
-                                        <img class="btnImg" src="~/Images/view.png" />
-                                    </button>
-                                </td>
-                            </tr>
+                            string date = "";
+                            foreach (var item in ViewBag.list)
+                            {
+                                date = item.IncidentDate != null ? Convert.ToDateTime(item.IncidentDate).ToString("MM/dd/yyyy") : "--";
+                                <tr>
+                                    <td>@item.FeedbackId</td>
+                                    <td>@item.Issue</td>
+                                    <td>@item.Category</td>
+                                    <td>@item.CIFNo</td>
+                                    <td>@item.BankingWith</td>
+                                    <td>@date</td>
+                                    <td>@item.Amount</td>
+                                    <td>@item.Status</td>
+                                    <td>@item.BotRemarks</td>
+                                    <td>
+                                        <button class="btn tbn-sm btn-success" type="submit" name="feedbackid" value="@item.FeedbackId" style="background-color: #5bc142;border-color: #a8d6a8;">
+                                            <img class="btnImg" src="~/Images/detail.png" />
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn tbn-sm btn-info" data-toggle="modal" data-target="#myModal1" onclick="getImages('@CBHelper.getImagesOnfeedbackId(item.FeedbackId.ToString())')" data-placement="bottom" title="View">
+                                            <img class="btnImg" src="~/Images/view.png" />
+                                        </a>
+                                    </td>
+                                </tr>
 
+                            }
                         }
-                    }
 
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
+        </form>
     </div>
 </div>
 

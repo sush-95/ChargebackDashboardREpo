@@ -139,7 +139,7 @@ namespace BankDashboard.Common
         public static List<tbl_UnassignedTickets> GetCaseReadyTable()
         {
             CBDB db = new CBDB();
-            List<tbl_UnassignedTickets> list = db.tbl_UnassignedTickets.SqlQuery("select * from tbl_UnassignedTickets where Status in ('processed','businessruleexception');").ToList();
+            List<tbl_UnassignedTickets> list = db.tbl_UnassignedTickets.SqlQuery("select * from tbl_UnassignedTickets where Status in ('processed','business rule exception');").ToList();
             return list;
         }
         #endregion----------------------------------------------------------------------------------------------------
@@ -326,28 +326,48 @@ namespace BankDashboard.Common
             }
             return query + ";";
         }
-
         public static string getImagesOnfeedbackId(string feedbackID)
         {
             List<string> list = new List<string>();
             byte[] filebyte = null;
-            string base64 = "";
-           
-            string folderpath = ConfigurationManager.AppSettings["CBImageScreen"].ToString();
-            string[] filelist = Directory.GetFiles(folderpath, "*wc_feedbackid" + feedbackID+"_*",SearchOption.AllDirectories);          
-         
-            foreach (string item in filelist)
+            string base64 = "",jsnStr="";           
+            string folderpath = ConfigurationManager.AppSettings["CBImageScreen"].ToString();            
+            if (Directory.Exists(folderpath))
             {
-                filebyte = File.ReadAllBytes(item);
-                base64 = Convert.ToBase64String(filebyte);
-                list.Add(string.Format("data:image/jpg;base64,{0}", base64));
+                string[] filelist = Directory.GetFiles(folderpath, "*wc_feedbackid" + feedbackID + "_*", SearchOption.AllDirectories);
+                foreach (string item in filelist)
+                {
+                    filebyte = File.ReadAllBytes(item);
+                    base64 = Convert.ToBase64String(filebyte);
+                    list.Add(string.Format("data:image/jpg;base64,{0}", base64));
+                }
+                jsnStr= JsonConvert.SerializeObject(list);
             }
-            return JsonConvert.SerializeObject(list);
+            return jsnStr;
         }
-        #endregion-----------------------------------------------------------------------------------------------------
+        public static string getImagesFromAuthCode(string feedbackID,string Authcode)
+        {
+            List<string> list = new List<string>();
+            byte[] filebyte = null;
+            string base64 = "", jsnStr = "";
+            string folderpath = ConfigurationManager.AppSettings["AuthCodeImageScreen"].ToString();
+            if (Directory.Exists(folderpath))
+            {
+                string[] filelist = Directory.GetFiles(folderpath, "*CB_" + feedbackID.Trim() + "_"+Authcode.Trim()+"_*", SearchOption.AllDirectories);
+                foreach (string item in filelist)
+                {
+                    filebyte = File.ReadAllBytes(item);
+                    base64 = Convert.ToBase64String(filebyte);
+                    list.Add(string.Format("data:image/jpg;base64,{0}", base64));
+                }
+                jsnStr = JsonConvert.SerializeObject(list);
+            }
+            return jsnStr;
+        }
+            #endregion-----------------------------------------------------------------------------------------------------
 
-        #region------------------------------------------Matched Transaction--------------------------------------------
-        public static List<Matched_FinancialTransaction> GetMatchedTransaction(ViewModelClass.FilterClass filter)
+            #region------------------------------------------Matched Transaction--------------------------------------------
+            public static List<Matched_FinancialTransaction> GetMatchedTransaction(ViewModelClass.FilterClass filter)
         {
             List<Matched_FinancialTransaction> list = new List<Matched_FinancialTransaction>();
             try

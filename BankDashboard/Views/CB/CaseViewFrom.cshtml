@@ -423,7 +423,7 @@ else if (botstatobj.CaseReadyForAction != null)
                         foreach (var item in ViewBag.list)
                         {
                             <tr>
-                                <td><input type="submit" name="feedbackid" value="@item.FeedbackId" class="btn btn-block" /></td>
+                                <td><button style="font-size:12px;color: #2541ca;" class="btn btn-block" type="submit" name="feedbackid" value="@item.FeedbackId"><u>@item.FeedbackId</u></button></td>
                                 <td>@item.CIFNo</td>
                                 <td>@item.CustomerName</td>
                                 <td>@item.IncidentDate</td>

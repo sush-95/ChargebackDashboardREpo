@@ -30,7 +30,7 @@ namespace BankDashboard.Controllers
             }
             try
             {
-                CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+                CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
                 ViewBag.Dashboard = "show";
                 ViewBag.botstat = "active";
                 BOtStatModel obj = new BOtStatModel();
@@ -53,7 +53,7 @@ namespace BankDashboard.Controllers
             ViewBag.botstat = "active";
             try
             {
-                CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+                CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
                 BOtStatModel obj = new BOtStatModel();
                 obj.flag = getval;
                 if (TempData["caseObj"] != null)
@@ -133,7 +133,7 @@ namespace BankDashboard.Controllers
         {
             FilterClass filterobj = new FilterClass();
             filterobj.FeedbackID = feedbackid;
-            TempData["fobj"]=filterobj;
+            TempData["fobj"] = filterobj;
             return RedirectToAction("CaseHistory");
         }
 
@@ -467,7 +467,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
-            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+            CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
             ViewBag.Dashboard = "show";
             ViewBag.wcarestat = "active";
             try
@@ -495,7 +495,7 @@ namespace BankDashboard.Controllers
             ViewBag.wcarestat = "active";
             try
             {
-                CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+                CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
                 WCStatModel obj = new WCStatModel();
                 obj.flag = getval;
                 if (TempData["WCObj"] != null)
@@ -667,7 +667,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
-            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+            CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
             ViewBag.Dashboard = "show";
             ViewBag.SLAStat = "active";
             CBDB db = new CBDB();
@@ -838,12 +838,17 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
-            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+            CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
             ViewBag.Report = "show";
             ViewBag.casehistrory = "active";
             try
             {
                 CBDB db = new CBDB();
+                if (TempData["do"] != null)
+                {
+                    find = "find";
+                    filter = (FilterClass)TempData["do"];
+                }
                 if (TempData["fobj"] != null)
                 {
                     find = "find";
@@ -864,19 +869,6 @@ namespace BankDashboard.Controllers
                 TempData["Error"] = "Somthing went wrong.." + ex.Message;
             }
             return View();
-        }
-        [HttpPost]
-        public JsonResult AuthCode(string feedback)
-        {
-           
-            List<tbl_AuthCode> list = new List<tbl_AuthCode>();
-            try
-            {
-                CBDB db = new CBDB();
-                list = db.tbl_AuthCode.Where(x => x.FeedbackId.Equals(feedback.Trim())).ToList();
-            }
-            catch { }
-            return Json(list, JsonRequestBehavior.AllowGet);
         }
         public ActionResult GetExcel(string hfilter)
         {
@@ -905,6 +897,36 @@ namespace BankDashboard.Controllers
                 TempData["Error"] = "Something went wrong..!";
             }
             return RedirectToAction("CaseHistory", new { filter = filterobj, find = "" });
+        }
+        public ActionResult CaseHistoryDetail(string hfilter, string feedbackid)
+        {
+            ViewBag.Report = "show";
+            ViewBag.casehistrory = "active";
+            List<tbl_AuthCode> list = new List<tbl_AuthCode>();
+            try
+            {
+                FilterClass filterobj = new FilterClass();
+                if (hfilter != "null")
+                {
+                    filterobj = JsonConvert.DeserializeObject<FilterClass>(hfilter);
+                }
+                ViewBag.feedbackid = feedbackid;
+                ViewBag.filter = filterobj;
+                CBDB db = new CBDB();
+                ViewBag.list = db.tbl_AuthCode.Where(x => x.FeedbackId.Equals(feedbackid.Trim())).ToList();
+            }
+            catch { }
+            return View();
+        }
+        public ActionResult BackToCaseHistory(string filter, string button)
+        {
+            FilterClass filterobj = new FilterClass();
+            if (filter != "null")
+            {
+                filterobj = JsonConvert.DeserializeObject<FilterClass>(filter);
+            }
+            TempData["do"] = filterobj;
+            return RedirectToAction("CaseHistory");
         }
         void FormattoExcel(List<tbl_UnassignedTickets> p, string sname)
         {
@@ -1126,7 +1148,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
-            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+            CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
             ViewBag.Report = "show";
             ViewBag.matchedTran = "active";
             try
@@ -1134,7 +1156,7 @@ namespace BankDashboard.Controllers
                 CBDB db = new CBDB();
                 if (excel != null)
                 {
-                    FormattoExcelForMathcedTran(CBHelper.GetMatchedTransaction(filter),"MatchedFinancialTransaction_" + DateTime.Now.ToString("ddMMyyyyhhmmss"));
+                    FormattoExcelForMathcedTran(CBHelper.GetMatchedTransaction(filter), "MatchedFinancialTransaction_" + DateTime.Now.ToString("ddMMyyyyhhmmss"));
                 }
                 else if (find != null)
                 {
@@ -1217,7 +1239,7 @@ namespace BankDashboard.Controllers
             System.Web.HttpContext.Current.Response.Write("<B>");
             System.Web.HttpContext.Current.Response.Write("Status");
             System.Web.HttpContext.Current.Response.Write("</B>");
-            System.Web.HttpContext.Current.Response.Write("</Td>");            
+            System.Web.HttpContext.Current.Response.Write("</Td>");
 
             System.Web.HttpContext.Current.Response.Write("</TR>");
 
@@ -1272,7 +1294,7 @@ namespace BankDashboard.Controllers
                 System.Web.HttpContext.Current.Response.Write(pdata.Status);
 
                 System.Web.HttpContext.Current.Response.Write("</Td>");
-               
+
 
                 System.Web.HttpContext.Current.Response.Write("</TR>");
 
@@ -1297,7 +1319,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
-            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+            CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
             ViewBag.UnmatchedTran = "active";
             ViewBag.Report = "show";
             try
@@ -1305,7 +1327,7 @@ namespace BankDashboard.Controllers
                 CBDB db = new CBDB();
                 if (excel != null)
                 {
-                  FormattoExcelForUnMathcedTran(CBHelper.GetUnMatchedTransaction(filter), "UnmatchedFinancialTransaction_" + DateTime.Now.ToString("ddMMyyyyhhmmss"));
+                    FormattoExcelForUnMathcedTran(CBHelper.GetUnMatchedTransaction(filter), "UnmatchedFinancialTransaction_" + DateTime.Now.ToString("ddMMyyyyhhmmss"));
                 }
                 else if (find != null)
                 {
@@ -1341,7 +1363,7 @@ namespace BankDashboard.Controllers
             System.Web.HttpContext.Current.Response.Write("<BR><BR><BR>");
             System.Web.HttpContext.Current.Response.Write("<Table border='1' bgColor='#ffffff' " + "borderColor='#000000' cellSpacing='0' cellPadding='0' " +
               "style='font-size:10.0pt; font-family:Calibri; background:white;'> <TR>");
-    
+
 
             System.Web.HttpContext.Current.Response.Write("<Td>");
             System.Web.HttpContext.Current.Response.Write("<B>");
@@ -1365,7 +1387,7 @@ namespace BankDashboard.Controllers
             System.Web.HttpContext.Current.Response.Write("<B>");
             System.Web.HttpContext.Current.Response.Write("Bot Entry Date");
             System.Web.HttpContext.Current.Response.Write("</B>");
-            System.Web.HttpContext.Current.Response.Write("</Td>");            
+            System.Web.HttpContext.Current.Response.Write("</Td>");
 
             System.Web.HttpContext.Current.Response.Write("</TR>");
 
@@ -1396,7 +1418,7 @@ namespace BankDashboard.Controllers
 
                 System.Web.HttpContext.Current.Response.Write(pdata.BotEntryTime);
 
-                System.Web.HttpContext.Current.Response.Write("</Td>");                
+                System.Web.HttpContext.Current.Response.Write("</Td>");
 
 
                 System.Web.HttpContext.Current.Response.Write("</TR>");
@@ -1821,7 +1843,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
-            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+            CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
             ViewBag.Report = "show";
             ViewBag.ClosureReport = "active";
             try
@@ -1854,7 +1876,7 @@ namespace BankDashboard.Controllers
             ViewModelClass.ClosureReportFilter filterobj = new ViewModelClass.ClosureReportFilter();
             try
             {
-                CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+                CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
                 List<tbl_IssuingIncomingVISA> list = new List<tbl_IssuingIncomingVISA>();
                 if (!hfilter.Equals("null"))
                 {
@@ -2000,7 +2022,7 @@ namespace BankDashboard.Controllers
             }
             ViewBag.Dashboard = "show";
             ViewBag.userManagement = "active";
-            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+            CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
             try
             {
                 ViewBag.userlist = CBHelper.GetUsersForProfile();
@@ -2041,7 +2063,7 @@ namespace BankDashboard.Controllers
             {
                 return RedirectToAction("Errorpage", "CB");
             }
-            CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+            CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
             ViewBag.Report = "show";
             ViewBag.botconfig = "active";
             try
@@ -2088,7 +2110,7 @@ namespace BankDashboard.Controllers
         {
             try
             {
-                CBHelper.UpdateMachine(WindowsIdentity.GetCurrent().Name);
+                CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
                 CBDB db = new CBDB();
                 FormattoExcelForRobotConfiig(db.Robot_Config.ToList(), "RobotConfig_" + DateTime.Now.ToString("ddMMyyyyhhmmss"));
             }

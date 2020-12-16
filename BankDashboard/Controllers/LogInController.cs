@@ -10,6 +10,8 @@ using System.Web.Mvc;
 using BankDashboard.LogFile;
 using System.Text.RegularExpressions;
 using BankDashboard.CBModel;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace BankDashboard.Controllers
 {
@@ -18,7 +20,6 @@ namespace BankDashboard.Controllers
         // GET: LogIn
         public ActionResult LogIn()
         {
-
             string ErrorMsg = string.Empty; string Action = string.Empty; string cntrlr = string.Empty, groupname = string.Empty;
             if (Session["User"] != null)
             {
@@ -38,86 +39,94 @@ namespace BankDashboard.Controllers
         {
             if (string.IsNullOrEmpty(pwd))
                 return RedirectToAction("LogIn", "LogIn");
-
-            pwd = pwd.Trim();
-            bool logincheck = false;
-            string key = Session["LoginKey"].ToString();
-
-            pwd = MvcHelper.DecryptToBytesUsingCBC(Convert.FromBase64String(pwd), key);
-            pwd = pwd.Trim();
-            string ErrorMsg = string.Empty; string Action = string.Empty; string cntrlr = string.Empty, groupname = string.Empty;
-            Tbl_User_Detail user = new Tbl_User_Detail();
-            
-            //ADManager AdObj = new ADManager();
-            //logincheck = AdObj.ChcekLogin(uname, pwd, ref groupname);
-
-
-            user = FDHelper.GetUser(uname, pwd);
-
-            if (user != null)
+            try
             {
-                logincheck = true;
-                groupname = user.Usergroup;
-            }
+                pwd = pwd.Trim();
+                bool logincheck = false;
+                string key = Session["LoginKey"].ToString();
 
-            if (logincheck)
-            {
-                if (!string.IsNullOrEmpty(groupname))
+                pwd = MvcHelper.DecryptToBytesUsingCBC(Convert.FromBase64String(pwd), key);
+                pwd = pwd.Trim();
+                string ErrorMsg = string.Empty; string Action = string.Empty; string cntrlr = string.Empty, groupname = string.Empty;
+                Tbl_User_Detail user = new Tbl_User_Detail();
+
+                //ADManager AdObj = new ADManager();
+                //logincheck = AdObj.ChcekLogin(uname, pwd, ref groupname);
+
+
+                user = FDHelper.GetUser(uname, pwd);
+
+                if (user != null)
                 {
-                    user = new Tbl_User_Detail()
+                    logincheck = true;
+                    groupname = user.Usergroup;
+                }
+
+                if (logincheck)
+                {
+                    try
                     {
-                        UserName = uname,
-                        Usergroup = groupname,
-                    };
-                    // user.GroupPages = MvcHelper.GetGroupPages(groupname);
-                    bool check = CBHelper.CheckMachine(System.Security.Principal.WindowsIdentity.GetCurrent().Name);
-                    if (check)
+
+                    }
+                    catch { }
+                    if (!string.IsNullOrEmpty(groupname))
                     {
-                        Session["USerName"] = user.UserName.Trim().ToString();
-                         FDHelper.SaveUser(ref user);                      
-                        if (user.Usergroup.Equals(Constants.UserGroups.UserManager))
+                        user = new Tbl_User_Detail()
                         {
-                            Action = "UserManagement"; cntrlr = "CB";
+                            UserName = uname,
+                            Usergroup = groupname,
+                        };
+                        // user.GroupPages = MvcHelper.GetGroupPages(groupname);
+                        bool check = CBHelper.CheckMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
+                        if (check)
+                        {
+                            Session["USerName"] = user.UserName.Trim().ToString();
+                            FDHelper.SaveUser(ref user);
+                            if (user.Usergroup.Equals(Constants.UserGroups.UserManager))
+                            {
+                                Action = "UserManagement"; cntrlr = "CB";
+                            }
+                            else
+                            {
+                                Action = FDHelper.GetPageName(user.GroupPages);
+                                cntrlr = "CB";
+                            }
+                            //WriteToLogFile.writeMessage("Machine is available User will be Redirected to -- Action = index cntrlr = Dashboard");
                         }
                         else
                         {
-                            Action = FDHelper.GetPageName(user.GroupPages);
-                            cntrlr = "CB";
+                            //WriteToLogFile.writeMessage("Sorry...!!! Multiple user login is not allowed.");
+                            ErrorMsg = "Sorry...!!! Multiple user login is not allowed.";
                         }
-                        //WriteToLogFile.writeMessage("Machine is available User will be Redirected to -- Action = index cntrlr = Dashboard");
                     }
                     else
                     {
-                        //WriteToLogFile.writeMessage("Sorry...!!! Multiple user login is not allowed.");
-                        ErrorMsg = "Sorry...!!! Multiple user login is not allowed.";
+                        //WriteToLogFile.writeMessage("User type is not authorized for the dashboard...!");
+                        ErrorMsg = "User type is not authorized for the dashboard...!";
                     }
                 }
                 else
                 {
-                    //WriteToLogFile.writeMessage("User type is not authorized for the dashboard...!");
-                    ErrorMsg = "User type is not authorized for the dashboard...!";
+                    //WriteToLogFile.writeMessage("Wrong credential...!");
+                    ErrorMsg = "Wrong credential...!";
+                }
+
+                if (!string.IsNullOrEmpty(ErrorMsg))
+                {
+                    //WriteToLogFile.writeMessage("Error msg" +ErrorMsg +"Redirecting to [GET] login page");
+                    TempData["invalidmsg"] = ErrorMsg;
+
+                    return RedirectToAction("LogIn");
+                }
+                else
+                {
+                    Session["User"] = user;
+                    //WriteToLogFile.writeMessage("[HttpPost]Login  Ended");
+                    //WriteToLogFile.writeMessage("Redirecting to -- Action = +"+Action.ToString() +" cntrlr = " + cntrlr.ToString());
+                    return RedirectToAction(Action, cntrlr);
                 }
             }
-            else
-            {
-                //WriteToLogFile.writeMessage("Wrong credential...!");
-                ErrorMsg = "Wrong credential...!";
-            }
-
-            if (!string.IsNullOrEmpty(ErrorMsg))
-            {
-                //WriteToLogFile.writeMessage("Error msg" +ErrorMsg +"Redirecting to [GET] login page");
-                TempData["invalidmsg"] = ErrorMsg;
-
-                return RedirectToAction("LogIn");
-            }
-            else
-            {
-                Session["User"] = user;
-                //WriteToLogFile.writeMessage("[HttpPost]Login  Ended");
-                //WriteToLogFile.writeMessage("Redirecting to -- Action = +"+Action.ToString() +" cntrlr = " + cntrlr.ToString());
-                return RedirectToAction(Action, cntrlr);
-            }
+            catch { return RedirectToAction("LogIn"); }
         }
 
         public JsonResult EncryptPassword(string pwd)
@@ -142,7 +151,7 @@ namespace BankDashboard.Controllers
             ////if (Session["Machine"] != null)
             if (Session["USerName"] != null)
             {
-                CBHelper.MachineLogout(System.Security.Principal.WindowsIdentity.GetCurrent().Name);
+                CBHelper.MachineLogout(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
             }
             Session.Abandon();
             try
