@@ -4,7 +4,19 @@
     Layout = "~/Views/Shared/_CBLayout.cshtml";
     ViewModelClass.FilterClass filterobj = (ViewModelClass.FilterClass)ViewBag.filter;
 }
+<style>
+    #example .tbn-sm {
+        height: 29px;
+        width: 29px;
+    }
 
+        #example .tbn-sm img {
+            height: 23px;
+            width: 22px;
+            margin-left: -9px;
+            margin-top: -13px;
+        }
+</style>
 <div class="card-header" style="text-align:center">
     <span class="pagetilte">Feedback ID:@ViewBag.feedbackid</span>
 </div>
@@ -20,102 +32,103 @@
             </div>
         </div>
     </form>
-        <div class="row">
-            <!-- Modal -->
-            <div class="modal fade" id="myModal1" role="dialog">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header" style="font-weight: bold;color: #7b6b56;">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-                                <div class="carousel-inner" id="imgContainer">
-                                    @*<div class="carousel-item active">
-                                            <img class="d-block w-100" src="~/Images/building.jpg" alt="First slide">
-                                        </div>*@
+    <div class="row">
+        <!-- Modal -->
+        <div class="modal fade" id="myModal1" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" style="width: 159%;margin-left: -217px;">
+                    <div class="modal-header" style="font-weight: bold;color: #7b6b56;">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner" id="imgContainer">
+                                @*<div class="carousel-item active">
+                                        <img class="d-block w-100" src="~/Images/building.jpg" alt="First slide">
+                                    </div>*@
 
-                                </div>
-                                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="sr-only">Next</span>
-                                </a>
                             </div>
+                            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
-            <!-- ModalEnd -->
-            <div class="col-md-12">
-                <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
-                    <thead style="color:white;text-align: center;">
-                        <tr>
-                            <th>Auth Code</th>
-                            <th>Amount</th>
-                            <th>Routing Portal</th>
-                            <th>Card No.</th>
-                            <th>ARN No.</th>
-                            <th>RRN No.</th>
-                            <th>Issuer</th>
-                            <th>Acquirer</th>
-                            <th>VROL Case No.</th>
-                            <th>Remarks</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (ViewBag.list != null)
+        </div>
+        <!-- ModalEnd -->
+        <div class="col-md-12">
+            <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
+                <thead style="color:white;text-align: center;">
+                    <tr>
+                        <th>Auth Code</th>
+                        <th>Amount</th>
+                        <th>Routing Portal</th>
+                        <th>Card No.</th>
+                        <th>ARN No.</th>
+                        <th>RRN No.</th>
+                        <th>Issuer</th>
+                        <th>Acquirer</th>
+                        <th>VROL Case No.</th>
+                        <th>Remarks</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ViewBag.list != null)
+                    {
+                        foreach (var item in (List<BankDashboard.CBModel.tbl_AuthCode>)ViewBag.list)
                         {
-                            foreach (var item in (List<BankDashboard.CBModel.tbl_AuthCode>)ViewBag.list)
-                            {
 
-                                <tr>
-                                    <td>@item.AuthCode</td>
-                                    <td>@item.Amount</td>
-                                    <td>@item.Routing_Channel</td>
-                                    <td>@item.CardNumber</td>
-                                    <td>@item.ARN_Number</td>
-                                    <td>@item.RRN_Number</td>
-                                    <td>@item.Issuer</td>
-                                    <td>@item.Acquirer</td>
-                                    <td>@item.VROL_Case_No</td>
-                                    <td>@item.Bot_Remark</td>
-                                    <td>
-                                        <a href="#" class="btn tbn-sm btn-info" data-toggle="modal" data-target="#myModal1"onclick="getImages('@CBHelper.getImagesFromAuthCode(item.FeedbackId,item.AuthCode)')" data-placement="bottom" title="View">
-                                            <img class="btnImg" src="~/Images/view.png" />
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
+                            <tr>
+                                <td>@item.AuthCode</td>
+                                <td>@item.Amount</td>
+                                <td>@item.Routing_Channel</td>
+                                <td>@item.CardNumber</td>
+                                <td>@item.ARN_Number</td>
+                                <td>@item.RRN_Number</td>
+                                <td>@item.Issuer</td>
+                                <td>@item.Acquirer</td>
+                                <td>@item.VROL_Case_No</td>
+                                <td>@item.Bot_Remark</td>
+                                <td>
+                                   
+                                    <a href="#" class="btn tbn-sm btn-info" data-toggle="modal" data-target="#myModal1" onclick="getImages('@CBHelper.getImagesFromAuthCode(item.FeedbackId,item.AuthCode)')" data-placement="bottom" title="View">
+                                        <img class="btnImg"  src="~/Images/view.png" />
+                                    </a>
+                                </td>
+                            </tr>
                         }
+                    }
 
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
-    <script>
-        function getImages(images) {
-            debugger
-            var imgarr = JSON.parse(images)
-            var Container = document.getElementById("imgContainer");
-            Container.innerHTML = "";
-            var htmlbody = "";
-            for (i = 0; i < imgarr.length; i++) {
-                if (i == 0) {
-                    htmlbody += '<div class="carousel-item active"> <img class="d-block w-100" src="' + imgarr[i] + '" alt="First slide"> </div>';
-                }
-                else {
-                    htmlbody += '<div class="carousel-item"> <img class="d-block w-100" src="' + imgarr[i] + '" alt="First slide"> </div>';
-                }
+</div>
+<script>
+    function getImages(images) {
+        debugger
+        var imgarr = JSON.parse(images)
+        var Container = document.getElementById("imgContainer");
+        Container.innerHTML = "";
+        var htmlbody = "";
+        for (i = 0; i < imgarr.length; i++) {
+            if (i == 0) {
+                htmlbody += '<div class="carousel-item active"> <img class="d-block w-100" src="' + imgarr[i] + '" alt="First slide"> </div>';
             }
-            Container.innerHTML = htmlbody;
+            else {
+                htmlbody += '<div class="carousel-item"> <img class="d-block w-100" src="' + imgarr[i] + '" alt="First slide"> </div>';
+            }
         }
-    </script>
+        Container.innerHTML = htmlbody;
+    }
+</script>

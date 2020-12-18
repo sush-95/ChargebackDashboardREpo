@@ -548,11 +548,11 @@ namespace BankDashboard.Common
             int qrylength = query.Length;
             if (filter.ROLCaseNumber != null && !string.IsNullOrEmpty(filter.ROLCaseNumber.Trim()))
             {
-                query = query + "ROLCaseNumber='" + filter.ROLCaseNumber.Trim() + "'";
+                query = query + "ROLCaseNo='" + filter.ROLCaseNumber.Trim() + "'";
             }
             if (filter.FinancialCPD != null && !string.IsNullOrEmpty(filter.FinancialCPD.Trim()))
             {
-                query = query + ((query.Length > qrylength + 3) ? " and FinancialCPD='" + filter.FinancialCPD.Trim() + "'" : " CIFNo='" + filter.FinancialCPD.Trim() + "'");
+                query = query + ((query.Length > qrylength + 3) ? " and FinancialCPD='" + filter.FinancialCPD.Trim() + "'" : " FinancialCPD='" + filter.FinancialCPD.Trim() + "'");
             }
             if (filter.Status != null && !string.IsNullOrEmpty(filter.Status.Trim()) && !filter.Status.Trim().Equals("0"))
             {
@@ -561,13 +561,13 @@ namespace BankDashboard.Common
             if (filter.FromDate != null && (filter.FromDate != new DateTime(0001, 01, 01)))
             {
 
-                query = query + ((query.Length > qrylength + 3) ? " and BotEntryTime >= '" + filter.FromDate.ToString("MM-dd-yyyy") + "'" : " BotEntryTime >= '" + filter.FromDate.ToString("MM-dd-yyyy") + "'");
+                query = query + ((query.Length > qrylength + 3) ? " and cast(BotEntryTime as date)  >= '" + filter.FromDate.ToString("MM-dd-yyyy") + "'" : " cast(BotEntryTime as date) >= '" + filter.FromDate.ToString("MM-dd-yyyy") + "'");
 
             }
             if (filter.ToDate != null && (filter.ToDate != new DateTime(0001, 01, 01)))
             {
 
-                query = query + ((query.Length > qrylength + 3) ? " and BotEntryTime >= '" + filter.ToDate.ToString("MM-dd-yyyy") + "'" : " BotEntryTime >= '" + filter.ToDate.ToString("MM-dd-yyyy") + "'");
+                query = query + ((query.Length > qrylength + 3) ? " and cast(BotEntryTime as date) <= '" + filter.ToDate.ToString("MM-dd-yyyy") + "'" : " cast(BotEntryTime as date) <= '" + filter.ToDate.ToString("MM-dd-yyyy") + "'");
 
             }
             if (qrylength == query.Length)

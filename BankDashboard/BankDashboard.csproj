@@ -511,6 +511,11 @@
     <Content Include="Login_v16\vendor\bootstrap\css\bootstrap-reboot.min.css.map" />
     <Content Include="Login_v16\vendor\bootstrap\css\bootstrap.css.map" />
     <Content Include="Login_v16\vendor\bootstrap\css\bootstrap.min.css.map" />
+    <Content Include="Login_v16\fonts\Linearicons-Free.eot" />
+    <Content Include="Login_v16\fonts\Linearicons-Free %281%29.eot" />
+    <Content Include="Login_v16\fonts\Linearicons-Free .woff2" />
+    <Content Include="Login_v16\fonts\Linearicons-Free.ttf" />
+    <Content Include="Login_v16\fonts\Linearicons-Free.woff" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile2.pubxml" />

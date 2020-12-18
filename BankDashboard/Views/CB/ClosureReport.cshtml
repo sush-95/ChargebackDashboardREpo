@@ -71,7 +71,7 @@
                 }
                 else
                 {
-                    <input type="text" class="form-control" value="@filterobj.FromDate.ToString("dd-MMM-yyyy")" autocomplete="off" name="FromDate" />
+                    <input type="text" class="form-control invoice" value="@filterobj.FromDate.ToString("dd-MMM-yyyy")" autocomplete="off" name="FromDate" />
                 }
             </div>
             <div class="col-sm-2">
@@ -82,7 +82,7 @@
                 }
                 else
                 {
-                    <input type="text" class="form-control" value="@filterobj.ToDate.ToString("dd-MMM-yyyy")" autocomplete="off" name="ToDate" />
+                    <input type="text" class="form-control invoice" value="@filterobj.ToDate.ToString("dd-MMM-yyyy")" autocomplete="off" name="ToDate" />
                 }
             </div>
             <div class="col-sm-2">
@@ -139,7 +139,7 @@
             <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel_AcceptedCaseClosureReport" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
-                <button class="btn btn-success" type="submit"style="margin-left:51%; ">
+                <button class="btn btn-success" type="submit"style="margin-left: 34%;width: 93px; ">
                     <img src="~/Images/exl.png" style="height: 19px;" />Export
                 </button>
             </form>
@@ -155,7 +155,7 @@
                         <th>Financial CPD</th>
                         <th>ARN Number</th>
                         <th>Message Type</th>
-                        <th>Case Closue Status</th>
+                        <th>Case Submission Status</th>
 
                         <th>Action</th>
                     </tr>
@@ -171,7 +171,7 @@
                                 <td>@item.FinancialCPD</td>
                                 <td>-</td>
                                 <td>@item.MessageType</td>
-                                <td>@item.CaseClosureStatus</td>
+                                <td>@item.CaseSubmissionStatus</td>
 
                                 <td>
                                     <button class="btn tbn-sm btn-info" data-toggle="tooltip" data-placement="bottom" title="View">
