@@ -106,7 +106,7 @@ namespace BankDashboard.Controllers
             }
             else if (Flag == "2")
             {
-                obj.RoutingPortalFigures = CBHelper.GetRoutingPortalForToday();
+                obj.RoutingPortalFigures = CBHelper.GetRoutingPortalOnFilter(Fromdate, Todate);
                 List<tbl_AuthCode> tblauth = CBHelper.getRoutingPortalTable(Fromdate, Todate, Filter);
                 TempData["list"] = tblauth;
                 TempData["filter"] = new CaseFilter() { Fromdate = Fromdate, Todate = Todate, Flag = Flag, Filter = Filter };
@@ -828,7 +828,7 @@ namespace BankDashboard.Controllers
         #endregion-----------------------------------------------------------------------
 
         #region-------------------------Case History----------------------------------------------
-        public ActionResult CaseHistory(FilterClass filter, string find)
+        public ActionResult CaseHistory(FilterClass filter, string find, string export)
         {
             if (Session["User"] == null)
             {
@@ -854,10 +854,18 @@ namespace BankDashboard.Controllers
                     find = "find";
                     filter = (FilterClass)TempData["fobj"];
                 }
+
                 if (find != null)
                 {
                     ViewBag.list = CBHelper.GetCaseHistoryFilterd(filter);
                     ViewBag.filter = filter;
+                }
+                else if (export != null)
+                {
+                    List<tbl_UnassignedTickets> list = CBHelper.GetCaseHistoryFilterd(filter);
+                    ViewBag.list = list;
+                    ViewBag.filter = filter;
+                    FormattoExcel(list, "CaseHostory_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
                 }
                 else
                 {
@@ -870,36 +878,13 @@ namespace BankDashboard.Controllers
             }
             return View();
         }
-        public ActionResult GetExcel(string hfilter)
+
+        public ActionResult CaseHistoryDetail(string hfilter, string feedbackid)
         {
             if (Session["User"] == null)
             {
                 return RedirectToAction("LogIn", "LogIn");
             }
-            ViewModelClass.FilterClass filterobj = new ViewModelClass.FilterClass();
-            try
-            {
-                List<tbl_UnassignedTickets> list = new List<tbl_UnassignedTickets>();
-                if (!hfilter.Equals("null"))
-                {
-                    filterobj = JsonConvert.DeserializeObject<ViewModelClass.FilterClass>(hfilter);
-                    list = CBHelper.GetCaseHistoryFilterd(filterobj);
-                }
-                else
-                {
-                    CBDB db = new CBDB();
-                    list = db.tbl_UnassignedTickets.ToList();
-                }
-                FormattoExcel(list, "CaseHostory_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
-            }
-            catch
-            {
-                TempData["Error"] = "Something went wrong..!";
-            }
-            return RedirectToAction("CaseHistory", new { filter = filterobj, find = "" });
-        }
-        public ActionResult CaseHistoryDetail(string hfilter, string feedbackid)
-        {
             ViewBag.Report = "show";
             ViewBag.casehistrory = "active";
             List<tbl_AuthCode> list = new List<tbl_AuthCode>();
@@ -920,6 +905,10 @@ namespace BankDashboard.Controllers
         }
         public ActionResult BackToCaseHistory(string filter, string button)
         {
+            if (Session["User"] == null)
+            {
+                return RedirectToAction("LogIn", "LogIn");
+            }
             FilterClass filterobj = new FilterClass();
             if (filter != "null")
             {
@@ -1436,10 +1425,18 @@ namespace BankDashboard.Controllers
         #region---------------------------------------Reconciliation----------------------------------------------
 
 
-        public ActionResult AddRowReconsiliationTable(NonCustom_GLReconciliationTable obj, string submit)
+        public ActionResult AddRowReconsiliationTable(NonCustom_GLReconciliationTable obj, string submit, string reset, string back)
         {
             ViewBag.Report = "show";
             ViewBag.Reconsiliation = "active";
+            if (!string.IsNullOrEmpty(back))
+            {
+                return RedirectToAction("ReconsiliationReport");
+            }
+            if (!string.IsNullOrEmpty(reset))
+            {
+                return View();
+            }
             if (submit != null && obj != null)
             {
                 CBHelper.AddRow_NonCustom_GLReconciliationTable(obj);
@@ -1665,40 +1662,47 @@ namespace BankDashboard.Controllers
             }
             ViewBag.Report = "show";
             ViewBag.Reconsiliation = "active";
-
-            if ((UploadedFiles != null))
+            try
             {
-                string filenamePrefix = "Reconsiliation_UserUpload";
-                if (!string.IsNullOrEmpty(SubmitFile))
+                if (UploadedFiles.Count() > 0 && (UploadedFiles[0] != null))
                 {
-                    filenamePrefix = ConfigurationManager.AppSettings["ReconsiliationFileNamePrefix"].ToString();
-                }
-                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["SaveFolderLocationReconcilliationFile"].ToString()))
-                    SaveFolderLocation = string.Concat(@"~/", ConfigurationManager.AppSettings["SaveFolderLocationReconcilliationFile"].ToString());
-                else
-                    SaveFolderLocation = @"~/ImagesScreens/";
-
-                if (UploadedFiles[0].FileName.EndsWith(".XLSX") || UploadedFiles[0].FileName.EndsWith(".xlsx"))
-                {
-                    string fileSavedname = filenamePrefix + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "_.xlsx";
-
-                    string filepath = Path.Combine(Server.MapPath(SaveFolderLocation), fileSavedname);
-                    UploadedFiles[0].SaveAs(filepath);
-                    int status = READExcel(filepath, out FileUploadMessage);
-                    if (status == 1)
+                    string filenamePrefix = "Reconsiliation_UserUpload";
+                    if (!string.IsNullOrEmpty(SubmitFile))
                     {
-                        TempData["SuccessMessage"] = FileUploadMessage;
+                        filenamePrefix = ConfigurationManager.AppSettings["ReconsiliationFileNamePrefix"].ToString();
                     }
-                    else if (status == 0)
+                    if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["SaveFolderLocationReconcilliationFile"].ToString()))
+                        SaveFolderLocation = string.Concat(@"~/", ConfigurationManager.AppSettings["SaveFolderLocationReconcilliationFile"].ToString());
+                    else
+                        SaveFolderLocation = @"~/ImagesScreens/";
+
+                    if (UploadedFiles[0].FileName.EndsWith(".XLSX") || UploadedFiles[0].FileName.EndsWith(".xlsx"))
                     {
-                        TempData["ErrorMessage"] = FileUploadMessage;
+                        string fileSavedname = filenamePrefix + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "_.xlsx";
+
+                        string filepath = Path.Combine(Server.MapPath(SaveFolderLocation), fileSavedname);
+                        UploadedFiles[0].SaveAs(filepath);
+                        int status = READExcel(filepath, out FileUploadMessage);
+                        if (status == 1)
+                        {
+                            TempData["SuccessMessage"] = FileUploadMessage;
+                        }
+                        else if (status == 0)
+                        {
+                            TempData["ErrorMessage"] = FileUploadMessage;
+                        }
                     }
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Select .xlsx files only!";
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Select .xlsx files only!";
+                    }
                 }
             }
+            catch
+            {
+                TempData["ErrorMessage"] = "Something went wrong..!";
+            }
+
             return RedirectToAction("ReconsiliationReport");
         }
         public static int READExcel(string path, out string returnMessage)
@@ -1832,8 +1836,8 @@ namespace BankDashboard.Controllers
 
         #endregion--------------------------------------------------------------------------------------------------
 
-        #region-------------------------------------Closure Report----------------------------------------
-        public ActionResult ClosureReport(ClosureReportFilter filter, string find)
+        #region-------------------------------------Accepted Closure Report----------------------------------------
+        public ActionResult ClosureReport(ClosureReportFilter filter, string find, string export)
         {
             if (Session["User"] == null)
             {
@@ -1854,10 +1858,20 @@ namespace BankDashboard.Controllers
                     ViewBag.list = CBHelper.AcceptedCaseClosureReportFilter(filter);
                     ViewBag.filter = filter;
                 }
+                else if (export != null)
+                {
+                    List<tbl_IssuingIncomingVISA> list = CBHelper.AcceptedCaseClosureReportFilter(filter);
+                    ViewBag.list = list;
+                    ViewBag.filter = filter;
+                    FormattoExcel_AcceptedCaseClosureReport(list, "AcceptedCaseClosureReport_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
+
+                }
                 else
                 {
                     ViewBag.list = CBHelper.AcceptedCaseClosureReportDefaultData();
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -1867,36 +1881,7 @@ namespace BankDashboard.Controllers
 
             return View();
         }
-        public ActionResult GetExcel_AcceptedCaseClosureReport(string hfilter)
-        {
-            if (Session["User"] == null)
-            {
-                return RedirectToAction("LogIn", "LogIn");
-            }
-            ViewModelClass.ClosureReportFilter filterobj = new ViewModelClass.ClosureReportFilter();
-            try
-            {
-                CBHelper.UpdateMachine(JsonConvert.SerializeObject(System.Web.HttpContext.Current.User.Identity));
-                List<tbl_IssuingIncomingVISA> list = new List<tbl_IssuingIncomingVISA>();
-                if (!hfilter.Equals("null"))
-                {
-                    filterobj = JsonConvert.DeserializeObject<ViewModelClass.ClosureReportFilter>(hfilter);
-                    list = CBHelper.AcceptedCaseClosureReportFilter(filterobj).ToList();
-                }
-                else
-                {
 
-                    list = CBHelper.AcceptedCaseClosureReportDefaultData().ToList();
-                }
-                FormattoExcel_AcceptedCaseClosureReport(list, "AcceptedCaseClosureReport_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
-            }
-            catch
-            {
-                TempData["Error"] = "Something went wrong..!";
-            }
-            return RedirectToAction("ReconsiliationReport", new { filter = filterobj });
-            //return RedirectToAction("Report", new { filter = filterobj, Apply = "" });
-        }
         void FormattoExcel_AcceptedCaseClosureReport(List<tbl_IssuingIncomingVISA> p, string sname)
         {
 

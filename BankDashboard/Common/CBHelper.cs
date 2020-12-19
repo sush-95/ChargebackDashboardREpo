@@ -90,6 +90,15 @@ namespace BankDashboard.Common
             cList.Add(DateTime.Today.ToString("dd-MMM-yyyy") + " till date.");
             return cList;
         }
+        public static List<string> GetRoutingPortalOnFilter(string fromdate,string todate)
+        {
+            DateTime frmdate = !string.IsNullOrEmpty(fromdate) ? Convert.ToDateTime(fromdate) : DateTime.Today;
+            DateTime tdate = !string.IsNullOrEmpty(todate) ? Convert.ToDateTime(todate) : DateTime.Today;
+            CaseStatisticsDataLayer objdata = new CaseStatisticsDataLayer();
+            List<string> cList = objdata.GetRoutingPortalGraph(frmdate, tdate);
+            cList.Add(frmdate.ToString("dd-MMM-yyyy") + " to "+tdate.ToString("dd-MMM-yyyy"));
+            return cList;
+        }
         public static List<string> RoutingPortaOnFilter(string startdate, string enddate)
         {
             DateTime Strtday = DateTime.Today, EndDt = DateTime.Today;
@@ -477,7 +486,7 @@ namespace BankDashboard.Common
                 addObj.PostDate = obj.PostDate;
                 addObj.MemberCase = obj.MemberCase;
                 addObj.Name = obj.Name;
-                addObj.Reference = obj.CardNumber;
+                addObj.CardNumber = obj.CardNumber;
                 addObj.Credit = obj.Credit;
                 addObj.Debit = obj.Debit;
 
@@ -539,7 +548,25 @@ namespace BankDashboard.Common
             catch (Exception ex) { throw ex; }
             return list;
         }
-
+        public static string GetImagesOnRolecaseno(string rolecaseno)      
+        {
+            List<string> list = new List<string>();
+            byte[] filebyte = null;
+            string base64 = "", jsnStr = "";
+            string folderpath = ConfigurationManager.AppSettings["CaseClosureImageScreen"].ToString();
+            if (Directory.Exists(folderpath))
+            {
+                string[] filelist = Directory.GetFiles(folderpath, "*PRO_VISA" + rolecaseno.Trim() + "_*", SearchOption.AllDirectories);
+                foreach (string item in filelist)
+                {
+                    filebyte = File.ReadAllBytes(item);
+                    base64 = Convert.ToBase64String(filebyte);
+                    list.Add(string.Format("data:image/jpg;base64,{0}", base64));
+                }
+                jsnStr = JsonConvert.SerializeObject(list);
+            }
+            return jsnStr;
+        }
 
         public static string GetQueryForAcceptedClosureReport(ViewModelClass.ClosureReportFilter filter)
         {
@@ -576,7 +603,7 @@ namespace BankDashboard.Common
             }
             return query + ";";
         }
-        #endregion
+        #endregion-----------------------------------------------------------------------------------------------------
 
         #region----------------------------------User Management-------------------------------------
         public static List<Tbl_User_Detail> GetUsersForProfile()

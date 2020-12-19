@@ -53,7 +53,7 @@
 
     .progress {
         width: 0px;
-        height: 27px;
+        height: 64px;
         transition-property: width;
         transition-duration: 1s;
         border-color: #c5acb1;
@@ -128,22 +128,19 @@
                 <div class="card-body">
                     <div class="col-sm-11 row">
                         <div class="pbar1 progress" id="p1" data-toggle="tooltip" data-placement="top" title="Closed">
-                            <input type="hidden" value="@botstatobj.WCCaseStatus[3]" id="xp1" />
-                            <b>@botstatobj.WCCaseStatus[0]</b>
+                            <input type="hidden" value="@botstatobj.WCCaseStatus[3]" id="xp1" />                         
                         </div>
                         <div class="pbar2 progress" id="p2" data-toggle="tooltip" data-placement="top" title="In Progress">
-                            <input type="hidden" value="@botstatobj.WCCaseStatus[4]" id="xp2" />
-                            <b >@botstatobj.WCCaseStatus[1]</b>
+                            <input type="hidden" value="@botstatobj.WCCaseStatus[4]" id="xp2" />                          
                         </div>
                         <div class="pbar3 progress" id="p3" data-toggle="tooltip" data-placement="top" title="Action Pending">
-                            <input type="hidden" value="@botstatobj.WCCaseStatus[5]" id="xp3" />
-                            <b >@botstatobj.WCCaseStatus[2]</b>
+                            <input type="hidden" value="@botstatobj.WCCaseStatus[5]" id="xp3" />                         
                         </div>
 
                     </div>
                     <br />
                     <div class="col-sm-11 row">
-                        <table style=" color: #7f7571;font-size: 14px;height: 170px;">
+                        <table style=" color: #7f7571;font-size: 14px;height: 135px;">
                             <tr>
                                 <td><div style="height: 16px;background:url(/Images/greentexture.PNG);width: 16px;"></div></td>
                                 <th>Closed :  @botstatobj.WCCaseStatus[0]</th>
@@ -156,7 +153,7 @@
                             </tr>
                             <tr>
                                 <td><div style="height: 16px;background:url(/Images/redtexture.PNG);width: 16px;"></div></td>
-                                <th>Pending Action :   @botstatobj.WCCaseStatus[2]</th>
+                                <th>Unactioned :   @botstatobj.WCCaseStatus[2]</th>
                                 <th> </th>
                             </tr>
 

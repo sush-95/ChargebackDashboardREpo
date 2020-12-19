@@ -13,46 +13,73 @@
         @Html.AntiForgeryToken()
         <div class="row">
             <div class="col-sm-2">
-                <span> Value Date:</span>
-                <input type="text" class="form-control invoice" value="@addObj.ValueDate" autocomplete="off" name="ValueDate" />
+                <span> Value Date</span>
+                <input type="text" class="form-control invoice" value="@addObj.ValueDate" autocomplete="off" name="ValueDate" id="ip_valuedate"/>
             </div>
             <div class="col-sm-2">
-                <span> Post Date:</span>
-                <input type="text" class="form-control" value="@addObj.PostDate" autocomplete="off" name="PostDate" />
+                <span> Post Date</span>
+                <input type="text" class="form-control invoice" value="@addObj.PostDate" autocomplete="off" name="PostDate" id="ip_postdate"/>
             </div>
             <div class="col-sm-2">
                 <span> MemberCase</span>
-                <input type="text" class="form-control" value="@addObj.MemberCase" autocomplete="off" name="MemberCase" />
+                <input type="text" class="form-control" value="@addObj.MemberCase" autocomplete="off" name="MemberCase" id="ip_membercase" />
             </div>
             <div class="col-sm-2">
                 <span> Name</span>
-                <input type="text" class="form-control" value="@addObj.Name" autocomplete="off" name="Name" />
+                <input type="text" class="form-control" value="@addObj.Name" autocomplete="off" name="Name" id="ip_name" />
             </div>
             <div class="col-sm-2">
                 <span> Reference</span>
-                <input type="text" class="form-control" value="@addObj.Reference" autocomplete="off" name="Reference" />
+                <input type="text" class="form-control" value="@addObj.Reference" autocomplete="off" name="Reference" id="ip_reference" />
             </div>
             <div class="col-sm-2">
                 <span> Card Number</span>
-                <input type="text" class="form-control" value="@addObj.CardNumber" autocomplete="off" name="CardNumber" />
+                <input type="text" class="form-control" value="@addObj.CardNumber" autocomplete="off" name="CardNumber" id="ip_cardnumber" />
             </div>
         </div>
         <div class="row">
             <div class="col-sm-2">
                 <span> Debit</span>
-                <input type="text" class="form-control" value="@addObj.Debit" autocomplete="off" name="Debit" />
+                <input type="text" class="form-control" value="@addObj.Debit" autocomplete="off" name="Debit" id="ip_debit" />
             </div>
             <div class="col-sm-2">
                 <span> Credit</span>
-                <input type="text" class="form-control" value="@addObj.Credit" autocomplete="off" name="Credit" />
+                <input type="text" class="form-control" value="@addObj.Credit" autocomplete="off" name="Credit" id="ip_credit"/>
             </div>
-            
-            <div class="col-sm-2">
-                <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;" name="submit" value="submit">Submit</button>
+
+            <div class="col-sm-5">
+                <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;" name="submit" value="submit" onclick="onFormSubmit()">Submit</button>
+                &nbsp;&nbsp;&nbsp;
+                <button class="btn btn-sm btn-danger" type="submit" style="margin-top: 19px; background-color: #ee3123; border-color:#ee3123;" name="back" value="back">Back</button>
+                &nbsp;&nbsp;&nbsp;
+                <button class="btn btn-sm btn-secondary" type="submit" style="margin-top: 19px;" name="reset" value="reset">Reset</button>
             </div>
-            <div class="col-sm-6"></div>
+            <div class="col-sm-3">
+                
+            </div>
         </div>
     </form>
     <br />
 
 </div>
+<script>
+    function onFormSubmit() {
+        var creditval = document.getElementById("ip_credit").value;
+        var debitval = document.getElementById("ip_debit").value;        
+        
+        var podateval = document.getElementById("ip_postdate").value;
+        var valdateval = document.getElementById("ip_valuedate").value;
+
+        var refval = document.getElementById("ip_reference").value;
+        var nameval = document.getElementById("ip_name").value;
+        
+        var mcaseno = document.getElementById("ip_membercase").value;
+        var cardno = document.getElementById("ip_cardnumber").value;
+
+        if (creditval == '' && debitval == '' && podateval == '' && valdateval == '' && refval == '' && nameval == '' && mcaseno == '' && cardno == '') { alert("Provide Value in Fields!"); event.preventDefault(); }
+        else if ((creditval == '' || debitval == '') && nameval == '' && mcaseno == '' && cardno == '')
+        { alert("Provide Value in Debit,  Credit , MemberCase and CardNumber"); event.preventDefault(); }
+        else { }
+       
+    }
+</script>

@@ -14,7 +14,7 @@ namespace BankDashboard.CBModel
         public string DeliveryType { get; set; }
 
         [StringLength(50)]
-        public string MemberCase { get; set; }
+        public string MemberCase { get; set; }  
 
         [StringLength(20)]
         public string ROLCaseNo { get; set; }

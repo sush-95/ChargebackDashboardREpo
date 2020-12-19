@@ -53,6 +53,11 @@
     #example th {
         background-image: none;
     }
+    #tf th {
+        border-bottom: solid;
+        border-bottom-width: 1px;
+        border-bottom-color: black;
+    }
 </style>
 
 
@@ -129,7 +134,7 @@
                 &nbsp;&nbsp;
                 <a class="btn btn-sm btn-success" href="/app/CB/AddRowReconsiliationTable" type="submit" style="margin-top: 19px;background-color: #92d050; border-color:#92d050;" name="find" value="find">Add Row</a>
                 &nbsp;&nbsp;
-                <button class="btn btn-sm btn-secondary" type="submit" style="margin-top: 19px;background-color: #ee3123; border-color:#ee3123;" name="removeAll" value="removeAll">Remove All</button>
+                <button class="btn btn-sm btn-secondary" type="submit" style="margin-top: 19px;background-color: #ee3123; border-color:#ee3123;" name="removeAll" value="removeAll" onclick="RemoveAllRowsCheck()">Remove All</button>
             </div>
 
 
@@ -171,7 +176,7 @@
     <!-- ModalEnd -->
     <div class="row">
         <div class="col-md-12">
-            <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 9px;">
+            <table id="example" class="table-bordered table table-striped table-condensed" style="font-size: 12px;">
                 <thead style="background-color:#0d274d;color:white;text-align: center;">
                     <tr>
                         <th>Post Date</th>
@@ -184,7 +189,7 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="font-size: 13px;">
                     @if (ViewBag.list != null)
                     {
                         foreach (var item in ViewBag.list)
@@ -200,7 +205,7 @@
                                 <td>
                                     <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/ReconsiliationReport" method="post">
                                         <input type="hidden" value="@item.Id" name="RecordId" />
-                                        <button class="btn btn-sm btn-secondary" type="submit" style="background-color: #ee3123; border-color:#ee3123;" name="remove" value="@item.Id">Remove</button>
+                                        <button class="btn btn-sm btn-secondary" type="submit" style="background-color: #ee3123; border-color:#ee3123;" name="remove" value="@item.Id" onclick="RemoveRowCheck()">Remove</button>
                                     </form>
                                 </td>
                             </tr>
@@ -210,14 +215,21 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
+                        <th colspan="2" style="border-bottom:none"></th>
+                       
+                        <th>Total</th>
                         <th>@ViewBag.ReconDebit</th>
                         <th>@ViewBag.ReconCredit</th>
-                        <th>=</th>
-                        <th>@ViewBag.ReconDifference</th>
-                        <th></th>
+                        <th colspan="3" style="border-bottom:none"></th>
+                       
+                    </tr>
+                    <tr id="tf">
+                        <th colspan="2"  style="border:none"></th>
+
+                        <th>Difference</th>
+                        <th colspan="2">@ViewBag.ReconDifference</th>
+                        <th colspan="3" style="border:none"></th>
+
                     </tr>
                 </tfoot>
             </table>
@@ -226,6 +238,24 @@
 </div>
 
 <script>
+    function RemoveAllRowsCheck() {
+        debugger
+        if (confirm("Do you want to remove all rows!") == true) {
+          
+        } else {
+            event.preventDefault();
+        }
+       
+    }
+    function RemoveRowCheck() {
+        debugger
+        if (confirm("Do you want to remove this row") == true) {
+
+        } else {
+            event.preventDefault();
+        }
+
+    }
     function checkfile(sender) {
         var validExts = new Array(".xlsx", ".xls");
         var fileExt = sender.value;

@@ -111,10 +111,14 @@
             <div class="col-sm-3">
                 <button class="btn btn-sm btn-success" type="submit" style="margin-top: 19px;background-color: #2193b5;" name="find" value="find">Find</button>
                 <a class="btn btn-sm btn-secondary" href="/app/CB/CaseHistory" style="margin-top: 19px;">Reset</a>
+                <button class="btn btn-sm btn-success" style="margin-top: 19px;" type="submit"  name="export" value="export">
+                    <img src="~/Images/exl.png" style="height: 19px;" />Export
+                </button>
                 @if (TempData["fobj"] != null)
                 {
                     <button class="btn btn-sm btn-danger" type="submit" style="margin-top: 19px;" onclick="GetBackToMainPage()" name="getval" value="3">Back</button>
                 }
+
 
             </div>
         </div>
@@ -152,20 +156,7 @@
         </div>
     </div>
     <!-- ModalEnd -->
-    <div class="row">
-        <div class="col-sm-2">
-        </div>
-        <div class="col-sm-8"></div>
-        <div class="col-sm-2">
-            <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/GetExcel" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" value="@Json.Encode(filterobj)" name="hfilter" />
-                <button class="btn btn-sm btn-success" type="submit" style="position: relative;right: -58%;">
-                    <img src="~/Images/exl.png" style="height: 19px;" />Export
-                </button>
-            </form>
-        </div>
-    </div>
+    
     <div class="row">
         <form action="@System.Web.Configuration.WebConfigurationManager.AppSettings["applicationname"].ToString().Trim()/CB/CaseHistoryDetail" method="post" style="width: 100%;">
             @Html.AntiForgeryToken()
@@ -175,7 +166,7 @@
                     <thead style="color:white;text-align: center;">
                         <tr>
                             <th>Feedback Id</th>
-                            <th style="width:125px;">Issue Type</th>
+                            <th width="125px">Issue Type</th>
                             <th>Category</th>
                             <th>CIF No</th>
                             <th>Banking With</th>
