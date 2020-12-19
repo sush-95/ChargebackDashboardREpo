@@ -1672,7 +1672,7 @@ namespace BankDashboard.Controllers
                         filenamePrefix = ConfigurationManager.AppSettings["ReconsiliationFileNamePrefix"].ToString();
                     }
                     if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["SaveFolderLocationReconcilliationFile"].ToString()))
-                        SaveFolderLocation = string.Concat(@"~/", ConfigurationManager.AppSettings["SaveFolderLocationReconcilliationFile"].ToString());
+                        SaveFolderLocation =ConfigurationManager.AppSettings["SaveFolderLocationReconcilliationFile"].ToString();
                     else
                         SaveFolderLocation = @"~/ImagesScreens/";
 
@@ -1680,7 +1680,8 @@ namespace BankDashboard.Controllers
                     {
                         string fileSavedname = filenamePrefix + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "_.xlsx";
 
-                        string filepath = Path.Combine(Server.MapPath(SaveFolderLocation), fileSavedname);
+                        //string filepath = Path.Combine(Server.MapPath(SaveFolderLocation), fileSavedname);
+                        string filepath = SaveFolderLocation + fileSavedname;
                         UploadedFiles[0].SaveAs(filepath);
                         int status = READExcel(filepath, out FileUploadMessage);
                         if (status == 1)
@@ -1787,12 +1788,16 @@ namespace BankDashboard.Controllers
                                 obj.Credit = objSHT.Cells[r, creditColIndex].Value2.ToString();
 
                             if (cardNumberColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, cardNumberColIndex].Text))
-                                obj.CardNumber = objSHT.Cells[r, cardNumberColIndex].Value2.ToString().Replace("-", "");
+                            {
+                                string cardNumber = objSHT.Cells[r, cardNumberColIndex].Value2.ToString().Replace("-", "");
+                                obj.CardNumber = (cardNumber.Length == 16) ? cardNumber : throw new Exception("Card Length should be 16");
+                            }
+                                
 
                             if (yearColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, yearColIndex].Text))
                                 obj.Year = objSHT.Cells[r, yearColIndex].Value2.ToString();
 
-                            if (commentsColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, commentsColIndex].Text))
+                            if (commentsColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, commentsColIndex].Text))  
                                 obj.Comments = objSHT.Cells[r, commentsColIndex].Value2.ToString();
 
                             obj.IsActive = true;
