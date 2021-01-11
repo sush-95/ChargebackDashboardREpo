@@ -320,7 +320,7 @@ namespace BankDashboard.DataAccessLayer
                         {
                             foreach (DataRow dr in ds.Tables[0].Rows)
                             {
-                                DebitCreditInfo.Add("DifferenceDebitCredit", dr["DifferenceDebitCredit"].ToString());
+                                DebitCreditInfo.Add("DifferenceDebitCredit", ((-1)*Convert.ToInt64(dr["DifferenceDebitCredit"])).ToString());
                                 DebitCreditInfo.Add("Debit", dr["Debit"].ToString());
                                 DebitCreditInfo.Add("Credit", dr["Credit"].ToString());
                                 break;

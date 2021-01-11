@@ -1,6 +1,8 @@
 ﻿using BankDashboard.CBModel;
 using BankDashboard.Common;
+using BankDashboard.LogFile;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -10,6 +12,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Web;
 using System.Web.Mvc;
+using Excel = Microsoft.Office.Interop.Excel;
 using static BankDashboard.Common.ViewModelClass;
 
 namespace BankDashboard.Controllers
@@ -1651,7 +1654,7 @@ namespace BankDashboard.Controllers
         }
         public ActionResult UploadExcelFile(HttpPostedFileBase[] UploadedFiles, string SubmitFile)
         {
-            string FileUploadMessage, SaveFolderLocation;
+            string FileUploadMessage ="", SaveFolderLocation;
             if (Session["User"] == null)
             {
                 return RedirectToAction("LogIn", "LogIn");
@@ -1675,11 +1678,10 @@ namespace BankDashboard.Controllers
                         SaveFolderLocation =ConfigurationManager.AppSettings["SaveFolderLocationReconcilliationFile"].ToString();
                     else
                         SaveFolderLocation = @"~/ImagesScreens/";
-
+                    
                     if (UploadedFiles[0].FileName.EndsWith(".XLSX") || UploadedFiles[0].FileName.EndsWith(".xlsx"))
                     {
                         string fileSavedname = filenamePrefix + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "_.xlsx";
-
                         //string filepath = Path.Combine(Server.MapPath(SaveFolderLocation), fileSavedname);
                         string filepath = SaveFolderLocation + fileSavedname;
                         UploadedFiles[0].SaveAs(filepath);
@@ -1699,9 +1701,9 @@ namespace BankDashboard.Controllers
                     }
                 }
             }
-            catch
+            catch(Exception e)
             {
-                TempData["ErrorMessage"] = "Something went wrong..!";
+                TempData["ErrorMessage"] = "Something went wrong..!" +e.Message;
             }
 
             return RedirectToAction("ReconsiliationReport");
@@ -1711,18 +1713,16 @@ namespace BankDashboard.Controllers
             int returnStatus = 1;
             returnMessage = "Data Uploaded Successfully";
             CBDB db = new CBDB();
-            //Instance reference for Excel Application
-            Microsoft.Office.Interop.Excel.Application objXL = null;
-            //Workbook refrence
-            Microsoft.Office.Interop.Excel.Workbook objWB = null;
+            
+            Excel.Application objXL = null;
+            
+            Excel.Workbook objWB = null;
             DataSet ds = new DataSet();
             try
             {
-                //Instancing Excel using COM services
-                objXL = new Microsoft.Office.Interop.Excel.Application();
-                //Adding WorkBook
+                objXL = new Excel.Application();
                 objWB = objXL.Workbooks.Open(path);
-                foreach (Microsoft.Office.Interop.Excel.Worksheet objSHT in objWB.Worksheets)
+                foreach (Excel.Worksheet objSHT in objWB.Worksheets)
                 {
                     int rows = objSHT.UsedRange.Rows.Count;
                     int cols = objSHT.UsedRange.Columns.Count;
@@ -1732,94 +1732,102 @@ namespace BankDashboard.Controllers
                     int yearColIndex = 0, commentsColIndex = 0;
                     //If 1st Row Contains unique Headers for datatable include this part else remove it
                     //Start
-                    for (int c = 1; c <= cols; c++)
+                    if(rows>1 && cols > 0)
                     {
-                        string colname = objSHT.Cells[1, c].Text;
-                        //dt.Columns.Add(colname);
-                        noofrow = 2;
-
-                        if (dateColIndex <= 0)
-                            dateColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("date"))) ? c : -1;
-
-                        if (descriptionColIndex <= 0)
-                            descriptionColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("description"))) ? c : -1;
-
-                        if (referenceColIndex <= 0)
-                            referenceColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("reference"))) ? c : -1;
-
-                        if (debitColIndex <= 0)
-                            debitColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("debit"))) ? c : -1;
-
-                        if (creditColIndex <= 0)
-                            creditColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("credit"))) ? c : -1;
-
-                        if (cardNumberColIndex <= 0)
-                            cardNumberColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("cardnumber"))) ? c : -1;
-
-                        if (yearColIndex <= 0)
-                            yearColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("year"))) ? c : -1;
-
-                        if (commentsColIndex <= 0)
-                            commentsColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("comments"))) ? c : -1;
-
-                    }
-                    //END
-                    if ((debitColIndex > 0 || creditColIndex > 0) && cardNumberColIndex > 0)
-                    {
-                        for (int r = noofrow; r <= rows; r++)
+                        for (int c = 1; c <= cols; c++)
                         {
-                            NonCustom_GLReconciliationTable obj = new NonCustom_GLReconciliationTable();
-                            if (dateColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, dateColIndex].Text))
-                            {
-                                double d = double.Parse(objSHT.Cells[r, dateColIndex].Value2.ToString());
-                                DateTime conv = DateTime.FromOADate(d);
-                                obj.PostDate = conv.ToShortDateString();
-                            }
-                            if (descriptionColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, descriptionColIndex].Text))
-                                obj.MemberCase = objSHT.Cells[r, descriptionColIndex].Value2.ToString();
+                            string colname = objSHT.Cells[1, c].Text;                    
+                            noofrow = 2;
+                            if (dateColIndex <= 0)
+                                dateColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("date"))) ? c : -1;
 
-                            if (referenceColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, referenceColIndex].Text))
-                                obj.Reference = objSHT.Cells[r, referenceColIndex].Value2.ToString();
+                            if (descriptionColIndex <= 0)
+                                descriptionColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("description"))) ? c : -1;
 
-                            if (debitColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, debitColIndex].Text))
-                                obj.Debit = objSHT.Cells[r, debitColIndex].Value2.ToString();
+                            if (referenceColIndex <= 0)
+                                referenceColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("reference"))) ? c : -1;
 
-                            if (creditColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, creditColIndex].Text))
-                                obj.Credit = objSHT.Cells[r, creditColIndex].Value2.ToString();
+                            if (debitColIndex <= 0)
+                                debitColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("debit"))) ? c : -1;
 
-                            if (cardNumberColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, cardNumberColIndex].Text))
-                            {
-                                string cardNumber = objSHT.Cells[r, cardNumberColIndex].Value2.ToString().Replace("-", "");
-                                obj.CardNumber = (cardNumber.Length == 16) ? cardNumber : throw new Exception("Card Length should be 16");
-                            }
-                                
+                            if (creditColIndex <= 0)
+                                creditColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("credit"))) ? c : -1;
 
-                            if (yearColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, yearColIndex].Text))
-                                obj.Year = objSHT.Cells[r, yearColIndex].Value2.ToString();
+                            if (cardNumberColIndex <= 0)
+                                cardNumberColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("cardnumber"))) ? c : -1;
 
-                            if (commentsColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, commentsColIndex].Text))  
-                                obj.Comments = objSHT.Cells[r, commentsColIndex].Value2.ToString();
+                            if (yearColIndex <= 0)
+                                yearColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("year"))) ? c : -1;
 
-                            obj.IsActive = true;
-                            db.NonCustom_GLReconciliationTable.Add(obj);
+                            if (commentsColIndex <= 0)
+                                commentsColIndex = (!string.IsNullOrWhiteSpace(colname) && (colname.ToLower().ToString().Equals("comments"))) ? c : -1;
 
-                            //DataRow dr = dt.NewRow();
-                            //for (int c = 1; c <= cols; c++)
-                            //{
-                            //    dr[c - 1] = objSHT.Cells[r, c].Text;
-                            //}
-                            //dt.Rows.Add(dr);
+                            
                         }
+                        //END
+                        if ((debitColIndex > 0 || creditColIndex > 0) && cardNumberColIndex > 0)
+                        {
+                            for (int r = noofrow; r <= rows; r++)
+                            {
+                                NonCustom_GLReconciliationTable obj = new NonCustom_GLReconciliationTable();
+                                if (dateColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, dateColIndex].Text))
+                                {
+                                    double d = double.Parse(objSHT.Cells[r, dateColIndex].Value2.ToString());
+                                    DateTime conv = DateTime.FromOADate(d);
+                                    obj.PostDate = conv.ToString("dd-MMM-yyyy");
+                                }
+                                if (descriptionColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, descriptionColIndex].Text))
+                                    obj.MemberCase = objSHT.Cells[r, descriptionColIndex].Value2.ToString();
 
-                        db.SaveChanges();
+                                if (referenceColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, referenceColIndex].Text))
+                                    obj.Reference = objSHT.Cells[r, referenceColIndex].Value2.ToString();
+
+                                if (debitColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, debitColIndex].Text))
+                                    obj.Debit = objSHT.Cells[r, debitColIndex].Value2.ToString();
+
+                                if (creditColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, creditColIndex].Text))
+                                    obj.Credit = objSHT.Cells[r, creditColIndex].Value2.ToString();
+
+                                if (cardNumberColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, cardNumberColIndex].Text))
+                                {
+                                    string cardNumber = objSHT.Cells[r, cardNumberColIndex].Value2.ToString().Replace("-", "");
+                                    obj.CardNumber = (cardNumber.Length == 16) ? cardNumber : throw new Exception("Card Length should be 16");
+                                }
+
+
+                                if (yearColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, yearColIndex].Text))
+                                    obj.Year = objSHT.Cells[r, yearColIndex].Value2.ToString();
+
+                                if (commentsColIndex > 0 && !string.IsNullOrEmpty(objSHT.Cells[r, commentsColIndex].Text))
+                                    obj.Comments = objSHT.Cells[r, commentsColIndex].Value2.ToString();
+
+                                obj.IsActive = true;
+                                db.NonCustom_GLReconciliationTable.Add(obj);
+
+                                //DataRow dr = dt.NewRow();
+                                //for (int c = 1; c <= cols; c++)
+                                //{
+                                //    dr[c - 1] = objSHT.Cells[r, c].Text;
+                                //}
+                                //dt.Rows.Add(dr);
+                            }
+
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            returnMessage = "Missing required columns Debit, Credit or CardNumber";
+                            returnStatus = 0;
+                        }
                     }
                     else
                     {
-                        returnMessage = "Missing required columns Debit, Credit or CardNumber";
+                        returnMessage = "No Data in File!";
                         returnStatus = 0;
                     }
-
-                    //ds.Tables.Add(dt);
+                   
+                    //breaking after reading first row of first sheet
+                    break;
                 }
 
                 objWB.Close();
@@ -1833,10 +1841,9 @@ namespace BankDashboard.Controllers
                 returnMessage = "Error Occured While uploading excel - " + ex.Message;
                 returnStatus = 0;
             }
-
+            
             return returnStatus;
         }
-
 
 
         #endregion--------------------------------------------------------------------------------------------------
@@ -1910,7 +1917,7 @@ namespace BankDashboard.Controllers
 
             System.Web.HttpContext.Current.Response.Write("<Td>");
             System.Web.HttpContext.Current.Response.Write("<B>");
-            System.Web.HttpContext.Current.Response.Write("Feedback Id");
+            System.Web.HttpContext.Current.Response.Write("Member Case");
             System.Web.HttpContext.Current.Response.Write("</B>");
             System.Web.HttpContext.Current.Response.Write("</Td>");
 
@@ -1958,7 +1965,7 @@ namespace BankDashboard.Controllers
 
                 System.Web.HttpContext.Current.Response.Write("<Td>");
 
-                System.Web.HttpContext.Current.Response.Write("");
+                System.Web.HttpContext.Current.Response.Write(pdata.MemberCase);
 
                 System.Web.HttpContext.Current.Response.Write("</Td>");
 

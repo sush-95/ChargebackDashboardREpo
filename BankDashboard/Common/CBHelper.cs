@@ -375,7 +375,7 @@ namespace BankDashboard.Common
         }
             #endregion-----------------------------------------------------------------------------------------------------
 
-            #region------------------------------------------Matched Transaction--------------------------------------------
+           #region------------------------------------------Matched Transaction--------------------------------------------
             public static List<Matched_FinancialTransaction> GetMatchedTransaction(ViewModelClass.FilterClass filter)
         {
             List<Matched_FinancialTransaction> list = new List<Matched_FinancialTransaction>();
